@@ -40,3 +40,26 @@ export const create = async (req: Request, res: Response): Promise<void> => {
     res.json(result)
   }
 }
+
+// update users
+export const update = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId: string = req.params?.id
+    const userInput: Prisma.UserUncheckedUpdateInput = req.body
+
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: userInput
+    })
+
+    const result = success(updatedUser)
+    res.json(result)
+  } catch (err: any) {
+    console.error(err)
+
+    const result = error(err.code, err.message)
+    res.json(result)
+  }
+}
