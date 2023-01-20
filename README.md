@@ -1,4 +1,4 @@
-# Node Typescript Skeleton
+# Node Typescript Prisma Mongo Skeleton
 
 This project contains a minimal starter for Node.js project with Typescript, ESLint, TS-Standard and Nodemon already configured
 
