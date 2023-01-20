@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 import { Request, Response } from 'express'
 
-// import { ResponseVO } from '../../model/vo/responseVo'
 import { error, success } from '../../utils/message'
 
 const prisma = new PrismaClient()
@@ -14,6 +13,25 @@ export const find = async (req: Request, res: Response): Promise<void> => {
     console.log('🚀 ~ file: controller.ts:15 ~ find ~ users', users)
 
     const result = success(users)
+    res.json(result)
+  } catch (err: any) {
+    console.error(err)
+
+    const result = error(err.code, err.message)
+    res.json(result)
+  }
+}
+
+// create users
+export const create = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userInput: Prisma.UserUncheckedCreateInput = req.body
+
+    const createdUser = await prisma.user.create({
+      data: userInput
+    })
+
+    const result = success(createdUser)
     res.json(result)
   } catch (err: any) {
     console.error(err)
