@@ -22,7 +22,7 @@ export const find = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-// create users
+// create user
 export const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const userInput: Prisma.UserUncheckedCreateInput = req.body
@@ -41,7 +41,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-// update users
+// update user
 export const update = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId: string = req.params?.id
@@ -55,6 +55,27 @@ export const update = async (req: Request, res: Response): Promise<void> => {
     })
 
     const result = success(updatedUser)
+    res.json(result)
+  } catch (err: any) {
+    console.error(err)
+
+    const result = error(err.code, err.message)
+    res.json(result)
+  }
+}
+
+// delete user
+export const remove = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId: string = req.params?.id
+
+    const deletedUser = await prisma.user.delete({
+      where: {
+        id: userId
+      }
+    })
+
+    const result = success({ message: `User ${deletedUser.name} deleted successfully` })
     res.json(result)
   } catch (err: any) {
     console.error(err)
