@@ -1,0 +1,37 @@
+{
+  "name": "node-typescript-skeleton",
+  "version": "1.0.0",
+  "description": "Node project skeleton using Typescript, ESLint, TS-Standard and Nodemon",
+  "main": "index.js",
+  "repository": "git@github.com:brandovidal/node-typescript-skeleton.git",
+  "author": "Brando Vidal",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon --watch src/ --exec ts-node src/index.ts",
+    "prestart": "npm run build",
+    "start": "node build/index.js",
+    "build": "tsc",
+    "lint": "eslint src/",
+    "lint-fix": "eslint src/ --fix",
+    "prepare": "husky install",
+    "test": "vitest",
+    "test-ci": "vitest run",
+    "test-ui": "vitest --ui"
+  },
+  "dependencies": {
+    "typescript": "4.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.18",
+    "@typescript-eslint/eslint-plugin": "5.48.2",
+    "@vitest/ui": "0.27.2",
+    "eslint": "8.32.0",
+    "eslint-config-standard-with-typescript": "31.0.0",
+    "husky": "8.0.3",
+    "lint-staged": "13.1.0",
+    "nodemon": "2.0.20",
+    "prisma": "4.9.0",
+    "ts-node": "10.9.1",
+    "vitest": "0.27.2"
+  }
+}
