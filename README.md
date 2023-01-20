@@ -8,6 +8,8 @@ Inside of your project, you'll see the following folders and files:
 
 ```css
 /
+├── __test__/
+├── build/
 ├── prisma/
 │   └── schema.prisma
 ├── src/
@@ -16,7 +18,6 @@ Inside of your project, you'll see the following folders and files:
 │   └── insert-data.ts
 │   └── retrieve-data.ts
 │   └── update-data.ts
-├── build/
 ├── .eslintignore
 ├── .eslintrc.json
 ├── .gitignore
