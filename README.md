@@ -8,8 +8,14 @@ Inside of your project, you'll see the following folders and files:
 
 ```css
 /
+├── prisma/
+│   └── schema.prisma
 ├── src/
+│   └── delete-data.ts
 │   └── index.ts
+│   └── insert-data.ts
+│   └── retrieve-data.ts
+│   └── update-data.ts
 ├── build/
 ├── .eslintignore
 ├── .eslintrc.json
@@ -29,23 +35,29 @@ Inside of your project, you'll see the following folders and files:
 - ⚡ Install dependencies
 
 ```bash
-yarn install
+npm install
 ```
 
 - ⚒️ Run development App
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 - 🚀 Start App
 
 ```bash
-yarn start
+npm run start
 ```
 
 - 🔦 Run Lint
 
 ```bash
-yarn lint
+npm run lint
+```
+
+- 👾 Run test
+
+```bash
+npm run test
 ```
