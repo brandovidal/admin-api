@@ -39,6 +39,12 @@ Inside of your project, you'll see the following folders and files:
 npm install
 ```
 
+- ⚒️ Run prisma
+
+```bash
+npx prisma egenarte
+```
+
 - ⚒️ Run development App
 
 ```bash

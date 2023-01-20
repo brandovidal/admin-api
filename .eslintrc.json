@@ -4,7 +4,11 @@
     "sourceType": "module"
   },
   "rules": {
-    "@typescript-eslint/strict-boolean-expressions": "warn"
+    "@typescript-eslint/strict-boolean-expressions": "warn",
+    "@typescript-eslint/no-misused-promises": [
+      "warn",
+      { "checksVoidReturn": false }
+    ]
   },
   "extends": [
     "plugin:@typescript-eslint/recommended",
