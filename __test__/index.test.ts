@@ -3,6 +3,7 @@ import request from 'supertest'
 
 import { app } from "../src/index";
 import { HttpCode } from "../src/utils/message";
+import { Prisma } from "@prisma/client";
 
 describe('GET /user', () => {
     test('should respond with a 200 status code', async () => {
@@ -20,104 +21,91 @@ describe('GET /user', () => {
     })
 }).clear()
 
-// describe('POST /user', () => {
-//     test('should respond with a 201 status code', async () => {
-//         const userInput = {
-//             email: 'jon.snow@got.com',
-//             name: 'Jon Snow',
-//             dateOfBirth: new Date(1995, 1, 23),
-//             location: {
-//             address: "2 Rue de l'opera",
-//             city: 'Paris',
-//             country: 'FRA'
-//             }
-//         }
-//         const response = await request(app).post('/user').send(userInput)
-        
-//         expect(response.status).toBe(HttpCode.OK)
-//         expect(response.headers['Content-Type']).contains(/json/)
-//     })
-
-//     test('should respond with a missing param', async () => {
-//         const userInputWithParamsMissing = {
-//             email: 'jon.snow@got.com',
-//             name: 'Jon Snow',
-//         }
-//         const response = await request(app).post('/user').send(userInputWithParamsMissing)
-
-//         expect(response.status).toBe(HttpCode.BAD_REQUEST)
-//         expect(response.headers['Content-Type']).contains(/json/)
-//     })
-
-//     test('should respond with a user exist message', async () => {
-//         const userInputExistInDB = {
-//             email: 'jon.snow@got.com',
-//             name: 'Jon Snow',
-//             dateOfBirth: new Date(1995, 1, 23),
-//             location: {
-//             address: "2 Rue de l'opera",
-//             city: 'Paris',
-//             country: 'FRA'
-//             }
-//         }
-//         const response = await request(app).post('/user').send(userInputExistInDB)
-//         console.log("🚀 ~ file: index.test.ts:43 ~ test ~ response", response.status)
-
-//         expect(response.status).toBe(HttpCode.FORBIDDEN)
-//         expect(response.headers['Content-Type']).contains(/json/)
-//     })
-// })
-
-describe('PUT /user', () => {
+describe('POST /user', () => {
     test('should respond with a 201 status code', async () => {
-        const users = await request(app).get('/user').send()
-        const data = users?.body?.data
-        console.log("🚀 ~ file: index.test.ts:75 ~ test ~ data", data)
-
-        expect(users.status).toBe(HttpCode.OK)
-
-        // const userInput = {
-        //     email: 'jon.snow@got.com',
-        //     name: 'Jon Snow',
-        //     dateOfBirth: new Date(1995, 1, 23),
-        //     location: {
-        //     address: "2 Rue de l'opera",
-        //     city: 'Paris',
-        //     country: 'FRA'
-        //     }
-        // }
-        // const response = await request(app).post('/user').send(userInput)
+        const userInput = {
+            email: 'jon.snow@got.com',
+            name: 'Jon Snow',
+            dateOfBirth: new Date(1995, 1, 23),
+            location: {
+            address: "2 Rue de l'opera",
+            city: 'Paris',
+            country: 'FRA'
+            }
+        }
+        const response = await request(app).post('/user').send(userInput)
         
-        // expect(response.status).toBe(HttpCode.OK)
-        // expect(response.headers['Content-Type']).contains(/json/)
+        expect(response.status).toBe(HttpCode.OK)
+        expect(response.headers['Content-Type']).contains(/json/)
     })
 
-    // test('should respond with a missing param', async () => {
-    //     const userInputWithParamsMissing = {
-    //         email: 'jon.snow@got.com',
-    //         name: 'Jon Snow',
-    //     }
-    //     const response = await request(app).post('/user').send(userInputWithParamsMissing)
+    test('should respond with a missing param', async () => {
+        const userInputWithParamsMissing = {
+            email: 'jon.snow@got.com',
+            name: 'Jon Snow',
+        }
+        const response = await request(app).post('/user').send(userInputWithParamsMissing)
 
-    //     expect(response.status).toBe(HttpCode.BAD_REQUEST)
-    //     expect(response.headers['Content-Type']).contains(/json/)
-    // })
+        expect(response.status).toBe(HttpCode.BAD_REQUEST)
+        expect(response.headers['Content-Type']).contains(/json/)
+    })
 
-    // test('should respond with a user exist message', async () => {
-    //     const userInputExistInDB = {
-    //         email: 'jon.snow@got.com',
-    //         name: 'Jon Snow',
-    //         dateOfBirth: new Date(1995, 1, 23),
-    //         location: {
-    //         address: "2 Rue de l'opera",
-    //         city: 'Paris',
-    //         country: 'FRA'
-    //         }
-    //     }
-    //     const response = await request(app).post('/user').send(userInputExistInDB)
-    //     console.log("🚀 ~ file: index.test.ts:43 ~ test ~ response", response.status)
+    test('should respond with a user exist message', async () => {
+        const userInputExistInDB = {
+            email: 'jon.snow@got.com',
+            name: 'Jon Snow',
+            dateOfBirth: new Date(1995, 1, 23),
+            location: {
+            address: "2 Rue de l'opera",
+            city: 'Paris',
+            country: 'FRA'
+            }
+        }
+        const response = await request(app).post('/user').send(userInputExistInDB)
+        console.log("🚀 ~ file: index.test.ts:43 ~ test ~ response", response.status)
 
-    //     expect(response.status).toBe(HttpCode.FORBIDDEN)
-    //     expect(response.headers['Content-Type']).contains(/json/)
-    // })
+        expect(response.status).toBe(HttpCode.FORBIDDEN)
+        expect(response.headers['Content-Type']).contains(/json/)
+    })
+})
+
+describe('PUT /user', () => {
+    test('should respond with a 200 status code', async () => {
+        const users = await request(app).get('/user').send()
+        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
+        const { id, ...user } = userFinded
+
+        expect(users.status).toBe(HttpCode.OK)
+        expect(userFinded).toBeInstanceOf(Object)
+
+        const updatedUserInput = {
+            ...user,
+            name: 'Roger Hudson',
+        }
+        
+        const response = await request(app).put(`/user/${userFinded?.id}`).send(updatedUserInput)
+
+        expect(response.status).toBe(HttpCode.OK)
+        expect(response.headers['Content-Type']).contains(/json/)
+    })
+})
+
+describe('DELETE /user', () => {
+    test('should respond with a 200 status code', async () => {
+        const users = await request(app).get('/user').send()
+        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
+        const { id, ...user } = userFinded
+
+        expect(users.status).toBe(HttpCode.OK)
+        expect(userFinded).toBeInstanceOf(Object)
+
+        const deletedUserInput = {
+            ...user,
+            name: 'Roger Hudson',
+        }
+        
+        const response = await request(app).delete(`/user/${userFinded?.id}`).send(deletedUserInput)
+
+        expect(response.status).toBe(HttpCode.OK)
+    })
 })
