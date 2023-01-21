@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { error, success } from '../../utils/message'
+import { error, HttpCode, success } from '../../utils/message'
 
 import { createUser, findUser, removeUser, updateUser } from './service'
 
@@ -23,12 +23,26 @@ export const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const createdUser = await createUser(req)
     const result = success(createdUser)
-    res.json(result)
+    res.status(200).json(result)
   } catch (err: any) {
     console.error(err)
 
+    const userExist = 'users_email_key'
+    const badRequest = 'missing'
+
+    const message = String(err.message)
+    if (message.includes(userExist)) {
+      const result = error(HttpCode.FORBIDDEN, 'User already exists')
+      res.status(HttpCode.FORBIDDEN).json(result)
+      return
+    } else if (message.includes(badRequest)) {
+      const result = error(HttpCode.BAD_REQUEST, 'User params is missing')
+      res.status(HttpCode.BAD_REQUEST).json(result)
+      return
+    }
+
     const result = error(err.code, err.message)
-    res.json(result)
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
   }
 }
 
@@ -40,6 +54,15 @@ export const update = async (req: Request, res: Response): Promise<void> => {
     res.json(result)
   } catch (err: any) {
     console.error(err)
+
+    const badRequest = 'missing'
+
+    const message = String(err.message)
+    if (message.includes(badRequest)) {
+      const result = error(HttpCode.BAD_REQUEST, 'User params is missing')
+      res.status(HttpCode.BAD_REQUEST).json(result)
+      return
+    }
 
     const result = error(err.code, err.message)
     res.json(result)
@@ -54,6 +77,15 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
     res.json(result)
   } catch (err: any) {
     console.error(err)
+
+    const badRequest = 'missing'
+
+    const message = String(err.message)
+    if (message.includes(badRequest)) {
+      const result = error(HttpCode.BAD_REQUEST, 'User params is missing')
+      res.status(HttpCode.BAD_REQUEST).json(result)
+      return
+    }
 
     const result = error(err.code, err.message)
     res.json(result)

@@ -5,17 +5,18 @@ export enum HttpCode {
   NO_CONTENT = 204,
   BAD_REQUEST = 400,
   UNAUTHORIZED = 401,
+  FORBIDDEN = 403,
   NOT_FOUND = 404,
   INTERNAL_SERVER_ERROR = 500,
 }
 
 export class Result {
-  private readonly statusCode: number
+  private readonly code: number
   private readonly message: string
-  private readonly data?: object
+  private readonly data?: object | null
 
-  constructor (statusCode: number, message: string, data?: object) {
-    this.statusCode = statusCode
+  constructor (code: number, message: string, data?: object | null) {
+    this.code = code
     this.message = message
     this.data = data
   }
@@ -25,7 +26,7 @@ export class Result {
   ***/
   bodyToString (): ResponseVO {
     return {
-      statusCode: this.statusCode,
+      code: this.code,
       message: this.message,
       data: this.data
     }
@@ -38,6 +39,6 @@ export const success = (data: object): ResponseVO => {
 }
 
 export const error = (code = HttpCode.INTERNAL_SERVER_ERROR, message: string): ResponseVO => {
-  const result = new Result(code, message)
+  const result = new Result(code, message, null)
   return result.bodyToString()
 }
