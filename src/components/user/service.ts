@@ -8,6 +8,19 @@ export const findUser = async (): Promise<User[]> => {
   return await prisma.user.findMany()
 }
 
+export const findUserByParams = async (req: Request): Promise<User | null> => {
+  const params: Prisma.UserWhereInput = req.query
+
+  const { name, email } = params
+
+  return await prisma.user.findFirst({
+    where: {
+      name: { contains: name?.toString(), mode: 'insensitive' },
+      email: { contains: email?.toString(), mode: 'insensitive' }
+    }
+  })
+}
+
 export const createUser = async (req: Request): Promise<User> => {
   const userInput: Prisma.UserUncheckedCreateInput = req.body
 

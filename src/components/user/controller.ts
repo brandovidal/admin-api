@@ -1,13 +1,19 @@
+import { Prisma } from '@prisma/client'
 import { NextFunction, Request, Response } from 'express'
 
 import { error, HttpCode, success } from '../../utils/message'
 
-import { createUser, findUser, removeUser, updateUser } from './service'
+import { createUser, findUser, findUserByParams, removeUser, updateUser } from './service'
+
+import isEmpty from 'just-is-empty'
 
 // Find all users
 export const find = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const users = await findUser()
+    const params: Prisma.UserWhereInput = req.query
+
+    const users = isEmpty(params) ? await findUser() : await findUserByParams(req)
+
     const result = success(HttpCode.OK, users, 'user list')
     res.json(result)
   } catch (err: any) {
@@ -25,7 +31,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
     const result = success(HttpCode.CREATED, createdUser, 'user created')
     res.status(200).json(result)
   } catch (err: any) {
-    console.error(err)
+    console.error(err.message)
 
     const userExist = 'users_email_key'
     const badRequest = 'missing'
@@ -53,7 +59,7 @@ export const update = async (req: Request, res: Response): Promise<void> => {
     const result = success(HttpCode.OK, updatedUser, 'user updated')
     res.json(result)
   } catch (err: any) {
-    console.error(err)
+    console.error(err.message)
 
     const badRequest = 'missing'
 
@@ -76,7 +82,7 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
     const result = success(HttpCode.OK, deletedUser, `User ${deletedUser.name} deleted successfully`)
     res.json(result)
   } catch (err: any) {
-    console.error(err)
+    console.error(err.message)
 
     const badRequest = 'missing'
 

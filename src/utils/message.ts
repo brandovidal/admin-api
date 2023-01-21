@@ -34,7 +34,7 @@ export class Result {
   }
 }
 
-export const success = (code = HttpCode.OK, data: object, message = 'success'): ResponseVO => {
+export const success = (code = HttpCode.OK, data: object | null, message = 'success'): ResponseVO => {
   const result = new Result(code, message, data)
   return result.bodyToString()
 }
