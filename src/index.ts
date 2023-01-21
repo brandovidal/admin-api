@@ -31,23 +31,8 @@ app.get('/', function (req, res) {
   res.send('Node API is running!')
 })
 
-// app.get('/users', async (req, res) => {
-//   const users = await prisma.user.findMany()
-//   res.json(users)
-// })
-
-// app.post('/users', async (req, res) => {
-//   const users = await prisma.user.findMany()
-//   res.json(users)
-// })
-
 const port = process.env.PORT ?? 5000
 
-app.listen(port, () => {
-  console.log('🚀 Server ready at: http://localhost:5000')
-}
-)
+app.listen(port, () => { console.log('🚀 Server ready at: http://localhost:5000') })
 
-const addition = (a: number, b: number): number => a + b
-
-export { addition }
+export { app }
