@@ -11,7 +11,7 @@ describe('GET /user', () => {
 
     test('should respond with an array of users', async () => {
         const response = await request(app).get('/user').send()
-        const data = response.body?.body?.data
+        const data = response.body?.data
         expect(data).toBeInstanceOf(Array)
     })
 })
