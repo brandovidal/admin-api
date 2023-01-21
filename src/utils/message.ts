@@ -2,6 +2,7 @@ import { ResponseVO } from './responseVo'
 
 export enum HttpCode {
   OK = 200,
+  CREATED = 200,
   NO_CONTENT = 204,
   BAD_REQUEST = 400,
   UNAUTHORIZED = 401,
@@ -33,12 +34,12 @@ export class Result {
   }
 }
 
-export const success = (data: object): ResponseVO => {
-  const result = new Result(HttpCode.OK, 'success', data)
+export const success = (code = HttpCode.OK, data: object, message = 'success'): ResponseVO => {
+  const result = new Result(code, message, data)
   return result.bodyToString()
 }
 
-export const error = (code = HttpCode.INTERNAL_SERVER_ERROR, message: string): ResponseVO => {
+export const error = (code = HttpCode.INTERNAL_SERVER_ERROR, message = 'error'): ResponseVO => {
   const result = new Result(code, message, null)
   return result.bodyToString()
 }

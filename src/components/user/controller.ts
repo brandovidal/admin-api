@@ -8,7 +8,7 @@ import { createUser, findUser, removeUser, updateUser } from './service'
 export const find = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const users = await findUser()
-    const result = success(users)
+    const result = success(HttpCode.OK, users, 'user list')
     res.json(result)
   } catch (err: any) {
     console.error(err?.code, err?.message)
@@ -22,7 +22,7 @@ export const find = async (req: Request, res: Response, next: NextFunction): Pro
 export const create = async (req: Request, res: Response): Promise<void> => {
   try {
     const createdUser = await createUser(req)
-    const result = success(createdUser)
+    const result = success(HttpCode.CREATED, createdUser, 'user created')
     res.status(200).json(result)
   } catch (err: any) {
     console.error(err)
@@ -50,7 +50,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
 export const update = async (req: Request, res: Response): Promise<void> => {
   try {
     const updatedUser = await updateUser(req)
-    const result = success(updatedUser)
+    const result = success(HttpCode.OK, updatedUser, 'user updated')
     res.json(result)
   } catch (err: any) {
     console.error(err)
@@ -73,7 +73,7 @@ export const update = async (req: Request, res: Response): Promise<void> => {
 export const remove = async (req: Request, res: Response): Promise<void> => {
   try {
     const deletedUser = await removeUser(req)
-    const result = success({ message: `User ${deletedUser.name} deleted successfully` })
+    const result = success(HttpCode.OK, deletedUser, `User ${deletedUser.name} deleted successfully`)
     res.json(result)
   } catch (err: any) {
     console.error(err)

@@ -15,3 +15,16 @@ describe('GET /user', () => {
         expect(data).toBeInstanceOf(Array)
     })
 })
+
+describe('POST /user', () => {
+    test('should respond with a 201 sattus code', async () => {
+        const response = await request(app).get('/user').send()
+        expect(response.status).toBe(200)
+    })
+
+    test('should respond with an array of users', async () => {
+        const response = await request(app).get('/user').send()
+        const data = response.body?.data
+        expect(data).toBeInstanceOf(Array)
+    })
+})
