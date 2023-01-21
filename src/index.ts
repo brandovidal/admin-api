@@ -1,13 +1,8 @@
 import express from 'express'
 
-import dotenv from 'dotenv'
 import cors from 'cors'
 
 import { router } from './routes'
-
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config()
-}
 
 const app = express()
 
@@ -26,8 +21,10 @@ app.use(cors(corsOptions))
 app.use('/', router)
 
 const port = process.env.PORT ?? 5000
+const DATABASE_URL = process.env.DATABASE_URL ?? 5000
+console.log('🚀 ~ file: index.ts:25 ~ DATABASE_URL', DATABASE_URL)
 
 // Service
-app.listen(port, () => { console.log('🚀 Server ready at: http://localhost:5000') })
+app.listen(port, () => { console.log(`🚀 Server ready at: http://localhost:${port}}`) })
 
 export { app }
