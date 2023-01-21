@@ -1,8 +1,8 @@
-import express from 'express'
+import { Router } from 'express'
 
 import { create, find, remove, update } from './controller'
 
-const router = express.Router()
+const router = Router()
 
 router.get('/', find)
 router.post('/', create)

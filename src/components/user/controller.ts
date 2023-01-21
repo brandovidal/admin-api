@@ -1,19 +1,19 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 import { error, success } from '../../utils/message'
 
 import { createUser, findUser, removeUser, updateUser } from './service'
 
 // Find all users
-export const find = async (req: Request, res: Response): Promise<void> => {
+export const find = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const users = await findUser()
     const result = success(users)
     res.json(result)
   } catch (err: any) {
-    console.error(err)
+    console.error(err?.code, err?.message)
 
-    const result = error(err.code, err.message)
+    const result = error(err?.code, err?.message)
     res.json(result)
   }
 }

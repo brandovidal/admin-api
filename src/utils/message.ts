@@ -1,46 +1,43 @@
 import { ResponseVO } from './responseVo'
 
-export enum StatusCode {
-  success = 200,
+export enum HttpCode {
+  OK = 200,
+  NO_CONTENT = 204,
+  BAD_REQUEST = 400,
+  UNAUTHORIZED = 401,
+  NOT_FOUND = 404,
+  INTERNAL_SERVER_ERROR = 500,
 }
 
 export class Result {
   private readonly statusCode: number
-  private readonly code: number
   private readonly message: string
-  private readonly data? = null
+  private readonly data?: object
 
-  constructor (statusCode: number, code: number, message: string, data?: any) {
+  constructor (statusCode: number, message: string, data?: object) {
     this.statusCode = statusCode
-    this.code = code
     this.message = message
     this.data = data
   }
 
-  /**
-     * Serverless: According to the API Gateway specs, the body content must be stringified
-     */
+  /***
+   * Serverless: According to the API Gateway specs, the body content must be stringified
+  ***/
   bodyToString (): ResponseVO {
     return {
       statusCode: this.statusCode,
-      body: {
-        code: this.code,
-        message: this.message,
-        data: this.data
-      }
+      message: this.message,
+      data: this.data
     }
   }
 }
 
 export const success = (data: object): ResponseVO => {
-  const result = new Result(StatusCode.success, 0, 'success', data)
-
+  const result = new Result(HttpCode.OK, 'success', data)
   return result.bodyToString()
 }
 
-export const error = (code = 1000, message: string): ResponseVO => {
-  const result = new Result(StatusCode.success, code, message)
-
-  console.log(result.bodyToString())
+export const error = (code = HttpCode.INTERNAL_SERVER_ERROR, message: string): ResponseVO => {
+  const result = new Result(code, message)
   return result.bodyToString()
 }
