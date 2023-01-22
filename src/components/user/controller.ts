@@ -6,7 +6,7 @@ import { error, HttpCode, success } from '../../utils/message'
 import { createUser, findUsers, findUserByParams, removeUser, updateUser } from './service'
 
 import isEmpty from 'just-is-empty'
-import { userSchema } from './schema'
+// import { userSchema } from './schema'
 
 // Find all users
 export const findAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -28,8 +28,8 @@ export const findAll = async (req: Request, res: Response, next: NextFunction): 
 // create user
 export const create = async (req: Request, res: Response): Promise<void> => {
   try {
-    const validate = userSchema.parse(req.body)
-    console.log('🚀 ~ file: controller.ts:32 ~ create ~ validate', validate)
+    // const validate = userSchema.parse(req.body)
+    // console.log('🚀 ~ file: controller.ts:32 ~ create ~ validate', validate)
 
     const createdUser = await createUser(req)
     const result = success(HttpCode.CREATED, createdUser, 'user created')

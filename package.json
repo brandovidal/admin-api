@@ -18,6 +18,7 @@
     "lint-fix": "eslint src/ --fix",
     "prepare": "husky install",
     "prisma-mongo-test": "dotenv -e .env.test -- npx prisma db push",
+    "pretest": "npm run prisma-mongo-test",
     "test": "dotenv -e .env.test -- vitest",
     "test-ci": "dotenv -e .env.test -- vitest run",
     "test-ui": "dotenv -e .env.test -- vitest --ui"
