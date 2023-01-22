@@ -5,7 +5,9 @@ import { Request } from 'express'
 const prisma = new PrismaClient()
 
 export const findUsers = async (): Promise<User[]> => {
-  return await prisma.user.findMany()
+  const users = await prisma.user.findMany()
+  void prisma.$disconnect()
+  return users
 }
 
 export const findUserByParams = async (req: Request): Promise<User | null> => {
@@ -13,40 +15,49 @@ export const findUserByParams = async (req: Request): Promise<User | null> => {
 
   const { name, email } = params
 
-  return await prisma.user.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
       name: { contains: name?.toString(), mode: 'insensitive' },
       email: { contains: email?.toString(), mode: 'insensitive' }
     }
   })
+
+  void prisma.$disconnect()
+  return user
 }
 
 export const createUser = async (req: Request): Promise<User> => {
   const userInput: Prisma.UserUncheckedCreateInput = req.body
 
-  return await prisma.user.create({
+  const user = await prisma.user.create({
     data: userInput
   })
+  void prisma.$disconnect()
+  return user
 }
 
 export const updateUser = async (req: Request): Promise<User> => {
   const userId: string = req.params?.id
   const userInput: Prisma.UserUncheckedUpdateInput = req.body
 
-  return await prisma.user.update({
+  const user = await prisma.user.update({
     where: {
       id: userId
     },
     data: userInput
   })
+  void prisma.$disconnect()
+  return user
 }
 
 export const removeUser = async (req: Request): Promise<User> => {
   const userId: string = req.params?.id
 
-  return await prisma.user.delete({
+  const user = await prisma.user.delete({
     where: {
       id: userId
     }
   })
+  void prisma.$disconnect()
+  return user
 }
