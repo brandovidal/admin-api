@@ -4,6 +4,12 @@ import cors from 'cors'
 
 import { router } from './routes'
 
+// NOTE: List of things 🤔
+// TODO: Add valiations
+// TODO: Add documentation
+// TODO: Add middlewares and error handlers
+// TODO: Add a logger
+
 const app = express()
 
 app.use(express.json())

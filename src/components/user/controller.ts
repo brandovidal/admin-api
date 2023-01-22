@@ -3,16 +3,17 @@ import { NextFunction, Request, Response } from 'express'
 
 import { error, HttpCode, success } from '../../utils/message'
 
-import { createUser, findUser, findUserByParams, removeUser, updateUser } from './service'
+import { createUser, findUsers, findUserByParams, removeUser, updateUser } from './service'
 
 import isEmpty from 'just-is-empty'
+import { userSchema } from './schema'
 
 // Find all users
-export const find = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const findAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const params: Prisma.UserWhereInput = req.query
 
-    const users = isEmpty(params) ? await findUser() : await findUserByParams(req)
+    const users = isEmpty(params) ? await findUsers() : await findUserByParams(req)
 
     const result = success(HttpCode.OK, users, 'user list')
     res.json(result)
@@ -27,6 +28,9 @@ export const find = async (req: Request, res: Response, next: NextFunction): Pro
 // create user
 export const create = async (req: Request, res: Response): Promise<void> => {
   try {
+    const validate = userSchema.parse(req.body)
+    console.log('🚀 ~ file: controller.ts:32 ~ create ~ validate', validate)
+
     const createdUser = await createUser(req)
     const result = success(HttpCode.CREATED, createdUser, 'user created')
     res.status(200).json(result)

@@ -7,17 +7,17 @@
   "author": "Brando Vidal",
   "license": "MIT",
   "scripts": {
-    "prisma-mongo": "npx prisma db push",
-    "predev": "dotenv -e .env.dev -- npm run prisma-mongo",
-    "dev": "dotenv -e .env.dev -- nodemon --watch src/ --exec ts-node src/index.ts",
+    "prisma-mongo-dev": "dotenv -e .env.dev -- npx prisma db push",
+    "dev": "dotenv -e .env.dev -- ts-node-dev --respawn src/index.ts",
     "local": "dotenv -e .env.dev -- ts-node",
     "build": "tsc",
+    "prisma-mongo": "dotenv -e .env -- npx prisma db push",
     "prestart": "npm run build && npm run prisma-mongo",
     "start": "dotenv -e .env -- node build/index.js",
     "lint": "eslint src/",
     "lint-fix": "eslint src/ --fix",
     "prepare": "husky install",
-    "pretest": "dotenv -e .env.test -- npm run prisma-mongo",
+    "prisma-mongo-test": "dotenv -e .env.test -- npx prisma db push",
     "test": "dotenv -e .env.test -- vitest",
     "test-ci": "dotenv -e .env.test -- vitest run",
     "test-ui": "dotenv -e .env.test -- vitest --ui"
@@ -35,10 +35,9 @@
     "eslint-config-standard-with-typescript": "31.0.0",
     "husky": "8.0.3",
     "lint-staged": "13.1.0",
-    "nodemon": "2.0.20",
     "prisma": "4.9.0",
     "supertest": "6.3.3",
-    "ts-node": "10.9.1",
+    "ts-node-dev": "2.0.0",
     "typescript": "4.9.4",
     "vitest": "0.27.2"
   },
@@ -46,6 +45,7 @@
     "@prisma/client": "4.9.0",
     "cors": "2.8.5",
     "express": "4.18.2",
-    "just-is-empty": "3.3.0"
+    "just-is-empty": "3.3.0",
+    "zod": "3.20.2"
   }
 }

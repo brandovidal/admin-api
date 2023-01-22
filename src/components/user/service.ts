@@ -4,7 +4,7 @@ import { Request } from 'express'
 
 const prisma = new PrismaClient()
 
-export const findUser = async (): Promise<User[]> => {
+export const findUsers = async (): Promise<User[]> => {
   return await prisma.user.findMany()
 }
 
