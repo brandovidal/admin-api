@@ -31,6 +31,12 @@ Inside of your project, you'll see the following folders and files:
 - Node.js 12+
 - Yarn or NPM
 
+👾 Necesary environment variables:
+
+Copy the `.env.example` file to `.env` and fill in the required environment variables.
+Replicate the `.env.example` file to `.env.test` and fill in the required environment variables.
+Replicate the `.env.example` file to `.env.dev` and fill in the required environment variables.
+
 ## 📖 How to use
 
 - ⚡ Install dependencies
@@ -39,7 +45,7 @@ Inside of your project, you'll see the following folders and files:
 npm install
 ```
 
-- ⚒️ Run prisma
+- 📂 Run prisma
 
 ```bash
 npx prisma egenarte
