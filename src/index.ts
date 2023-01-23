@@ -7,7 +7,6 @@ import swaggerUi from 'swagger-ui-express'
 import { router } from './routes'
 
 // NOTE: List of things 🤔
-// TODO: Add documentation
 // TODO: Add a logger
 
 const app: Application = express()
