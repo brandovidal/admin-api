@@ -1,7 +1,5 @@
 import { Prisma, PrismaClient, User } from '@prisma/client'
 
-import { UserModel } from '../../models/user'
-
 const prisma = new PrismaClient()
 
 export interface UserWhereParams extends Prisma.UserWhereInput {}
@@ -51,13 +49,13 @@ export const getUserByParams = async (params: UserWhereParams): Promise<User | n
   return user
 }
 
-export const createUser = async (userInput: UserModel): Promise<User> => {
+export const createUser = async (userInput: User): Promise<User> => {
   const user = await prisma.user.create({ data: userInput })
   void prisma.$disconnect()
   return user
 }
 
-export const updateUser = async (userId: string, userInput: UserModel): Promise<User> => {
+export const updateUser = async (userId: string, userInput: User): Promise<User> => {
   const user = await prisma.user.update({
     where: {
       id: userId

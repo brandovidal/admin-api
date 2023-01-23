@@ -67,82 +67,6 @@
 				],
 				"type": "object",
 				"description": "Model User"
-			},
-			"LocationModel": {
-				"properties": {
-					"address": {
-						"type": "string"
-					},
-					"city": {
-						"type": "string"
-					},
-					"country": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"address",
-					"city",
-					"country"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserModel": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"dateOfBirth": {
-						"anyOf": [
-							{
-								"type": "string",
-								"format": "date-time"
-							},
-							{
-								"type": "string"
-							}
-						]
-					},
-					"name": {
-						"type": "string"
-					},
-					"location": {
-						"$ref": "#/components/schemas/LocationModel"
-					},
-					"createdAt": {
-						"anyOf": [
-							{
-								"type": "string",
-								"format": "date-time"
-							},
-							{
-								"type": "string"
-							}
-						]
-					},
-					"updatedAt": {
-						"anyOf": [
-							{
-								"type": "string",
-								"format": "date-time"
-							},
-							{
-								"type": "string"
-							}
-						]
-					}
-				},
-				"required": [
-					"email",
-					"dateOfBirth",
-					"name"
-				],
-				"type": "object",
-				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -203,7 +127,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserModel"
+								"$ref": "#/components/schemas/User"
 							}
 						}
 					}
@@ -272,7 +196,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserModel"
+								"$ref": "#/components/schemas/User"
 							}
 						}
 					}
