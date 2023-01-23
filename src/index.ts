@@ -4,9 +4,7 @@ import cors from 'cors'
 import { router } from './routes'
 
 // NOTE: List of things 🤔
-// TODO: Add validations
 // TODO: Add documentation
-// TODO: Add middlewares and error handlers
 // TODO: Add a logger
 
 const app = express()
@@ -26,8 +24,6 @@ app.use(cors(corsOptions))
 app.use('/', router)
 
 const port = process.env.PORT ?? 5000
-const DATABASE_URL = process.env.DATABASE_URL ?? 5000
-console.log('🚀 ~ file: index.ts:25 ~ DATABASE_URL', DATABASE_URL)
 
 // Service
 app.listen(port, () => { console.log(`🚀 Server ready at: http://localhost:${port}}`) })

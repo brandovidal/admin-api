@@ -10,6 +10,19 @@ export const findUsers = async (): Promise<User[]> => {
   return users
 }
 
+export const findUserById = async (query: Prisma.UserWhereUniqueInput): Promise<User | null> => {
+  const { id } = query
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id
+    }
+  })
+
+  void prisma.$disconnect()
+  return user
+}
+
 export const findUserByParams = async (params: Prisma.UserWhereInput): Promise<User | null> => {
   const { name, email } = params
 
@@ -24,9 +37,7 @@ export const findUserByParams = async (params: Prisma.UserWhereInput): Promise<U
   return user
 }
 
-export const registerUser = async (req: Request): Promise<User> => {
-  const userInput: Prisma.UserUncheckedCreateInput = req.body
-
+export const createUser = async (userInput: Prisma.UserUncheckedCreateInput): Promise<User> => {
   const user = await prisma.user.create({ data: userInput })
   void prisma.$disconnect()
   return user

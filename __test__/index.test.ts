@@ -1,9 +1,10 @@
 import { describe, expect, test } from "vitest";
 import request from 'supertest'
 
-import { app } from "../src/index";
-import { HttpCode } from "../src/utils/message";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client"
+
+import { app } from "../src/index"
+import { HttpCode } from "../src/types/http-code"
 
 describe('GET /user', () => {
     test('should respond with a 200 status code', async () => {

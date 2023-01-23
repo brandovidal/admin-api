@@ -4,8 +4,7 @@ const prisma = new PrismaClient()
 
 export const retrieveData = async (): Promise<void> => {
   // Find all users
-  const allUsers = await prisma.user.findMany()
-  console.log('🚀 ~ file: retrieve-data.ts:8 ~ retrieveData ~ allUsers', allUsers)
+  await prisma.user.findMany()
 
   // // Find a user by his Id
   // const [user] = allUsers
@@ -80,7 +79,7 @@ export const retrieveData = async (): Promise<void> => {
   // })
 
   // // Find post with tags containing Node and Docker and viewCount Greater than between 20 and 30
-  const postsWithTags = await prisma.post.findMany({
+  await prisma.post.findMany({
     where: {
       tags: {
         hasSome: [Tag.NodeJS, Tag.Docker]
@@ -91,7 +90,6 @@ export const retrieveData = async (): Promise<void> => {
       }
     }
   })
-  console.log('🚀 ~ file: retrieve-data.ts:94 ~ retrieveData ~ postsWithTags', postsWithTags)
 }
 
 void retrieveData().then()
