@@ -12,11 +12,13 @@ export enum HttpCode {
 }
 
 export class Result {
-  private readonly code: number
+  private readonly status: number
+  private readonly code: string
   private readonly message: string
   private readonly data?: object | null
 
-  constructor (code: number, message: string, data?: object | null) {
+  constructor (status: number, code: string, message: string, data?: object | null) {
+    this.status = status
     this.code = code
     this.message = message
     this.data = data
@@ -27,6 +29,7 @@ export class Result {
   ***/
   bodyToString (): ResponseVO {
     return {
+      status: this.status,
       code: this.code,
       message: this.message,
       data: this.data
@@ -34,12 +37,12 @@ export class Result {
   }
 }
 
-export const success = (code = HttpCode.OK, data: object | null, message = 'success'): ResponseVO => {
-  const result = new Result(code, message, data)
+export const success = (status = HttpCode.OK, data: object | null, code = '', message = 'success'): ResponseVO => {
+  const result = new Result(status, code, message, data)
   return result.bodyToString()
 }
 
-export const error = (code = HttpCode.INTERNAL_SERVER_ERROR, message = 'error'): ResponseVO => {
-  const result = new Result(code, message, null)
+export const error = (status = HttpCode.INTERNAL_SERVER_ERROR, code = '', message = 'error'): ResponseVO => {
+  const result = new Result(status, code, message, null)
   return result.bodyToString()
 }

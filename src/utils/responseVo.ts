@@ -1,5 +1,6 @@
 export class ResponseVO {
-  code = 400
+  status = 400
+  code = ''
   message = ''
   data?: object | null
 }

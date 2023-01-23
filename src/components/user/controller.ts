@@ -3,9 +3,10 @@ import { NextFunction, Request, Response } from 'express'
 
 import { error, HttpCode, success } from '../../utils/message'
 
-import { createUser, findUsers, findUserByParams, removeUser, updateUser } from './service'
+import { registerUser, findUsers, findUserByParams, removeUser, updateUser } from './service'
 
 import isEmpty from 'just-is-empty'
+
 // import { userSchema } from './schema'
 
 // Find all users
@@ -13,14 +14,14 @@ export const findAll = async (req: Request, res: Response, next: NextFunction): 
   try {
     const params: Prisma.UserWhereInput = req.query
 
-    const users = isEmpty(params) ? await findUsers() : await findUserByParams(req)
+    const users = isEmpty(params) ? await findUsers() : await findUserByParams(params)
 
-    const result = success(HttpCode.OK, users, 'user list')
+    const result = success(HttpCode.OK, users, 'success', 'user list')
     res.json(result)
   } catch (err: any) {
     console.error(err?.code, err?.message)
 
-    const result = error(err?.code, err?.message)
+    const result = error(HttpCode.NO_CONTENT, 'no_content', err?.message)
     res.json(result)
   }
 }
@@ -31,22 +32,29 @@ export const create = async (req: Request, res: Response): Promise<void> => {
     // const validate = userSchema.parse(req.body)
     // console.log('🚀 ~ file: controller.ts:32 ~ create ~ validate', validate)
 
-    const createdUser = await createUser(req)
+    const params: Prisma.UserWhereInput = req.body
+    const userFinded = await findUserByParams(params)
+    console.log('🚀 ~ file: controller.ts:41 ~ create ~ userFinded', userFinded, params)
+
+    const createdUser = await registerUser(req)
+
     const result = success(HttpCode.CREATED, createdUser, 'user created')
     res.status(200).json(result)
   } catch (err: any) {
-    console.error(err.message)
+    console.error('name', err.name)
+    console.error('message', err.message)
 
     const userExist = 'users_email_key'
     const badRequest = 'missing'
 
     const message = String(err.message)
+
     if (message.includes(userExist)) {
-      const result = error(HttpCode.FORBIDDEN, 'User already exists')
+      const result = error(HttpCode.FORBIDDEN, 'user_already_exist', 'User already exists')
       res.status(HttpCode.FORBIDDEN).json(result)
       return
     } else if (message.includes(badRequest)) {
-      const result = error(HttpCode.BAD_REQUEST, 'User params is missing')
+      const result = error(HttpCode.BAD_REQUEST, 'params_missing', 'User params is missing')
       res.status(HttpCode.BAD_REQUEST).json(result)
       return
     }
@@ -69,7 +77,7 @@ export const update = async (req: Request, res: Response): Promise<void> => {
 
     const message = String(err.message)
     if (message.includes(badRequest)) {
-      const result = error(HttpCode.BAD_REQUEST, 'User params is missing')
+      const result = error(HttpCode.BAD_REQUEST, 'params_missing', 'User params is missing')
       res.status(HttpCode.BAD_REQUEST).json(result)
       return
     }
@@ -92,7 +100,7 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
 
     const message = String(err.message)
     if (message.includes(badRequest)) {
-      const result = error(HttpCode.BAD_REQUEST, 'User params is missing')
+      const result = error(HttpCode.BAD_REQUEST, 'params_missing', 'User params is missing')
       res.status(HttpCode.BAD_REQUEST).json(result)
       return
     }

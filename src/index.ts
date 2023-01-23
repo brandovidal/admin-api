@@ -1,11 +1,10 @@
 import express from 'express'
-
 import cors from 'cors'
 
 import { router } from './routes'
 
 // NOTE: List of things 🤔
-// TODO: Add valiations
+// TODO: Add validations
 // TODO: Add documentation
 // TODO: Add middlewares and error handlers
 // TODO: Add a logger

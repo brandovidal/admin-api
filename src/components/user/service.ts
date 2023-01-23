@@ -1,6 +1,6 @@
-import { Prisma, PrismaClient, User } from '@prisma/client'
-
 import { Request } from 'express'
+
+import { Prisma, PrismaClient, User } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -10,9 +10,7 @@ export const findUsers = async (): Promise<User[]> => {
   return users
 }
 
-export const findUserByParams = async (req: Request): Promise<User | null> => {
-  const params: Prisma.UserWhereInput = req.query
-
+export const findUserByParams = async (params: Prisma.UserWhereInput): Promise<User | null> => {
   const { name, email } = params
 
   const user = await prisma.user.findFirst({
@@ -26,12 +24,10 @@ export const findUserByParams = async (req: Request): Promise<User | null> => {
   return user
 }
 
-export const createUser = async (req: Request): Promise<User> => {
+export const registerUser = async (req: Request): Promise<User> => {
   const userInput: Prisma.UserUncheckedCreateInput = req.body
 
-  const user = await prisma.user.create({
-    data: userInput
-  })
+  const user = await prisma.user.create({ data: userInput })
   void prisma.$disconnect()
   return user
 }
