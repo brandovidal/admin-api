@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, it } from "vitest";
 import request from 'supertest'
 
 import { Prisma } from "@prisma/client"
@@ -7,13 +7,13 @@ import { app } from "../src/index"
 import { HttpCode } from "../src/types/http-code"
 
 describe('GET /user', () => {
-    test('should respond with a 200 status code', async () => {
+    it('should respond with a 200 status code', async () => {
         const response = await request(app).get('/user').send()
 
         expect(response.status).toBe(HttpCode.OK)
     })
 
-    test('should respond with an array of users', async () => {
+    it('should respond with an array of users', async () => {
         const response = await request(app).get('/user').send()
         const data = response.body?.data
 
@@ -23,7 +23,7 @@ describe('GET /user', () => {
 }).clear()
 
 describe('POST /user', () => {
-    test('should respond with a 201 status code', async () => {
+    it('should respond with a 201 status code', async () => {
         const userInput = {
             email: 'jon.snow@got.com',
             name: 'Jon Snow',
@@ -40,7 +40,7 @@ describe('POST /user', () => {
         expect(response.headers['Content-Type']).contains(/json/)
     })
 
-    test('should respond with a missing param', async () => {
+    it('should respond with a missing param', async () => {
         const userInputWithParamsMissing = {
             email: 'jon.snow@got.com',
             name: 'Jon Snow',
@@ -51,7 +51,7 @@ describe('POST /user', () => {
         expect(response.headers['Content-Type']).contains(/json/)
     })
 
-    test('should respond with a user exist message', async () => {
+    it('should respond with a user exist message', async () => {
         const userInputExistInDB = {
             email: 'jon.snow@got.com',
             name: 'Jon Snow',
@@ -63,7 +63,6 @@ describe('POST /user', () => {
             }
         }
         const response = await request(app).post('/user').send(userInputExistInDB)
-        console.log("🚀 ~ file: index.test.ts:43 ~ test ~ response", response.status)
 
         expect(response.status).toBe(HttpCode.FORBIDDEN)
         expect(response.headers['Content-Type']).contains(/json/)
@@ -71,7 +70,7 @@ describe('POST /user', () => {
 })
 
 describe('PUT /user', () => {
-    test('should respond with a 200 status code', async () => {
+    it('should respond with a 200 status code', async () => {
         const users = await request(app).get('/user').send()
         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
         const { id, ...user } = userFinded
@@ -92,7 +91,7 @@ describe('PUT /user', () => {
 })
 
 describe('DELETE /user', () => {
-    test('should respond with a 200 status code', async () => {
+    it('should respond with a 200 status code', async () => {
         const users = await request(app).get('/user').send()
         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
         const { id, ...user } = userFinded

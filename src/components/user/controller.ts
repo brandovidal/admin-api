@@ -5,6 +5,7 @@ import { createUser, getUsers, deleteUser, updateUser, getUserById } from './rep
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse } from 'tsoa'
 
 export type UserCreationParams = Pick<User, 'email' | 'name' | 'dateOfBirth' | 'location'>
+export type UserUpdationParams = Pick<User, 'email' | 'name' | 'dateOfBirth' | 'location'>
 
 @Route('user')
 export default class UserController {
@@ -20,12 +21,12 @@ export default class UserController {
 
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createUser (@Body() requestBody: UserCreationParams): Promise<User> {
+  public async createUser (@Body() requestBody: UserUpdationParams): Promise<User> {
     return await createUser(requestBody)
   }
 
   @Put('/{id}')
-  public async updateUser (@Path() id: string, @Body() requestBody: UserCreationParams): Promise<User> {
+  public async updateUser (@Path() id: string, @Body() requestBody: UserUpdationParams): Promise<User> {
     return await updateUser(id, requestBody)
   }
 
