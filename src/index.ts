@@ -2,8 +2,6 @@ import express, { Application } from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 
-import swaggerUi from 'swagger-ui-express'
-
 import { router } from './routes'
 
 // NOTE: List of things 🤔
@@ -27,16 +25,6 @@ app.use(cors(corsOptions))
 
 // Routes
 app.use('/', router)
-
-app.use(
-  '/docs',
-  swaggerUi.serve,
-  swaggerUi.setup(undefined, {
-    swaggerOptions: {
-      url: '/swagger.json'
-    }
-  })
-)
 
 const port = process.env.PORT ?? 5000
 
