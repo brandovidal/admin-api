@@ -1,16 +1,14 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { Prisma } from '@prisma/client'
-
 import { HttpCode } from '../../../types/http-code'
 import { error } from '../../../utils/message'
 
-import { findUserById } from './../service'
+import { getUserById } from '../repository'
 
 export const userNotExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
-    const params: Prisma.UserWhereUniqueInput = req.params
-    const userFinded = await findUserById(params)
+    const userId: string = req.params.id
+    const userFinded = await getUserById(userId)
 
     if (userFinded === null) {
       const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })

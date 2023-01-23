@@ -1,60 +1,36 @@
-import { Prisma } from '@prisma/client'
-import { NextFunction, Request, Response } from 'express'
+import { User } from '@prisma/client'
 
-import { HttpCode } from '../../types/http-code'
+import { createUser, getUsers, deleteUser, updateUser, getUserById } from './repository'
 
-import { createUser, findUsers, findUserByParams, removeUser, updateUser } from './service'
-import { error, success } from '../../utils/message'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse } from 'tsoa'
 
-import isEmpty from 'just-is-empty'
+export type UserCreationParams = Pick<User, 'email' | 'name' | 'dateOfBirth' | 'location'>
 
-// Find all users
-export const findAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const params: Prisma.UserWhereInput = req.query
-    const users = isEmpty(params) ? await findUsers() : await findUserByParams(params)
-
-    const result = success({ status: HttpCode.OK, data: users, code: 'success', message: 'user list successfully' })
-    res.json(result)
-  } catch (err: any) {
-    const result = error({ status: HttpCode.NO_CONTENT, code: 'no_content', message: err?.message })
-    res.status(HttpCode.NO_CONTENT).json(result)
+@Route('user')
+export default class UserController {
+  @Get('/')
+  public async getUsers (): Promise<User[] | null> {
+    return await getUsers()
   }
-}
 
-// create user
-export const create = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const createdUser = await createUser(req.body)
-
-    const result = success({ status: HttpCode.CREATED, data: createdUser, code: 'success', message: 'user created successfully' })
-    res.status(200).json(result)
-  } catch (err: any) {
-    const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+  @Get('/{id}')
+  public async getUserId (@Path() id: string): Promise<User | null> {
+    return await getUserById(id)
   }
-}
 
-// update user
-export const update = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const updatedUser = await updateUser(req)
-    const result = success({ status: HttpCode.OK, data: updatedUser, code: 'success', message: 'user updated successfully' })
-    res.json(result)
-  } catch (err: any) {
-    const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+  @SuccessResponse('201', 'Created')
+  @Post('/')
+  public async createUser (@Body() requestBody: UserCreationParams): Promise<User> {
+    return await createUser(requestBody)
   }
-}
 
-// delete user
-export const remove = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const deletedUser = await removeUser(req)
-    const result = success({ status: HttpCode.OK, data: deletedUser, code: 'success', message: 'user deleted successfully' })
-    res.json(result)
-  } catch (err: any) {
-    const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+  @Put('/{id}')
+  public async updateUser (@Path() id: string, @Body() requestBody: UserCreationParams): Promise<User> {
+    return await updateUser(id, requestBody)
+  }
+
+  @Delete('/{id}')
+  public async deleteUser (@Path() id: string): Promise<User> {
+    return await deleteUser(id)
   }
 }

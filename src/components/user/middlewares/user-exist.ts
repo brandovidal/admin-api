@@ -5,12 +5,12 @@ import { Prisma } from '@prisma/client'
 import { HttpCode } from '../../../types/http-code'
 import { error } from '../../../utils/message'
 
-import { findUserByParams } from '../service'
+import { getUserByParams } from '../repository'
 
 export const userExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
     const body: Prisma.UserWhereInput = req.body
-    const userFinded = await findUserByParams(body)
+    const userFinded = await getUserByParams(body)
 
     if (userFinded !== null) {
       const result = error({ status: HttpCode.FORBIDDEN, code: 'user_exist', message: 'User already exist' })

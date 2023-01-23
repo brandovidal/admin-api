@@ -1,8 +1,5 @@
 import { Router } from 'express'
 
-// Controllers
-import { create, findAll, remove, update } from './controller'
-
 // Schemas
 import { userSchema } from './schema'
 
@@ -11,9 +8,13 @@ import { userSchemaValidaton } from './middlewares/schema-validation'
 import { userExistValidaton } from './middlewares/user-exist'
 import { userNotExistValidaton } from './middlewares/user-not-exist'
 
+// handler
+import { create, getUserbyId, getUsers, remove, update } from './handler'
+
 const router = Router()
 
-router.get('/', findAll)
+router.get('/', getUsers)
+router.get('/:id', getUserbyId)
 router.post('/', [userSchemaValidaton(userSchema), userExistValidaton], create)
 router.put('/:id', [userNotExistValidaton], update)
 router.delete('/:id', [userNotExistValidaton], remove)
