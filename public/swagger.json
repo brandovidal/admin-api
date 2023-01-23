@@ -68,36 +68,81 @@
 				"type": "object",
 				"description": "Model User"
 			},
-			"Pick_User.email-or-name-or-dateOfBirth-or-location_": {
+			"LocationModel": {
 				"properties": {
+					"address": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"country": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"address",
+					"city",
+					"country"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserModel": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
 					"email": {
 						"type": "string"
+					},
+					"dateOfBirth": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
 					},
 					"name": {
 						"type": "string"
 					},
-					"dateOfBirth": {
-						"type": "string",
-						"format": "date-time"
-					},
 					"location": {
-						"items": {
-							"$ref": "#/components/schemas/Location"
-						},
-						"type": "array"
+						"$ref": "#/components/schemas/LocationModel"
+					},
+					"createdAt": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
+					},
+					"updatedAt": {
+						"anyOf": [
+							{
+								"type": "string",
+								"format": "date-time"
+							},
+							{
+								"type": "string"
+							}
+						]
 					}
 				},
 				"required": [
 					"email",
-					"name",
 					"dateOfBirth",
-					"location"
+					"name"
 				],
 				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"UserUpdationParams": {
-				"$ref": "#/components/schemas/Pick_User.email-or-name-or-dateOfBirth-or-location_"
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -158,7 +203,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserUpdationParams"
+								"$ref": "#/components/schemas/UserModel"
 							}
 						}
 					}
@@ -227,7 +272,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/UserUpdationParams"
+								"$ref": "#/components/schemas/UserModel"
 							}
 						}
 					}

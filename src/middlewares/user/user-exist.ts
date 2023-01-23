@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from 'express'
 
 import { Prisma } from '@prisma/client'
 
-import { HttpCode } from '../../../types/http-code'
-import { error } from '../../../utils/message'
+import { HttpCode } from '../../types/http-code'
+import { error } from '../../utils/message'
 
-import { getUserByParams } from '../repository'
+import { getUserByParams } from '../../components/user/repository'
 
 export const userExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {

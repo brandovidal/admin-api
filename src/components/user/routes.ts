@@ -4,9 +4,7 @@ import { Router } from 'express'
 import { userSchema } from './schema'
 
 // Middlewarea
-import { userSchemaValidaton } from './middlewares/schema-validation'
-import { userExistValidaton } from './middlewares/user-exist'
-import { userNotExistValidaton } from './middlewares/user-not-exist'
+import { userSchemaValidaton, userExistValidaton, userNotExistValidaton } from '../../middlewares/user'
 
 // handler
 import { create, getUserbyId, getUsers, remove, update } from './handler'

@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { HttpCode } from '../../../types/http-code'
-import { error } from '../../../utils/message'
+import { HttpCode } from '../../types/http-code'
+import { error } from '../../utils/message'
 
-import { getUserById } from '../repository'
+import { getUserById } from '../../components/user/repository'
 
 export const userNotExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {

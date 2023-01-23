@@ -3,9 +3,7 @@ import { User } from '@prisma/client'
 import { createUser, getUsers, deleteUser, updateUser, getUserById } from './repository'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse } from 'tsoa'
-
-export type UserCreationParams = Pick<User, 'email' | 'name' | 'dateOfBirth' | 'location'>
-export type UserUpdationParams = Pick<User, 'email' | 'name' | 'dateOfBirth' | 'location'>
+import { UserModel } from '../../models/user'
 
 @Route('user')
 export default class UserController {
@@ -21,12 +19,12 @@ export default class UserController {
 
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createUser (@Body() requestBody: UserUpdationParams): Promise<User> {
+  public async createUser (@Body() requestBody: UserModel): Promise<User> {
     return await createUser(requestBody)
   }
 
   @Put('/{id}')
-  public async updateUser (@Path() id: string, @Body() requestBody: UserUpdationParams): Promise<User> {
+  public async updateUser (@Path() id: string, @Body() requestBody: UserModel): Promise<User> {
     return await updateUser(id, requestBody)
   }
 

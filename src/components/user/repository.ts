@@ -1,11 +1,10 @@
 import { Prisma, PrismaClient, User } from '@prisma/client'
 
+import { UserModel } from '../../models/user'
+
 const prisma = new PrismaClient()
 
-export interface UserCreationParams extends Prisma.UserUncheckedCreateInput {}
-export interface UserUpdationParams extends Prisma.UserUncheckedUpdateInput {}
 export interface UserWhereParams extends Prisma.UserWhereInput {}
-export interface UserWhereUniqueParams extends Prisma.UserWhereUniqueInput {}
 
 export const getUsers = async (): Promise<User[]> => {
   const users = await prisma.user.findMany()
@@ -52,13 +51,13 @@ export const getUserByParams = async (params: UserWhereParams): Promise<User | n
   return user
 }
 
-export const createUser = async (userInput: UserCreationParams): Promise<User> => {
+export const createUser = async (userInput: UserModel): Promise<User> => {
   const user = await prisma.user.create({ data: userInput })
   void prisma.$disconnect()
   return user
 }
 
-export const updateUser = async (userId: string, userInput: UserUpdationParams): Promise<User> => {
+export const updateUser = async (userId: string, userInput: UserModel): Promise<User> => {
   const user = await prisma.user.update({
     where: {
       id: userId

@@ -2,8 +2,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { AnyZodObject, ZodError } from 'zod'
 
-import { HttpCode } from '../../../types/http-code'
-import { error } from '../../../utils/message'
+import { HttpCode } from '../../types/http-code'
+import { error } from '../../utils/message'
 
 export const userSchemaValidaton = (schema: AnyZodObject) => async (req: Request, res: Response, next: NextFunction) => {
   try {
