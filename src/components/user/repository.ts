@@ -4,13 +4,7 @@ import { UserResponse } from '../../interfaces/user'
 
 const prisma = new PrismaClient()
 
-export const getUsers = async (): Promise<User[]> => {
-  const users = await prisma.user.findMany()
-  void prisma.$disconnect()
-  return users
-}
-
-export const getUsersPaginate = async (name?: string, email?: string, page = 1, size = 10): Promise<UserResponse> => {
+export const getUsers = async (name?: string, email?: string, page = 1, size = 10): Promise<UserResponse> => {
   const take = size
   const skip = (page - 1) * take
 
