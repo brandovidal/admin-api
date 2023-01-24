@@ -91,6 +91,86 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"InternalErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							500
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"internal_server_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"Internal server error"
+						],
+						"nullable": false
+					},
+					"error": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ForbiddenErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							403
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"internal_server_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"Internal server error"
+						],
+						"nullable": false
+					},
+					"error": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"UserResponse": {
 				"properties": {
 					"user": {
@@ -104,6 +184,57 @@
 				},
 				"required": [
 					"user"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidateErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							400
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"validation_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"User validation with erros"
+						],
+						"nullable": false
+					},
+					"error": {
+						"items": {
+							"properties": {
+								"message": {
+									"type": "string"
+								},
+								"path": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"message",
+								"path"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -129,7 +260,7 @@
 				"operationId": "GetUsers",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The return type is UsersResponse.",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -137,11 +268,33 @@
 								}
 							}
 						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForbiddenErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
 					}
 				},
+				"description": "The `getUsers` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `UsersResponse`",
 				"security": [],
 				"parameters": [
 					{
+						"description": "- string",
 						"in": "query",
 						"name": "name",
 						"required": false,
@@ -150,6 +303,7 @@
 						}
 					},
 					{
+						"description": "- string",
 						"in": "query",
 						"name": "email",
 						"required": false,
@@ -158,6 +312,7 @@
 						}
 					},
 					{
+						"description": "- The page number of the results to return.",
 						"in": "query",
 						"name": "page",
 						"required": false,
@@ -168,6 +323,7 @@
 						}
 					},
 					{
+						"description": "- The number of items to return per page.",
 						"in": "query",
 						"name": "size",
 						"required": false,
@@ -188,6 +344,26 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
 								}
 							}
 						}
@@ -220,6 +396,26 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/UserResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForbiddenErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
 								}
 							}
 						}
@@ -267,6 +463,26 @@
 								}
 							}
 						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForbiddenErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
 					}
 				},
 				"description": "The `getUserId` function takes in a `id` path parameter and returns a promise of a User object",
@@ -292,6 +508,26 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
 								}
 							}
 						}
@@ -332,6 +568,16 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
 								}
 							}
 						}

@@ -5,7 +5,6 @@ import cors from 'cors'
 import { router } from './routes'
 
 // NOTE: List of things 🤔
-// TODO: Add cache
 // TODO: Add a logger
 
 const app: Application = express()
