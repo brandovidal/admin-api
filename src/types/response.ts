@@ -6,5 +6,6 @@ export class ResponseModel {
   message = ''
   data?: object | null = null
   count?: number = 0
+  total?: number = 0
   error?: ErrorModel | ErrorModel[] | null = null
 }

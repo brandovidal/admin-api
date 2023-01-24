@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/http-code'
 import { error, success } from '../../utils/message'
@@ -7,27 +8,51 @@ import UserController from './controller'
 
 const controller = new UserController()
 
-// Find all users
+// Find users
 export const getUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const query = req.query
+
+    const name = query.name?.toString()
+    const email = query.email?.toString()
+    const page = parseInt(query.page?.toString() ?? '1')
+    const size = parseInt(query.size?.toString() ?? '10')
+
+    const { count, total, users } = await controller.getUsers(name, email, page, size)
+
+    const result = success({ status: HttpCode.OK, data: users, count, total, code: 'success', message: 'user list successfully' })
+    res.json(result)
+  } catch (err: any) {
+    const result = error({ status: HttpCode.FORBIDDEN, code: 'users_not_exist', message: 'Users not exist' })
+    res.status(HttpCode.FORBIDDEN).json(result)
+  }
+}
+
+// Find only one user
+export const getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const query = req.query
 
     const name = query.name?.toString() ?? ''
     const email = query.email?.toString() ?? ''
-    const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
 
-    const { count, users } = await controller.getUsers(name, email, page, size)
+    const { user } = await controller.getUser(name, email)
 
-    const result = success({ status: HttpCode.OK, data: users, count, code: 'success', message: 'user list successfully' })
+    if (isEmpty(user)) {
+      const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
+      res.status(HttpCode.FORBIDDEN).json(result)
+      return
+    }
+
+    const result = success({ status: HttpCode.OK, data: user, count: 1, code: 'success', message: 'find user successfully' })
     res.json(result)
   } catch (err: any) {
-    console.error('🚀 ~ file: handler.ts:46 ~ getUsersPaginate ~ err', err)
-    const result = error({ status: HttpCode.NO_CONTENT, code: 'no_content', message: err?.message })
-    res.status(HttpCode.NO_CONTENT).json(result)
+    const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
+    res.status(HttpCode.FORBIDDEN).json(result)
   }
 }
 
+// Find users
 export const getUserbyId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId: string = req.params?.id
@@ -36,8 +61,8 @@ export const getUserbyId = async (req: Request, res: Response, next: NextFunctio
     const result = success({ status: HttpCode.OK, data: user, code: 'success', message: 'user list successfully' })
     res.json(result)
   } catch (err: any) {
-    const result = error({ status: HttpCode.NO_CONTENT, code: 'no_content', message: err?.message })
-    res.status(HttpCode.NO_CONTENT).json(result)
+    const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
+    res.status(HttpCode.FORBIDDEN).json(result)
   }
 }
 

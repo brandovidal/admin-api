@@ -2,33 +2,76 @@ import { User } from '@prisma/client'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query } from 'tsoa'
 
-import { createUser, getUsers, deleteUser, updateUser, getUserById } from './repository'
+import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } from './repository'
 
-import { UserResponse } from '../../interfaces/user'
+import { UserResponse, UsersResponse } from '../../interfaces/user'
 
-@Route('user')
+@Route('users')
 export default class UserController {
   @Get('/')
-  public async getUsers (@Query() name: string, @Query() email: string, @Query() page: number, @Query() size: number): Promise<UserResponse> {
+  /**
+   * The `getUsers` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `UsersResponse`
+  * @param {string} [name] - string
+  * @param {string} [email] - string
+  * @param [page=1] - The page number of the results to return.
+  * @param [size=10] - The number of items to return per page.
+  * @returns The return type is UsersResponse.
+  */
+  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<UsersResponse> {
     return await getUsers(name, email, page, size)
   }
 
+  /**
+  * The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`
+  * object
+  * @param {string} [name] - string - This is the name of the user.
+  * @param {string} [email] - The email of the user to get.
+  * @returns A promise of a UserResponse object
+  */
+  @Get('/user')
+  public async getUser (@Query() name?: string, @Query() email?: string): Promise<UserResponse> {
+    return await getUser(name, email)
+  }
+
+  /**
+   * The `getUserId` function takes in a `id` path parameter and returns a promise of a User object
+   * @param {string} id - string - This is the path parameter. It's the id of the user we want to get.
+   * @returns The user object
+   */
   @Get('/{id}')
   public async getUserId (@Path() id: string): Promise<User | null> {
     return await getUserById(id)
   }
 
+  /**
+   * The `createUser` function takes in a `User` object and returns a promise of a User object
+   * @param {User} requestBody - User
+   * @returns A promise of a user object
+   */
   @SuccessResponse('201', 'Created')
   @Post('/')
   public async createUser (@Body() requestBody: User): Promise<User> {
     return await createUser(requestBody)
   }
 
+  /**
+   * The `updateUser` function takes in a `id` path parameter and a `User` object and returns a promise of a User object
+   * @param {string} id - string - This is the id of the user we want to update.
+   * @param {User} requestBody - This is the body of the request. It's the data that the user is
+   * sending to the server.
+   * @returns The updated user
+   */
   @Put('/{id}')
   public async updateUser (@Path() id: string, @Body() requestBody: User): Promise<User> {
     return await updateUser(id, requestBody)
   }
 
+  /**
+   * The `deleteUser` function takes in a `id` path parameter and returns a promise of a User object
+   * @param {string} id - string - This is the path parameter. It's the id of the user we want to
+   * delete.
+   * @returns The user that was deleted
+   */
   @Delete('/{id}')
   public async deleteUser (@Path() id: string): Promise<User> {
     return await deleteUser(id)

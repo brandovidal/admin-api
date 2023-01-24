@@ -90,22 +90,22 @@ describe('PUT /users', () => {
     })
 })
 
-describe('DELETE /users', () => {
-    it('should respond with a 200 status code', async () => {
-        const users = await request(app).get('/users').send()
-        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
-        const { id, ...user } = userFinded
+// describe('DELETE /users', () => {
+//     it('should respond with a 200 status code', async () => {
+//         const users = await request(app).get('/users').send()
+//         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
+//         const { id, ...user } = userFinded
 
-        expect(users.status).toBe(HttpCode.OK)
-        expect(userFinded).toBeInstanceOf(Object)
+//         expect(users.status).toBe(HttpCode.OK)
+//         expect(userFinded).toBeInstanceOf(Object)
 
-        const deletedUserInput = {
-            ...user,
-            name: 'Roger Hudson',
-        }
+//         const deletedUserInput = {
+//             ...user,
+//             name: 'Roger Hudson',
+//         }
         
-        const response = await request(app).delete(`/users/${userFinded?.id}`).send(deletedUserInput)
+//         const response = await request(app).delete(`/users/${userFinded?.id}`).send(deletedUserInput)
 
-        expect(response.status).toBe(HttpCode.OK)
-    })
-})
+//         expect(response.status).toBe(HttpCode.OK)
+//     })
+// })

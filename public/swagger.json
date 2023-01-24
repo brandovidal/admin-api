@@ -68,9 +68,13 @@
 				"type": "object",
 				"description": "Model User"
 			},
-			"UserResponse": {
+			"UsersResponse": {
 				"properties": {
 					"count": {
+						"type": "number",
+						"format": "double"
+					},
+					"total": {
 						"type": "number",
 						"format": "double"
 					},
@@ -82,8 +86,24 @@
 					}
 				},
 				"required": [
-					"count",
 					"users"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserResponse": {
+				"properties": {
+					"user": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/User"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"user"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -104,7 +124,7 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/user": {
+		"/users": {
 			"get": {
 				"operationId": "GetUsers",
 				"responses": {
@@ -113,7 +133,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserResponse"
+									"$ref": "#/components/schemas/UsersResponse"
 								}
 							}
 						}
@@ -124,7 +144,7 @@
 					{
 						"in": "query",
 						"name": "name",
-						"required": true,
+						"required": false,
 						"schema": {
 							"type": "string"
 						}
@@ -132,7 +152,7 @@
 					{
 						"in": "query",
 						"name": "email",
-						"required": true,
+						"required": false,
 						"schema": {
 							"type": "string"
 						}
@@ -140,8 +160,9 @@
 					{
 						"in": "query",
 						"name": "page",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": 1,
 							"format": "double",
 							"type": "number"
 						}
@@ -149,8 +170,9 @@
 					{
 						"in": "query",
 						"name": "size",
-						"required": true,
+						"required": false,
 						"schema": {
+							"default": 10,
 							"format": "double",
 							"type": "number"
 						}
@@ -171,26 +193,68 @@
 						}
 					}
 				},
+				"description": "The `createUser` function takes in a `User` object and returns a promise of a User object",
 				"security": [],
 				"parameters": [],
 				"requestBody": {
+					"description": "- User",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/User"
+								"$ref": "#/components/schemas/User",
+								"description": "- User"
 							}
 						}
 					}
 				}
 			}
 		},
-		"/user/{id}": {
+		"/users/user": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "A promise of a UserResponse object",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`\nobject",
+				"security": [],
+				"parameters": [
+					{
+						"description": "- string - This is the name of the user.",
+						"in": "query",
+						"name": "name",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "- The email of the user to get.",
+						"in": "query",
+						"name": "email",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/{id}": {
 			"get": {
 				"operationId": "GetUserId",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The user object",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -205,9 +269,11 @@
 						}
 					}
 				},
+				"description": "The `getUserId` function takes in a `id` path parameter and returns a promise of a User object",
 				"security": [],
 				"parameters": [
 					{
+						"description": "- string - This is the path parameter. It's the id of the user we want to get.",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -221,7 +287,7 @@
 				"operationId": "UpdateUser",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The updated user",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -231,9 +297,11 @@
 						}
 					}
 				},
+				"description": "The `updateUser` function takes in a `id` path parameter and a `User` object and returns a promise of a User object",
 				"security": [],
 				"parameters": [
 					{
+						"description": "- string - This is the id of the user we want to update.",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -243,11 +311,13 @@
 					}
 				],
 				"requestBody": {
+					"description": "- This is the body of the request. It's the data that the user is\nsending to the server.",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/User"
+								"$ref": "#/components/schemas/User",
+								"description": "- This is the body of the request. It's the data that the user is\nsending to the server."
 							}
 						}
 					}
@@ -257,7 +327,7 @@
 				"operationId": "DeleteUser",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "The user that was deleted",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -267,9 +337,11 @@
 						}
 					}
 				},
+				"description": "The `deleteUser` function takes in a `id` path parameter and returns a promise of a User object",
 				"security": [],
 				"parameters": [
 					{
+						"description": "- string - This is the path parameter. It's the id of the user we want to\ndelete.",
 						"in": "path",
 						"name": "id",
 						"required": true,

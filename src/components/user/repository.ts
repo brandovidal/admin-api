@@ -1,14 +1,14 @@
 import { PrismaClient, User } from '@prisma/client'
 
-import { UserResponse } from '../../interfaces/user'
+import { UsersResponse, UserResponse } from '../../interfaces/user'
 
 const prisma = new PrismaClient()
 
-export const getUsers = async (name?: string, email?: string, page = 1, size = 10): Promise<UserResponse> => {
+export const getUsers = async (name?: string, email?: string, page = 1, size = 10): Promise<UsersResponse> => {
   const take = size
   const skip = (page - 1) * take
 
-  const [count, users] = await prisma.$transaction([
+  const [total, users] = await prisma.$transaction([
     prisma.user.count(),
     prisma.user.findMany({
       where: {
@@ -23,8 +23,10 @@ export const getUsers = async (name?: string, email?: string, page = 1, size = 1
     })
   ])
 
+  const count = users.length
+
   void prisma.$disconnect()
-  return { count, users }
+  return { count, total, users }
 }
 
 export const getUserById = async (userId: string): Promise<User | null> => {
@@ -38,18 +40,17 @@ export const getUserById = async (userId: string): Promise<User | null> => {
   return user
 }
 
-export const getUserByParams = async (params: User): Promise<User | null> => {
-  const { name, email } = params
-
+export const getUser = async (name?: string, email?: string): Promise<UserResponse> => {
   const user = await prisma.user.findFirst({
     where: {
-      name: { contains: name?.toString(), mode: 'insensitive' },
-      email: { contains: email?.toString(), mode: 'insensitive' }
+      name: { contains: name, mode: 'insensitive' },
+      email: { contains: email, mode: 'insensitive' }
     }
   })
+  console.log('🚀 ~ file: repository.ts:48 ~ getUser ~ user', user)
 
   void prisma.$disconnect()
-  return user
+  return { user }
 }
 
 export const createUser = async (userInput: User): Promise<User> => {
