@@ -1,13 +1,13 @@
 # get all Users
-# GET http://localhost:5000/users
+GET http://localhost:5000/users
 
 # get Users from page 1  with 10 items per page
 # GET http://localhost:5000/users
 # ?page=1&size=10
 
 # get Users from page 1 with 2 items per page
-GET http://localhost:5000/users
-?page=1&size=2
+# GET http://localhost:5000/users
+# ?page=1&size=2
 
 # get Users from page 2 with 2 items per page
 # GET http://localhost:5000/users
