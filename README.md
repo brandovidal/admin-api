@@ -48,7 +48,7 @@ npm install
 - 📂 Run prisma
 
 ```bash
-npx prisma egenarte
+npx prisma generate
 ```
 
 - ⚒️ Run development App
