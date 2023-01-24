@@ -47,7 +47,6 @@ export const getUser = async (name?: string, email?: string): Promise<UserRespon
       email: { contains: email, mode: 'insensitive' }
     }
   })
-  console.log('🚀 ~ file: repository.ts:48 ~ getUser ~ user', user)
 
   void prisma.$disconnect()
   return { user }
