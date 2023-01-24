@@ -14,7 +14,7 @@ const userCache = new CacheContainer(new MemoryStorage())
 const prisma = new PrismaClient()
 
 export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<UsersResponse> => {
-  const take = size
+  const take = size ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedUsers = await userCache.getItem<User[]>('get-users') ?? []
@@ -26,7 +26,8 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const cachedSize = await userCache.getItem<number>('get-size-users')
   const cachedPage = await userCache.getItem<number>('get-page-users')
 
-  if (!isEmpty(cachedUsers) && !isEmpty(cachedTotalUsers) && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedUsers) && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
+    console.log('🚀 ~ List of users from cache')
     return { count: cachedUsers.length, total: cachedTotalUsers, users: cachedUsers }
   }
 

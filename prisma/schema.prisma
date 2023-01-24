@@ -11,6 +11,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator zod {
+  provider                         = "zod-prisma-types"
+  output                           = "../src/schemas"
+  createOptionalDefaultValuesTypes = true
+}
+
 enum Tag {
   NodeJS
   Java

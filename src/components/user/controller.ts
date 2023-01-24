@@ -1,11 +1,13 @@
 import { User } from '@prisma/client'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } from './repository'
 
-import { ForbiddenErrorJSON, InternalErrorJSON, UserResponse, UsersResponse, ValidateErrorJSON } from '../../interfaces/user'
+import { UserResponse, UsersResponse } from '../../interfaces/user'
+import { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 
+@Tags('User')
 @Route('users')
 export default class UserController {
   /**
@@ -19,6 +21,7 @@ export default class UserController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
+  @OperationId('getUsers')
   public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<UsersResponse> {
     return await getUsers(name, email, page, size)
   }

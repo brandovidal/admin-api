@@ -6,6 +6,335 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Tag": {
+				"type": "string",
+				"enum": [
+					"NodeJS",
+					"Java",
+					"React",
+					"GraphQL",
+					"Spring",
+					"Typescript",
+					"Express",
+					"Docker",
+					"Jest",
+					"Jenkins",
+					"AWS"
+				],
+				"description": "Enums"
+			},
+			"Comment": {
+				"properties": {
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"voteCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"text": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"voteCount",
+					"text"
+				],
+				"type": "object",
+				"description": "Model Comment"
+			},
+			"Post": {
+				"properties": {
+					"authorId": {
+						"type": "string"
+					},
+					"comments": {
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"tags": {
+						"items": {
+							"$ref": "#/components/schemas/Tag"
+						},
+						"type": "array"
+					},
+					"isPublished": {
+						"type": "boolean"
+					},
+					"viewCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"content": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"authorId",
+					"comments",
+					"updatedAt",
+					"createdAt",
+					"tags",
+					"isPublished",
+					"viewCount",
+					"content",
+					"title",
+					"id"
+				],
+				"type": "object",
+				"description": "Model Post"
+			},
+			"PostsResponse": {
+				"properties": {
+					"count": {
+						"type": "number",
+						"format": "double"
+					},
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"posts": {
+						"items": {
+							"$ref": "#/components/schemas/Post"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"posts"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InternalErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							500
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"internal_server_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"Internal server error"
+						],
+						"nullable": false
+					},
+					"error": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ForbiddenErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							403
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"internal_server_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"Internal server error"
+						],
+						"nullable": false
+					},
+					"error": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PostResponse": {
+				"properties": {
+					"post": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Post"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"post"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PostSchema": {
+				"properties": {
+					"authorId": {
+						"type": "string"
+					},
+					"comments": {
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"tags": {
+						"items": {
+							"$ref": "#/components/schemas/Tag"
+						},
+						"type": "array"
+					},
+					"isPublished": {
+						"type": "boolean"
+					},
+					"viewCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"content": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"authorId",
+					"comments",
+					"updatedAt",
+					"createdAt",
+					"tags",
+					"isPublished",
+					"viewCount",
+					"content",
+					"title",
+					"id"
+				],
+				"type": "object",
+				"description": "Model Post"
+			},
+			"ValidateErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							400
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"validation_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"User validation with erros"
+						],
+						"nullable": false
+					},
+					"error": {
+						"items": {
+							"properties": {
+								"message": {
+									"type": "string"
+								},
+								"path": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"message",
+								"path"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Location": {
 				"properties": {
 					"country": {
@@ -91,86 +420,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InternalErrorJSON": {
-				"properties": {
-					"status": {
-						"type": "number",
-						"enum": [
-							500
-						],
-						"nullable": false
-					},
-					"code": {
-						"type": "string",
-						"enum": [
-							"internal_server_error"
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string",
-						"enum": [
-							"Internal server error"
-						],
-						"nullable": false
-					},
-					"error": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"status",
-					"code",
-					"message",
-					"error"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ForbiddenErrorJSON": {
-				"properties": {
-					"status": {
-						"type": "number",
-						"enum": [
-							403
-						],
-						"nullable": false
-					},
-					"code": {
-						"type": "string",
-						"enum": [
-							"internal_server_error"
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string",
-						"enum": [
-							"Internal server error"
-						],
-						"nullable": false
-					},
-					"error": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"status",
-					"code",
-					"message",
-					"error"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"UserResponse": {
 				"properties": {
 					"user": {
@@ -187,63 +436,12 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"ValidateErrorJSON": {
-				"properties": {
-					"status": {
-						"type": "number",
-						"enum": [
-							400
-						],
-						"nullable": false
-					},
-					"code": {
-						"type": "string",
-						"enum": [
-							"validation_error"
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string",
-						"enum": [
-							"User validation with erros"
-						],
-						"nullable": false
-					},
-					"error": {
-						"items": {
-							"properties": {
-								"message": {
-									"type": "string"
-								},
-								"path": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"message",
-								"path"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"status",
-					"code",
-					"message",
-					"error"
-				],
-				"type": "object",
-				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
 	},
 	"info": {
-		"title": "node-typescript-skeleton",
+		"title": "node-prisma-mongo-skeleton",
 		"version": "1.0.0",
 		"description": "Node project skeleton using Typescript, ESLint, TS-Standard and Nodemon",
 		"license": {
@@ -255,9 +453,370 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/posts": {
+			"get": {
+				"operationId": "GetPosts",
+				"responses": {
+					"200": {
+						"description": "The return type is PostsResponse.",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostsResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForbiddenErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `getPosts` function takes in a `title`, `content`, `page` and `size` query parameter and returns a `PostsResponse`",
+				"tags": [
+					"Post"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- string",
+						"in": "query",
+						"name": "title",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "- string",
+						"in": "query",
+						"name": "content",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "- The page number of the results to return.",
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"default": 1,
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "- The number of items to return per page.",
+						"in": "query",
+						"name": "size",
+						"required": false,
+						"schema": {
+							"default": 10,
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreatePost",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostSchema"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `createPost` function takes in a `Post` object and returns a promise of a Post object",
+				"tags": [
+					"Post"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "- Post",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PostSchema",
+								"description": "- Post"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/posts/post": {
+			"get": {
+				"operationId": "GetPost",
+				"responses": {
+					"200": {
+						"description": "A promise of a PostResponse object",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForbiddenErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `getPost` function takes in a `title` and `content` query parameter and returns a `PostResponse`\nobject",
+				"tags": [
+					"Post"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- string - This is the title of the post.",
+						"in": "query",
+						"name": "title",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"description": "- The content of the post to get.",
+						"in": "query",
+						"name": "content",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/posts/{id}": {
+			"get": {
+				"operationId": "GetPostId",
+				"responses": {
+					"200": {
+						"description": "The post object",
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/PostSchema"
+										}
+									],
+									"nullable": true
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Forbidden",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ForbiddenErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `getPostId` function takes in a `id` path parameter and returns a promise of a Post object",
+				"tags": [
+					"Post"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- string - This is the path parameter. It's the id of the post we want to get.",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdatePost",
+				"responses": {
+					"200": {
+						"description": "The updated post",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostSchema"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `updatePost` function takes in a `id` path parameter and a `Post` object and returns a promise of a Post object",
+				"tags": [
+					"Post"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- string - This is the id of the post we want to update.",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "- This is the body of the request. It's the data that the post is\nsending to the server.",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PostSchema",
+								"description": "- This is the body of the request. It's the data that the post is\nsending to the server."
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeletePost",
+				"responses": {
+					"200": {
+						"description": "The post that was deleted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PostSchema"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "The `deletePost` function takes in a `id` path parameter and returns a promise of a Post object",
+				"tags": [
+					"Post"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "- string - This is the path parameter. It's the id of the post we want to\ndelete.",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/users": {
 			"get": {
-				"operationId": "GetUsers",
+				"operationId": "getUsers",
 				"responses": {
 					"200": {
 						"description": "The return type is UsersResponse.",
@@ -291,6 +850,9 @@
 					}
 				},
 				"description": "The `getUsers` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `UsersResponse`",
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -370,6 +932,9 @@
 					}
 				},
 				"description": "The `createUser` function takes in a `User` object and returns a promise of a User object",
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -422,6 +987,9 @@
 					}
 				},
 				"description": "The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`\nobject",
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -486,6 +1054,9 @@
 					}
 				},
 				"description": "The `getUserId` function takes in a `id` path parameter and returns a promise of a User object",
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -534,6 +1105,9 @@
 					}
 				},
 				"description": "The `updateUser` function takes in a `id` path parameter and a `User` object and returns a promise of a User object",
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -584,6 +1158,9 @@
 					}
 				},
 				"description": "The `deleteUser` function takes in a `id` path parameter and returns a promise of a User object",
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [
 					{
@@ -602,6 +1179,16 @@
 	"servers": [
 		{
 			"url": "/"
+		}
+	],
+	"tags": [
+		{
+			"name": "User",
+			"description": "Operations of users"
+		},
+		{
+			"name": "Post",
+			"description": "Operations of users"
 		}
 	]
 }
