@@ -1,4 +1,5 @@
 import { PrismaClient, Tag } from '@prisma/client'
+// import { logger } from 'src/utils/logger'
 
 const prisma = new PrismaClient()
 
@@ -23,7 +24,7 @@ export const retrieveData = async (): Promise<void> => {
   //     name: true
   //   }
   // })
-  // // console.log(partialUserByEmail);
+  // // logger.info(partialUserByEmail);
 
   // // Find user living in France order by creation date Descending
   // const users = await prisma.user.findMany({
@@ -36,7 +37,7 @@ export const retrieveData = async (): Promise<void> => {
   //   },
   //   orderBy: { createdAt: 'desc' }
   // })
-  // // console.log(users);
+  // // logger.info(users);
 
   // const [firstUser] = users
   // // Find all post of a user and also fetch the author data (.populate('author'))
@@ -48,7 +49,7 @@ export const retrieveData = async (): Promise<void> => {
   //     author: true
   //   }
   // })
-  // // console.log(allUserPosts);
+  // // logger.info(allUserPosts);
 
   // // Find all post of a user and also fetch the author data but only his name
   // const allUserPostsWithPartialAuthor = await prisma.post.findMany({
@@ -63,7 +64,7 @@ export const retrieveData = async (): Promise<void> => {
   //     }
   //   }
   // })
-  // // console.log(allUserPostsWithPartialAuthor);
+  // // logger.info(allUserPostsWithPartialAuthor);
 
   // // Find published post with viewCount greater than 20 order by creation date Ascending
   // const ascPosts = await prisma.post.findMany({

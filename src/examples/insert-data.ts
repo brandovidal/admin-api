@@ -1,4 +1,5 @@
 import { PrismaClient, Tag, Prisma } from '@prisma/client'
+import { logger } from 'src/utils/logger'
 
 const prisma = new PrismaClient()
 
@@ -39,8 +40,8 @@ export const insertUserAndPost = async (): Promise<void> => {
   const createdPost = await prisma.post.create({
     data: postInput
   })
-  console.log({ createdUser })
-  console.log({ createdPost })
+  logger.info({ createdUser })
+  logger.info({ createdPost })
 
   const newComment: Prisma.CommentCreateInput = {
     text: 'A new comment in the post created above',
@@ -59,7 +60,7 @@ export const insertUserAndPost = async (): Promise<void> => {
     }
   })
 
-  console.log({ updatedPost })
+  logger.info({ updatedPost })
 }
 
 void insertUserAndPost().then()

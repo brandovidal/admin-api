@@ -4,8 +4,7 @@ import cors from 'cors'
 
 import { router } from './routes'
 
-// NOTE: List of things 🤔
-// TODO: Add a logger
+import { logger } from './utils/logger'
 
 const app: Application = express()
 
@@ -29,6 +28,6 @@ app.use('/', router)
 const port = process.env.PORT ?? 5000
 
 // Service
-app.listen(port, () => { console.log(`🚀 Server ready at: http://localhost:${port}}`) })
+app.listen(port, () => { logger.info(`🚀 Server ready at: http://localhost:${port}}`) })
 
 export { app }
