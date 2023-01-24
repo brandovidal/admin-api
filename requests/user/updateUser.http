@@ -1,0 +1,8 @@
+# create User
+PUT http://localhost:5000/users/63cf6acba21276ac3ed67a86
+Content-Type: application/json; charset=utf-8
+
+{
+    "name": "Kevin Staaaaff 2",
+    "email": "kevin.staaaaff.2@gmail.com"
+}

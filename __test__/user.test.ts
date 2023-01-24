@@ -28,14 +28,14 @@ describe('GET /users', () => {
         expect(response.status).toBe(HttpCode.OK)
         expect(data).toBeInstanceOf(Object)
     })
-}).clear()
+})
 
 describe('POST /users', () => {
     it('should respond with a 201 status code', async () => {
         const userInput = {
             email: 'jon.snow@got.com',
             name: 'Jon Snow',
-            dateOfBirth: new Date(1995, 1, 23),
+            dateOfBirth: "2023-01-20T16:49:52.500+00:00",
             location: {
                 address: "2 Rue de l'opera",
                 city: 'Paris',
@@ -51,7 +51,6 @@ describe('POST /users', () => {
     it('should respond with a missing param', async () => {
         const userInputWithParamsMissing = {
             email: 'jon.snow@got.com',
-            name: 'Jon Snow',
         }
         const response = await request(app).post('/users').send(userInputWithParamsMissing)
 
@@ -63,11 +62,11 @@ describe('POST /users', () => {
         const userInputExistInDB = {
             email: 'jon.snow@got.com',
             name: 'Jon Snow',
-            dateOfBirth: new Date(1995, 1, 23),
+            dateOfBirth: "2023-01-20T16:49:52.500+00:00",
             location: {
-            address: "2 Rue de l'opera",
-            city: 'Paris',
-            country: 'FRA'
+                address: "2 Rue de l'opera",
+                city: 'Paris',
+                country: 'FRA'
             }
         }
         const response = await request(app).post('/users').send(userInputExistInDB)
@@ -77,44 +76,43 @@ describe('POST /users', () => {
     })
 })
 
-// describe('PUT /users', () => {
-//     it('should respond with a 200 status code', async () => {
-//         const users = await request(app).get('/users').send()
-//         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
-//         console.log("🚀 ~ file: user.test.ts:76 ~ it ~ userFinded", userFinded)
-//         const { id, ...user } = userFinded
+describe('PUT /users', () => {
+    it('should respond with a 200 status code', async () => {
+        const users = await request(app).get('/users').send()
+        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
+        const { id, ...user } = userFinded
 
-//         expect(users.status).toBe(HttpCode.OK)
-//         expect(userFinded).toBeInstanceOf(Object)
+        expect(users.status).toBe(HttpCode.OK)
+        expect(userFinded).toBeInstanceOf(Object)
 
-//         const updatedUserInput = {
-//             ...user,
-//             name: 'Roger Hudson',
-//         }
+        const updatedUserInput = {
+            ...user,
+            name: 'Roger Hudson',
+        }
         
-//         const response = await request(app).put(`/users/${userFinded?.id}`).send(updatedUserInput)
+        const response = await request(app).put(`/users/${userFinded?.id}`).send(updatedUserInput)
 
-//         expect(response.status).toBe(HttpCode.OK)
-//         expect(response.headers['Content-Type']).contains(/json/)
-//     })
-// })
+        expect(response.status).toBe(HttpCode.OK)
+        expect(response.headers['Content-Type']).contains(/json/)
+    })
+})
 
-// describe('DELETE /users', () => {
-//     it('should respond with a 200 status code', async () => {
-//         const users = await request(app).get('/users').send()
-//         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
-//         const { id, ...user } = userFinded
+describe('DELETE /users', () => {
+    it('should respond with a 200 status code', async () => {
+        const users = await request(app).get('/users').send()
+        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
+        const { id, ...user } = userFinded
 
-//         expect(users.status).toBe(HttpCode.OK)
-//         expect(userFinded).toBeInstanceOf(Object)
+        expect(users.status).toBe(HttpCode.OK)
+        expect(userFinded).toBeInstanceOf(Object)
 
-//         const deletedUserInput = {
-//             ...user,
-//             name: 'Roger Hudson',
-//         }
+        const deletedUserInput = {
+            ...user,
+            name: 'Roger Hudson',
+        }
         
-//         const response = await request(app).delete(`/users/${userFinded?.id}`).send(deletedUserInput)
+        const response = await request(app).delete(`/users/${userFinded?.id}`).send(deletedUserInput)
 
-//         expect(response.status).toBe(HttpCode.OK)
-//     })
-// })
+        expect(response.status).toBe(HttpCode.OK)
+    })
+})

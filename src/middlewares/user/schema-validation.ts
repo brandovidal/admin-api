@@ -10,7 +10,6 @@ export const userSchemaValidaton = (schema: AnyZodObject) => async (req: Request
     await schema.parseAsync(req.body)
     next()
   } catch (err) {
-    console.log('🚀 ~ file: schema-validation.ts:13 ~ userSchemaValidaton ~ err', err)
     if (err instanceof ZodError) {
       const errors = err.issues.map((e) => ({ path: e.path[0], message: e.message }))
 
