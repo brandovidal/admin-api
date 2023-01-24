@@ -6,15 +6,15 @@ import { Prisma } from "@prisma/client"
 import { app } from "../src/index"
 import { HttpCode } from "../src/types/http-code"
 
-describe('GET /user', () => {
+describe('GET /users', () => {
     it('should respond with a 200 status code', async () => {
-        const response = await request(app).get('/user').send()
+        const response = await request(app).get('/users').send()
 
         expect(response.status).toBe(HttpCode.OK)
     })
 
     it('should respond with an array of users', async () => {
-        const response = await request(app).get('/user').send()
+        const response = await request(app).get('/users').send()
         const data = response.body?.data
 
         expect(response.status).toBe(HttpCode.OK)
@@ -22,7 +22,7 @@ describe('GET /user', () => {
     })
 }).clear()
 
-describe('POST /user', () => {
+describe('POST /users', () => {
     it('should respond with a 201 status code', async () => {
         const userInput = {
             email: 'jon.snow@got.com',
@@ -34,7 +34,7 @@ describe('POST /user', () => {
             country: 'FRA'
             }
         }
-        const response = await request(app).post('/user').send(userInput)
+        const response = await request(app).post('/users').send(userInput)
         
         expect(response.status).toBe(HttpCode.OK)
         expect(response.headers['Content-Type']).contains(/json/)
@@ -45,7 +45,7 @@ describe('POST /user', () => {
             email: 'jon.snow@got.com',
             name: 'Jon Snow',
         }
-        const response = await request(app).post('/user').send(userInputWithParamsMissing)
+        const response = await request(app).post('/users').send(userInputWithParamsMissing)
 
         expect(response.status).toBe(HttpCode.BAD_REQUEST)
         expect(response.headers['Content-Type']).contains(/json/)
@@ -62,16 +62,16 @@ describe('POST /user', () => {
             country: 'FRA'
             }
         }
-        const response = await request(app).post('/user').send(userInputExistInDB)
+        const response = await request(app).post('/users').send(userInputExistInDB)
 
         expect(response.status).toBe(HttpCode.FORBIDDEN)
         expect(response.headers['Content-Type']).contains(/json/)
     })
 })
 
-describe('PUT /user', () => {
+describe('PUT /users', () => {
     it('should respond with a 200 status code', async () => {
-        const users = await request(app).get('/user').send()
+        const users = await request(app).get('/users').send()
         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
         const { id, ...user } = userFinded
 
@@ -83,16 +83,16 @@ describe('PUT /user', () => {
             name: 'Roger Hudson',
         }
         
-        const response = await request(app).put(`/user/${userFinded?.id}`).send(updatedUserInput)
+        const response = await request(app).put(`/users/${userFinded?.id}`).send(updatedUserInput)
 
         expect(response.status).toBe(HttpCode.OK)
         expect(response.headers['Content-Type']).contains(/json/)
     })
 })
 
-describe('DELETE /user', () => {
+describe('DELETE /users', () => {
     it('should respond with a 200 status code', async () => {
-        const users = await request(app).get('/user').send()
+        const users = await request(app).get('/users').send()
         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
         const { id, ...user } = userFinded
 
@@ -104,7 +104,7 @@ describe('DELETE /user', () => {
             name: 'Roger Hudson',
         }
         
-        const response = await request(app).delete(`/user/${userFinded?.id}`).send(deletedUserInput)
+        const response = await request(app).delete(`/users/${userFinded?.id}`).send(deletedUserInput)
 
         expect(response.status).toBe(HttpCode.OK)
     })

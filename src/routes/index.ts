@@ -5,7 +5,7 @@ import swaggerUi from 'swagger-ui-express'
 
 const router = Router()
 
-router.use('/user', userRouter)
+router.use('/users', userRouter)
 
 router.get('/', function (req, res) {
   res.send('Node API is running!')
