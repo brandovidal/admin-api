@@ -19,7 +19,7 @@
     "prepare": "husky install",
     "prisma-generate": "dotenv -e .env.dev -- npx prisma db push",
     "pretest": "concurrently 'dotenv -e .env.test -- npx prisma db push'",
-    "test": "vitest",
+    "test": "dotenv -e .env.test -- vitest",
     "test-ci": "dotenv -e .env.test -- vitest run",
     "test-ui": "dotenv -e .env.test -- vitest --ui",
     "swagger": "tsoa spec"
