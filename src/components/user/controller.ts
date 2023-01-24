@@ -1,14 +1,21 @@
 import { User } from '@prisma/client'
 
-import { createUser, getUsers, deleteUser, updateUser, getUserById } from './repository'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query } from 'tsoa'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse } from 'tsoa'
+import { createUser, getUsers, deleteUser, updateUser, getUserById, getUsersPaginate } from './repository'
+
+import { UserResponse } from '../../interfaces/user'
 
 @Route('user')
 export default class UserController {
   @Get('/')
   public async getUsers (): Promise<User[] | null> {
     return await getUsers()
+  }
+
+  @Get('/all')
+  public async getUsersPaginate (@Query() name: string, @Query() email: string, @Query() page: number, @Query() size: number): Promise<UserResponse> {
+    return await getUsersPaginate(name, email, page, size)
   }
 
   @Get('/{id}')

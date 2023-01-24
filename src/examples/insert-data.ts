@@ -4,8 +4,8 @@ const prisma = new PrismaClient()
 
 export const insertUserAndPost = async (): Promise<void> => {
   const userInput: Prisma.UserUncheckedCreateInput = {
-    email: 'jon.snow@got.com',
-    name: 'Jon Snow',
+    email: 'ian.watson@got.com',
+    name: 'Ian Watson',
     dateOfBirth: new Date(1995, 1, 23),
     location: {
       address: "2 Rue de l'opera",

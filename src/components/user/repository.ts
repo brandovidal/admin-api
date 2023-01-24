@@ -1,8 +1,8 @@
-import { Prisma, PrismaClient, User } from '@prisma/client'
+import { PrismaClient, User } from '@prisma/client'
+
+import { UserResponse } from '../../interfaces/user'
 
 const prisma = new PrismaClient()
-
-export interface UserWhereParams extends Prisma.UserWhereInput {}
 
 export const getUsers = async (): Promise<User[]> => {
   const users = await prisma.user.findMany()
@@ -10,18 +10,27 @@ export const getUsers = async (): Promise<User[]> => {
   return users
 }
 
-export const getUsersByParams = async (params: UserWhereParams): Promise<User[] | null> => {
-  const { name, email } = params
+export const getUsersPaginate = async (name?: string, email?: string, page = 1, size = 10): Promise<UserResponse> => {
+  const take = size
+  const skip = (page - 1) * take
 
-  const users = await prisma.user.findMany({
-    where: {
-      name: { contains: name?.toString(), mode: 'insensitive' },
-      email: { contains: email?.toString(), mode: 'insensitive' }
-    }
-  })
+  const [count, users] = await prisma.$transaction([
+    prisma.user.count(),
+    prisma.user.findMany({
+      where: {
+        name: { contains: name?.toString(), mode: 'insensitive' },
+        email: { contains: email?.toString(), mode: 'insensitive' }
+      },
+      take,
+      skip,
+      orderBy: {
+        updatedAt: 'asc'
+      }
+    })
+  ])
 
   void prisma.$disconnect()
-  return users
+  return { count, users }
 }
 
 export const getUserById = async (userId: string): Promise<User | null> => {
@@ -35,7 +44,7 @@ export const getUserById = async (userId: string): Promise<User | null> => {
   return user
 }
 
-export const getUserByParams = async (params: UserWhereParams): Promise<User | null> => {
+export const getUserByParams = async (params: User): Promise<User | null> => {
   const { name, email } = params
 
   const user = await prisma.user.findFirst({

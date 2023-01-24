@@ -7,13 +7,15 @@ export class Result {
   private readonly code: string
   private readonly message: string
   private readonly data?: object | null
+  private readonly count?: number
   private readonly error?: ErrorModel | ErrorModel[] | null
 
-  constructor (status: number, code: string, message: string, data?: object | null, error?: ErrorModel | ErrorModel[] | null) {
+  constructor (status: number, code: string, message: string, data?: object | null, count?: number, error?: ErrorModel | ErrorModel[] | null) {
     this.status = status
     this.code = code
     this.message = message
     this.data = data
+    this.count = count
     this.error = error
   }
 
@@ -26,17 +28,18 @@ export class Result {
       code: this.code,
       message: this.message,
       data: this.data,
+      count: this.count,
       error: this.error
     }
   }
 }
 
-export const success = ({ status = HttpCode.OK, data = null, code = '', message = 'success', error = null }: ResponseModel): ResponseModel => {
-  const result = new Result(status, code, message, data, error)
+export const success = ({ status = HttpCode.OK, data = null, count = 0, code = '', message = 'success', error = null }: ResponseModel): ResponseModel => {
+  const result = new Result(status, code, message, data, count, error)
   return result.bodyToString()
 }
 
-export const error = ({ status = HttpCode.INTERNAL_SERVER_ERROR, data = null, code = '', message = 'error', error }: ResponseModel): ResponseModel => {
-  const result = new Result(status, code, message, data, error)
+export const error = ({ status = HttpCode.INTERNAL_SERVER_ERROR, data = null, count = 0, code = '', message = 'error', error }: ResponseModel): ResponseModel => {
+  const result = new Result(status, code, message, data, count, error)
   return result.bodyToString()
 }

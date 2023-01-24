@@ -33,18 +33,25 @@ export const getUserbyId = async (req: Request, res: Response, next: NextFunctio
   }
 }
 
-// export const findAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const params: Prisma.UserWhereInput = req.query
-//     const users = isEmpty(params) ? await getUsers() : await getUserByParams(params)
+export const getUsersPaginate = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const query = req.query
 
-//     const result = success({ status: HttpCode.OK, data: users, code: 'success', message: 'user list successfully' })
-//     res.json(result)
-//   } catch (err: any) {
-//     const result = error({ status: HttpCode.NO_CONTENT, code: 'no_content', message: err?.message })
-//     res.status(HttpCode.NO_CONTENT).json(result)
-//   }
-// }
+    const nameParam = query.name?.toString() ?? ''
+    const emailParam = query.email?.toString() ?? ''
+    const page = parseInt(query.page?.toString() ?? '1')
+    const size = parseInt(query.size?.toString() ?? '10')
+
+    const { count, users } = await controller.getUsersPaginate(nameParam, emailParam, page, size)
+
+    const result = success({ status: HttpCode.OK, data: users, count, code: 'success', message: 'user list successfully' })
+    res.json(result)
+  } catch (err: any) {
+    console.error('🚀 ~ file: handler.ts:46 ~ getUsersPaginate ~ err', err)
+    const result = error({ status: HttpCode.NO_CONTENT, code: 'no_content', message: err?.message })
+    res.status(HttpCode.NO_CONTENT).json(result)
+  }
+}
 
 // create user
 export const create = async (req: Request, res: Response): Promise<void> => {
