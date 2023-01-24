@@ -7,7 +7,9 @@ import { UsersResponse, UserResponse } from '../../interfaces/user'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-const myCache = new CacheContainer(new MemoryStorage())
+import isEmpty from 'just-is-empty'
+
+const userCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
@@ -15,16 +17,16 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const take = size
   const skip = (page - 1) * take
 
-  const cachedUsers = await myCache.getItem<User[]>('users')
-  const cachedTotalUsers = await myCache.getItem<number>('totalUsers')
+  const cachedUsers = await userCache.getItem<User[]>('get-users') ?? []
+  const cachedTotalUsers = await userCache.getItem<number>('total-users') ?? 0
 
   // params
-  const cachedName = await myCache.getItem<number>('userName')
-  const cachedEmail = await myCache.getItem<number>('userEmail')
-  const cachedSize = await myCache.getItem<number>('userSize')
-  const cachedPage = await myCache.getItem<number>('userPage')
+  const cachedName = await userCache.getItem<number>('get-name-users')
+  const cachedEmail = await userCache.getItem<number>('get-email-users')
+  const cachedSize = await userCache.getItem<number>('get-size-users')
+  const cachedPage = await userCache.getItem<number>('get-page-users')
 
-  if (cachedUsers !== undefined && cachedTotalUsers !== undefined && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedUsers) && !isEmpty(cachedTotalUsers) && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
     return { count: cachedUsers.length, total: cachedTotalUsers, users: cachedUsers }
   }
 
@@ -45,25 +47,25 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
 
   const count = users.length
 
-  await myCache.setItem('users', users, { ttl: TTL_DEFAULT })
-  await myCache.setItem('totalUsers', total, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-users', users, { ttl: TTL_DEFAULT })
+  await userCache.setItem('total-users', total, { ttl: TTL_DEFAULT })
 
   // params
-  await myCache.setItem('userName', name, { ttl: TTL_DEFAULT })
-  await myCache.setItem('userEmail', email, { ttl: TTL_DEFAULT })
-  await myCache.setItem('userSize', size, { ttl: TTL_DEFAULT })
-  await myCache.setItem('userPage', page, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-name-users', name, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-email-users', email, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-size-users', size, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-page-users', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return { count, total, users }
 }
 
 export const getUserById = async (userId: string): Promise<User | null> => {
-  const cachedUser = await myCache.getItem<User>('user')
-  const cachedUserId = await myCache.getItem<string>('userId')
+  const cachedUserById = await userCache.getItem<User>('get-user-by-id') ?? null
+  const cachedUserId = await userCache.getItem<string>('get-id-user')
 
-  if (cachedUser !== undefined && cachedUserId === userId) {
-    return cachedUser
+  if (!isEmpty(cachedUserById) && cachedUserId === userId) {
+    return cachedUserById
   }
 
   const user = await prisma.user.findFirst({
@@ -72,23 +74,23 @@ export const getUserById = async (userId: string): Promise<User | null> => {
     }
   })
 
-  await myCache.setItem('user', user, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-user-by-id', user, { ttl: TTL_DEFAULT })
 
   // params
-  await myCache.setItem('userId', userId, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-id-user', userId, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return user
 }
 
 export const getUser = async (name?: string, email?: string): Promise<UserResponse> => {
-  const cachedUser = await myCache.getItem<User>('user')
+  const cachedUser = await userCache.getItem<User>('get-only-user') ?? null
 
   // params
-  const cachedName = await myCache.getItem<number>('userName')
-  const cachedEmail = await myCache.getItem<number>('userEmail')
+  const cachedName = await userCache.getItem<number>('get-only-name')
+  const cachedEmail = await userCache.getItem<number>('get-only-email')
 
-  if (cachedUser !== undefined && cachedName === name && cachedEmail === email) {
+  if (!isEmpty(cachedUser) && cachedName === name && cachedEmail === email) {
     return { user: cachedUser }
   }
 
@@ -99,11 +101,11 @@ export const getUser = async (name?: string, email?: string): Promise<UserRespon
     }
   })
 
-  await myCache.setItem('user', user, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-only-user', user, { ttl: TTL_DEFAULT })
 
   // params
-  await myCache.setItem('userName', name, { ttl: TTL_DEFAULT })
-  await myCache.setItem('userEmail', email, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return { user }
