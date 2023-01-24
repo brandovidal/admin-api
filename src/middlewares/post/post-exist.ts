@@ -13,7 +13,6 @@ export const postExistValidaton = async (req: Request, res: Response, next: Next
     const content = body.content?.toString() ?? ''
 
     const { post } = await getPost(title, content)
-    console.log('🚀 ~ file: post-exist.ts:16 ~ postExistValidaton ~ post', post)
 
     if (post !== null) {
       const result = error({ status: HttpCode.FORBIDDEN, code: 'post_exist', message: 'Post already exist' })

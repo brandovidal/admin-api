@@ -74,7 +74,6 @@ export const create = async (req: Request, res: Response): Promise<void> => {
     const result = success({ status: HttpCode.CREATED, data: createdPost, code: 'success', message: 'post created successfully' })
     res.status(200).json(result)
   } catch (err: any) {
-    console.log('🚀 ~ file: handler.ts:77 ~ create ~ err', err)
     const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
   }

@@ -27,7 +27,6 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const cachedPage = await userCache.getItem<number>('get-page-users')
 
   if (!isEmpty(cachedUsers) && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
-    console.log('🚀 ~ List of users from cache')
     return { count: cachedUsers.length, total: cachedTotalUsers, users: cachedUsers }
   }
 
