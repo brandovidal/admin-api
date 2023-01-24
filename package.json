@@ -18,8 +18,8 @@
     "lint-fix": "eslint src/ --fix",
     "prepare": "husky install",
     "prisma-generate": "dotenv -e .env.dev -- npx prisma db push",
-    "pretest": "concurrently 'npm run swagger' 'dotenv -e .env.test -- npx prisma db push'",
-    "test": "dotenv -e .env.test -- vitest",
+    "pretest": "concurrently 'dotenv -e .env.test -- npx prisma db push'",
+    "test": "vitest",
     "test-ci": "dotenv -e .env.test -- vitest run",
     "test-ui": "dotenv -e .env.test -- vitest --ui",
     "swagger": "tsoa spec"
