@@ -1,5 +1,5 @@
 import { PrismaClient, Tag, Prisma } from '@prisma/client'
-import { logger } from 'src/utils/logger'
+import { logger } from '../src/utils/logger'
 
 const prisma = new PrismaClient()
 
@@ -63,4 +63,22 @@ export const insertUserAndPost = async (): Promise<void> => {
   logger.info({ updatedPost })
 }
 
-void insertUserAndPost().then()
+export const insertCategory = async (): Promise<void> => {
+  const categoryInput: Prisma.CategoryUncheckedCreateInput = {
+    name: 'Zapatillas',
+    model: {
+      name: 'Nike',
+      description: 'Talla 40'
+    },
+    userId: '63cb8b0fa5df98e192ab53df'
+  }
+  logger.info(categoryInput)
+
+  const category = await prisma.category.create({
+    data: categoryInput
+  })
+  logger.info(category)
+}
+
+// void insertUserAndPost().then()
+void insertCategory().then()

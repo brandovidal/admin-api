@@ -11,6 +11,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RoleEnumType {
+  user
+  admin
+}
+
 enum Tag {
   NodeJS
   Java
@@ -39,16 +44,26 @@ type Comment {
 }
 
 model User {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  email       String
-  dateOfBirth DateTime
-  name        String
-  location    Location[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt()
-  Post        Post[]
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  @@unique([email])
+  username String
+  name     String
+
+  email    String   @unique
+  photo    String?  @default("default.png")
+  verified Boolean? @default(false)
+
+  password String
+  role     RoleEnumType? @default(user)
+
+  verificationCode String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Post Post[]
+
+  @@unique([email, verificationCode])
   @@map("users")
 }
 
@@ -67,4 +82,19 @@ model Post {
 
   @@index([authorId])
   @@map("posts")
+}
+
+model Category {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  code  String
+  name  String
+  model Model
+
+  @@index([code])
+  @@map("categories")
+}
+
+type Model {
+  name        String
+  description String
 }

@@ -7,7 +7,7 @@
   "author": "Brando Vidal",
   "license": "MIT",
   "scripts": {
-    "predev": "npm run swagger",
+    "predev": "npm run swagger && dotenv -e .env -- npx prisma db push",
     "dev": "dotenv -e .env.dev -- nodemon --watch src/ --exec ts-node src/index.ts",
     "local": "dotenv -e .env.dev -- ts-node",
     "prebuild": "npm run swagger",
