@@ -20,8 +20,7 @@
 					"Jest",
 					"Jenkins",
 					"AWS"
-				],
-				"description": "Enums"
+				]
 			},
 			"Comment": {
 				"properties": {
@@ -335,25 +334,13 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Location": {
-				"properties": {
-					"country": {
-						"type": "string"
-					},
-					"city": {
-						"type": "string"
-					},
-					"address": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"country",
-					"city",
-					"address"
+			"RoleEnumType": {
+				"type": "string",
+				"enum": [
+					"user",
+					"admin"
 				],
-				"type": "object",
-				"description": "Model Location"
+				"description": "Enums"
 			},
 			"User": {
 				"properties": {
@@ -365,20 +352,36 @@
 						"type": "string",
 						"format": "date-time"
 					},
-					"location": {
-						"items": {
-							"$ref": "#/components/schemas/Location"
-						},
-						"type": "array"
+					"verificationCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"role": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/RoleEnumType"
+							}
+						],
+						"nullable": true
+					},
+					"password": {
+						"type": "string"
+					},
+					"verified": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"photo": {
+						"type": "string",
+						"nullable": true
+					},
+					"email": {
+						"type": "string"
 					},
 					"name": {
 						"type": "string"
 					},
-					"dateOfBirth": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"email": {
+					"username": {
 						"type": "string"
 					},
 					"id": {
@@ -388,10 +391,14 @@
 				"required": [
 					"updatedAt",
 					"createdAt",
-					"location",
-					"name",
-					"dateOfBirth",
+					"verificationCode",
+					"role",
+					"password",
+					"verified",
+					"photo",
 					"email",
+					"name",
+					"username",
 					"id"
 				],
 				"type": "object",

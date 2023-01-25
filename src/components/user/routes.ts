@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 // Schemas
-import { userSchema } from './schema'
+import { createUserSchema } from './schema'
 
 // Middlewarea
 import { userSchemaValidaton, userExistValidaton, userNotExistValidaton } from '../../middlewares/user'
@@ -14,7 +14,7 @@ const router = Router()
 router.get('/', getUsers)
 router.get('/user', getUser)
 router.get('/:id', getUserbyId)
-router.post('/', [userSchemaValidaton(userSchema), userExistValidaton], create)
+router.post('/', [userSchemaValidaton(createUserSchema), userExistValidaton], create)
 router.put('/:id', [userNotExistValidaton], update)
 router.delete('/:id', [userNotExistValidaton], remove)
 

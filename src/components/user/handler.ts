@@ -79,6 +79,21 @@ export const create = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
+export const getMeHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const user = res.locals.user
+
+    res.status(200).status(200).json({
+      status: 'success',
+      data: {
+        user
+      }
+    })
+  } catch (err: any) {
+    next(err)
+  }
+}
+
 // update user
 export const update = async (req: Request, res: Response): Promise<void> => {
   try {

@@ -1,17 +1,26 @@
-import { PrismaClient, User } from '@prisma/client'
+import { Prisma, PrismaClient, User } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import { UsersResponse, UserResponse } from '../../interfaces/user'
 
-import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
+import { accessTokenExpiresIn, PAGE_DEFAULT, refreshTokenExpiresIn, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import isEmpty from 'just-is-empty'
+import omit from 'just-omit'
+import { signJwt } from 'src/utils/jwt'
+
+export const excludedFields = ['password', 'verified', 'verificationCode']
 
 const userCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
+
+interface UserToken {
+  accessToken: string
+  refreshToken: string
+}
 
 export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<UsersResponse> => {
   const take = size ?? SIZE_DEFAULT
@@ -111,7 +120,38 @@ export const getUser = async (name?: string, email?: string): Promise<UserRespon
   return { user }
 }
 
-export const createUser = async (userInput: User): Promise<User> => {
+export const findUniqueUser = async (where: Prisma.UserWhereUniqueInput, select?: Prisma.UserSelect): Promise<User> => {
+  const user = (await prisma.user.findUnique({
+    where,
+    select
+  })) as User
+
+  void prisma.$disconnect()
+  return user
+}
+
+export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToken> => {
+  // 1. Create Session
+  const userId = user.id as string
+
+  await userCache.setItem(`${userId}`, JSON.stringify(omit(user, ['password', 'verified', 'verificationCode'])), { ttl: TTL_DEFAULT * 60 })
+  // redisClient.set(`${user.id}`, JSON.stringify(omit(user, excludedFields)), {
+  //   EX: config.get<number>('redisCacheExpiresIn') * 60
+  // })
+
+  // 2. Create Access and Refresh tokens
+  const accessToken = signJwt({ sub: user.id }, 'accessTokenPrivateKey', {
+    expiresIn: `${accessTokenExpiresIn}m`
+  })
+
+  const refreshToken = signJwt({ sub: user.id }, 'refreshTokenPrivateKey', {
+    expiresIn: `${refreshTokenExpiresIn}m`
+  })
+
+  return { accessToken, refreshToken }
+}
+
+export const createUser = async (userInput: Prisma.UserCreateInput): Promise<User> => {
   const user = await prisma.user.create({ data: userInput })
   void prisma.$disconnect()
   return user

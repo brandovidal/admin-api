@@ -30,12 +30,6 @@ enum Tag {
   AWS
 }
 
-type Location {
-  address String
-  city    String
-  country String
-}
-
 type Comment {
   text      String
   voteCount Int
