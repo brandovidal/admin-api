@@ -83,12 +83,8 @@ export const getMeHandler = async (req: Request, res: Response, next: NextFuncti
   try {
     const user = res.locals.user
 
-    res.status(200).status(200).json({
-      status: 'success',
-      data: {
-        user
-      }
-    })
+    const result = success({ status: HttpCode.OK, data: user, code: 'success', message: 'get User Me' })
+    res.status(200).json(result)
   } catch (err: any) {
     next(err)
   }

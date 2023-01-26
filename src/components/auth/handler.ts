@@ -5,7 +5,10 @@ import bcrypt from 'bcryptjs'
 
 import { Prisma } from '@prisma/client'
 
-import { LoginUserInput, RegisterUserInput } from '../user/schema'
+import { CacheContainer } from 'node-ts-cache'
+import { MemoryStorage } from 'node-ts-cache-storage-memory'
+
+import { LoginUserInput, RegisterUserInput } from './schema'
 
 import {
   createUser,
@@ -13,17 +16,16 @@ import {
   signTokens
 } from '../user/repository'
 
-import config from 'config'
+// import config from 'config'
 
 // import AppError from '../utils/appError'
 // import redisClient from '../utils/connectRedis'
 
-import { CacheContainer } from 'node-ts-cache'
-import { MemoryStorage } from 'node-ts-cache-storage-memory'
-
 import { signJwt, verifyJwt } from '../../utils/jwt'
 import { error } from '../../utils/message'
 import { HttpCode } from '../../types/http-code'
+
+import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -38,25 +40,22 @@ if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true
 const accessTokenCookieOptions: CookieOptions = {
   ...cookiesOptions,
   expires: new Date(
-    Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
+    Date.now() + accessTokenExpiresIn * 60 * 1000
   ),
-  maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000
+  maxAge: accessTokenExpiresIn * 60 * 1000
 }
 
 const refreshTokenCookieOptions: CookieOptions = {
   ...cookiesOptions,
   expires: new Date(
-    Date.now() + config.get<number>('refreshTokenExpiresIn') * 60 * 1000
+    Date.now() + refreshTokenExpiresIn * 60 * 1000
   ),
-  maxAge: config.get<number>('refreshTokenExpiresIn') * 60 * 1000
+  maxAge: refreshTokenExpiresIn * 60 * 1000
 }
 
 // ? Register User Controller
-export const registerUserHandler = async (
-  req: Request<null, null, RegisterUserInput>,
-  res: Response,
-  next: NextFunction
-): Promise<Response<any, Record<string, any>> | undefined> => {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
 
@@ -67,11 +66,13 @@ export const registerUserHandler = async (
       .digest('hex'))
 
     const userInput = {
-      ...req.body,
+      username: req.body.username,
+      name: req.body.name,
       email: req.body.email.toLowerCase(),
       password: hashedPassword,
       verificationCode
     }
+    // delete userInput.passwordConfirm
 
     const user = await createUser(userInput)
 
@@ -95,7 +96,7 @@ export const registerUserHandler = async (
 }
 
 // ? Login User Controller
-export async function loginUserHandler ({ req, res, next }: { req: Request<null, null, LoginUserInput>, res: Response, next: NextFunction }): Promise<void> {
+export const loginUserHandler = async (req: Request<object, object, LoginUserInput>, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { email, password } = req.body
 
@@ -112,6 +113,8 @@ export async function loginUserHandler ({ req, res, next }: { req: Request<null,
 
     // Sign Tokens
     const { accessToken, refreshToken } = await signTokens(user)
+
+    res.header('Authorization', `Bearer ${accessToken}`)
     res.cookie('access_token', accessToken, accessTokenCookieOptions)
     res.cookie('refresh_token', refreshToken, refreshTokenCookieOptions)
     res.cookie('logged_in', true, {
@@ -148,7 +151,7 @@ export const refreshAccessTokenHandler = async (
     // Validate refresh token
     const decoded = verifyJwt<{ sub: string }>(
       refreshToken,
-      'refreshTokenPublicKey'
+      'JWT_REFRESH_TOKEN_PRIVATE_KEY'
     )
 
     if (decoded == null) {
@@ -177,11 +180,12 @@ export const refreshAccessTokenHandler = async (
     }
 
     // Sign new access token
-    const accessToken = signJwt({ sub: user.id }, 'accessTokenPrivateKey', {
-      expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`
+    const accessToken = signJwt({ sub: user.id }, 'JWT_ACCESS_TOKEN_PRIVATE_KEY', {
+      expiresIn: `${15}m`
     })
 
     // 4. Add Cookies
+    res.header('Authorization', `Bearer ${accessToken}`)
     res.cookie('access_token', accessToken, accessTokenCookieOptions)
     res.cookie('logged_in', true, {
       ...accessTokenCookieOptions,

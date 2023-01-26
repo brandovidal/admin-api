@@ -5,11 +5,11 @@ import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import { UsersResponse, UserResponse } from '../../interfaces/user'
 
-import { accessTokenExpiresIn, PAGE_DEFAULT, refreshTokenExpiresIn, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
+import { accessTokenExpiresIn, PAGE_DEFAULT, redisCacheExpiresIn, refreshTokenExpiresIn, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import isEmpty from 'just-is-empty'
 import omit from 'just-omit'
-import { signJwt } from 'src/utils/jwt'
+import { signJwt } from '../../utils/jwt'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -134,17 +134,17 @@ export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToke
   // 1. Create Session
   const userId = user.id as string
 
-  await userCache.setItem(`${userId}`, JSON.stringify(omit(user, ['password', 'verified', 'verificationCode'])), { ttl: TTL_DEFAULT * 60 })
+  await userCache.setItem(`${userId}`, JSON.stringify(omit(user, ['password', 'verified', 'verificationCode'])), { ttl: redisCacheExpiresIn * 60 })
   // redisClient.set(`${user.id}`, JSON.stringify(omit(user, excludedFields)), {
   //   EX: config.get<number>('redisCacheExpiresIn') * 60
   // })
 
   // 2. Create Access and Refresh tokens
-  const accessToken = signJwt({ sub: user.id }, 'accessTokenPrivateKey', {
+  const accessToken = signJwt({ sub: user.id }, 'JWT_ACCESS_TOKEN_PRIVATE_KEY', {
     expiresIn: `${accessTokenExpiresIn}m`
   })
 
-  const refreshToken = signJwt({ sub: user.id }, 'refreshTokenPrivateKey', {
+  const refreshToken = signJwt({ sub: user.id }, 'JWT_REFRESH_TOKEN_PRIVATE_KEY', {
     expiresIn: `${refreshTokenExpiresIn}m`
   })
 

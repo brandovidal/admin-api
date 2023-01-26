@@ -5,7 +5,7 @@ enum RoleEnumType {
   USER = 'user',
 }
 
-export const registerUserSchema = object({
+export const createUserSchema = object({
   body: object({
     username: string({
       required_error: 'Name is required'
@@ -42,6 +42,6 @@ export const loginUserSchema = object({
   })
 })
 
-export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>
+export type RegisterUserInput = Omit<TypeOf<typeof createUserSchema>['body'], 'passwordConfirm'>
 
 export type LoginUserInput = TypeOf<typeof loginUserSchema>['body']

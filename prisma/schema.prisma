@@ -40,7 +40,7 @@ type Comment {
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  username String
+  username String @unique
   name     String
 
   email    String   @unique
@@ -50,14 +50,14 @@ model User {
   password String
   role     RoleEnumType? @default(user)
 
-  verificationCode String? @unique
+  verificationCode String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   Post Post[]
 
-  @@unique([email, verificationCode])
+  @@unique([username, email, verificationCode])
   @@map("users")
 }
 
