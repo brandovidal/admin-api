@@ -12,9 +12,29 @@ provider:
 #  environment:
 #    variable1: value1
 
+package:
+  patterns:
+    - .husky/**
+    - src/**
+    - build/**
+    - "!__test__/**"
+    - "!.git/**"
+    - "!.github/**"
+    - "!.husky/**"
+    - "!config/**"
+    - "!prisma/**"
+    - "!examples/**"
+    - "!requests/**"
+    - "!node_modules/**"
+  excludeDevDependencies: false
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
 functions:
-  getOsInfo:
-    handler: src/components/user/handler.getUsers
+  getUsers:
+    handler: src/components/user/function.getUsers
     events:
       - http:
           path: v1/api/get-users
