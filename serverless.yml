@@ -14,7 +14,7 @@ provider:
 
 functions:
   getOsInfo:
-    handler: handler.src/components/user/handlers/getUsers
+    handler: src/components/user/handler.getUsers
     events:
       - http:
           path: v1/api/get-users
