@@ -11,13 +11,7 @@ export const updateData = async (): Promise<void> => {
       id: firstUser.id
     },
     data: {
-      location: {
-        set: {
-          address: '',
-          country: 'US',
-          city: 'San Francisco'
-        }
-      }
+      name: 'Ian Watson'
     }
   })
 

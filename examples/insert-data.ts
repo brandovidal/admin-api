@@ -7,12 +7,8 @@ export const insertUserAndPost = async (): Promise<void> => {
   const userInput: Prisma.UserUncheckedCreateInput = {
     email: 'ian.watson@got.com',
     name: 'Ian Watson',
-    dateOfBirth: new Date(1995, 1, 23),
-    location: {
-      address: "2 Rue de l'opera",
-      city: 'Paris',
-      country: 'FRA'
-    }
+    username: 'ianwatson',
+    password: 'password'
   }
 
   const createdUser = await prisma.user.create({
@@ -63,22 +59,4 @@ export const insertUserAndPost = async (): Promise<void> => {
   logger.info({ updatedPost })
 }
 
-export const insertCategory = async (): Promise<void> => {
-  const categoryInput: Prisma.CategoryUncheckedCreateInput = {
-    name: 'Zapatillas',
-    model: {
-      name: 'Nike',
-      description: 'Talla 40'
-    },
-    userId: '63cb8b0fa5df98e192ab53df'
-  }
-  logger.info(categoryInput)
-
-  const category = await prisma.category.create({
-    data: categoryInput
-  })
-  logger.info(category)
-}
-
 // void insertUserAndPost().then()
-void insertCategory().then()
