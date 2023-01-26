@@ -1,6 +1,4 @@
-import { ErrorModel } from '../types/error'
-import { HttpCode } from '../types/http-code'
-import { ResponseModel } from '../types/response'
+import { HttpCode, ErrorType, SuccessType } from '../types/response'
 
 export class Result {
   private readonly status: number
@@ -9,9 +7,9 @@ export class Result {
   private readonly data?: object | null
   private readonly count?: number
   private readonly total?: number
-  private readonly error?: ErrorModel | ErrorModel[] | null
+  private readonly error?: ErrorType | ErrorType[] | null
 
-  constructor (status: number, code: string, message: string, data?: object | null, count?: number, total?: number, error?: ErrorModel | ErrorModel[] | null) {
+  constructor (status: number, code: string, message: string, data?: object | null, count?: number, total?: number, error?: ErrorType | ErrorType[] | null) {
     this.status = status
     this.code = code
     this.message = message
@@ -21,7 +19,7 @@ export class Result {
     this.error = error
   }
 
-  get (): ResponseModel {
+  get (): { status: number, code: string, message: string, data: object | null | undefined, count: number | undefined, total: number | undefined, error: ErrorType | ErrorType[] | null | undefined } {
     return {
       status: this.status,
       code: this.code,
@@ -38,12 +36,12 @@ export class Result {
   }
 }
 
-export const success = ({ status = HttpCode.OK, data = null, count = 0, total = 0, code = '', message = 'success', error = null }: ResponseModel): ResponseModel => {
-  const result = new Result(status, code, message, data, count, total, error)
+export const success = ({ status = HttpCode.OK, data = null, count = 0, total = 0, code = '', message = 'success' }: SuccessType): SuccessType => {
+  const result = new Result(status, code, message, data, count, total)
   return result.get()
 }
 
-export const error = ({ status = HttpCode.INTERNAL_SERVER_ERROR, data = null, count = 0, total = 0, code = '', message = 'error', error }: ResponseModel): ResponseModel => {
-  const result = new Result(status, code, message, data, count, total, error)
+export const error = ({ status = HttpCode.INTERNAL_SERVER_ERROR, data = null, count = 0, total = 0, code = '', message = 'error' }: SuccessType): SuccessType => {
+  const result = new Result(status, code, message, data, count, total)
   return result.get()
 }

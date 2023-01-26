@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { Prisma } from "@prisma/client"
 
-import { HttpCode } from "../src/types/http-code"
+import { HttpCode } from "../src/types/response"
 
 import { server } from "./server";
 

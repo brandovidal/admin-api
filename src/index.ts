@@ -11,7 +11,7 @@ const app: Application = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.text())
-app.use(express.json({ type: 'application/json', limit: '2kb' }))
+app.use(express.json({ type: 'application/json', limit: '10kb' }))
 
 app.use(morgan('tiny'))
 app.use(express.static('public'))

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { error } from '../utils/message'
-import { HttpCode } from '../types/http-code'
+import { HttpCode } from '../types/response'
 
 // import AppError from '../utils/appError'
 

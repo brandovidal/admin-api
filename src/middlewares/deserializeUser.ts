@@ -12,7 +12,7 @@ import { verifyJwt } from '../utils/jwt'
 // import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 // import { error } from '../utils/message'
-import { HttpCode } from '../types/http-code'
+import { HttpCode } from '../types/response'
 
 // const userCache = new CacheContainer(new MemoryStorage())
 

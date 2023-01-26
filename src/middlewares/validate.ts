@@ -1,33 +1,26 @@
 import { Request, Response, NextFunction } from 'express'
 import { AnyZodObject, ZodError } from 'zod'
 
-import { HttpCode } from '../types/http-code'
-import { error } from '../utils/message'
+import { AppError } from '../utils/appError'
 
-export const validate =
-  (schema: AnyZodObject) =>
-    (req: Request, res: Response, next: NextFunction) => {
-      try {
-        schema.parse({
-          params: req.params,
-          query: req.query,
-          body: req.body
-        })
+import { HttpCode } from '../types/response'
 
-        next()
-      } catch (err) {
-        console.log('🚀 ~ file: validate.ts:16 ~ err', err)
-        if (err instanceof ZodError) {
-          // return res.status(400).json({
-          //   status: 'fail',
-          //   errors: error.errors
-          // })
+export const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
+  try {
+    schema.parse({
+      params: req.params,
+      query: req.query,
+      body: req.body
+    })
+    next()
+  } catch (err) {
+    if (err instanceof ZodError) {
+      const validations = err.errors?.map(({ path, code, message }) => ({ name: path.at(1) ?? 'error', code, message }))
 
-          const errors = err.issues.map((e) => ({ path: e.path[0], message: e.message }))
-
-          const result = error({ status: HttpCode.BAD_REQUEST, code: 'validation_error', message: 'User validation with erros', error: errors })
-          return res.status(HttpCode.BAD_REQUEST).json(result)
-        }
-        next(error)
-      }
+      const result = AppError(HttpCode.BAD_REQUEST, 'validation_error', 'Validation with errors', validations)
+      res.status(HttpCode.BAD_REQUEST).json(result)
+      return result
     }
+    next(err)
+  }
+}

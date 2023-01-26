@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import isEmpty from 'just-is-empty'
 
-import { HttpCode } from '../../types/http-code'
+import { HttpCode } from '../../types/response'
 import { error, success } from '../../utils/message'
 
 import PostController from './controller'

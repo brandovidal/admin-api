@@ -1,10 +1,11 @@
-import { Router } from 'express'
+import { Router, NextFunction, Request, Response } from 'express'
+import swaggerUi from 'swagger-ui-express'
 
 import authRouter from '../components/auth/routes'
 import userRouter from '../components/user/routes'
 import postRouter from '../components/post/routes'
 
-import swaggerUi from 'swagger-ui-express'
+import BaseError, { AppError } from '../utils/appError'
 
 const router = Router()
 
@@ -25,5 +26,21 @@ router.use(
     }
   })
 )
+
+router.all('*', (req: Request, res: Response, next: NextFunction): void => {
+  next(AppError(404, 'not_found', `Route ${req.originalUrl} not found`))
+  // res.send('Route not found')
+})
+
+router.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
+  console.log({ err })
+  const { status, code, message } = err
+
+  res.status(status).json({
+    status,
+    code,
+    message
+  })
+})
 
 export { router }

@@ -23,7 +23,7 @@ import {
 
 import { signJwt, verifyJwt } from '../../utils/jwt'
 import { error } from '../../utils/message'
-import { HttpCode } from '../../types/http-code'
+import { HttpCode } from '../../types/response'
 
 import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
