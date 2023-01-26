@@ -1,0 +1,21 @@
+service: dracon
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+# you can define service wide environment variables here
+#  environment:
+#    variable1: value1
+
+functions:
+  getOsInfo:
+    handler: handler.src/components/user/handlers/getUsers
+    events:
+      - http:
+          path: v1/api/get-users
+          method: get

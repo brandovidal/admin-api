@@ -64,6 +64,7 @@
     "just-omit": "2.2.0",
     "node-ts-cache": "4.4.0",
     "node-ts-cache-storage-memory": "4.4.0",
+    "serverless": "3.26.0",
     "swagger-jsdoc": "6.2.8",
     "swagger-ui-express": "4.6.0",
     "tsoa": "5.0.0",
