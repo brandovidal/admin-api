@@ -54,7 +54,6 @@ const refreshTokenCookieOptions: CookieOptions = {
 }
 
 // ? Register User Controller
-// eslint-disable-next-line @typescript-eslint/ban-types
 export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
@@ -85,10 +84,8 @@ export const registerUserHandler = async (req: Request<object, object, RegisterU
   } catch (err: any) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        return res.status(409).json({
-          status: 'fail',
-          message: 'Email already exist, please use another email address'
-        })
+        // return error({ status: HttpCode.CONFLICT, code: 'invalid_email_or_password', message: 'Invalid email or password' })
+        return res.status(HttpCode.CONFLICT).json({ status: HttpCode.CONFLICT, code: 'user_exist', message: 'User already exist' })
       }
     }
     next(err)
