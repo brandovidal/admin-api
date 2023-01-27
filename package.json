@@ -8,8 +8,9 @@
   "license": "MIT",
   "scripts": {
     "clean-build": "rimraf build",
-    "clean-install": "rimraf node_modules && npm install",
+    "clean-install": "rimraf node_modules",
     "clean": "npm run clean-build && npm run clean-install",
+    "postinstall": "prisma generate",
     "predev": "npm run swagger && dotenv -e .env.dev -- npx prisma db push",
     "dev": "dotenv -e .env.dev -- nodemon --watch src/ --exec ts-node src/index.ts",
     "local": "dotenv -e .env.dev -- ts-node",
@@ -28,7 +29,6 @@
     "swagger": "tsoa spec"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.109",
     "@types/bcryptjs": "2.4.2",
     "@types/config": "3.3.0",
     "@types/cookie-parser": "1.4.3",
