@@ -1,4 +1,4 @@
-import { HttpCode, ErrorType, ValidationType } from '../types/response'
+import { HttpCode, type ErrorType, type ValidationType } from '../types/response'
 
 export default class BaseError extends Error {
   readonly status

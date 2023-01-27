@@ -1,4 +1,4 @@
-import { CookieOptions, NextFunction, Request, Response } from 'express'
+import { type CookieOptions, type NextFunction, type Request, type Response } from 'express'
 
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
@@ -8,7 +8,7 @@ import { Prisma } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import { LoginUserInput, RegisterUserInput } from './schema'
+import { type LoginUserInput, type RegisterUserInput } from './schema'
 
 import {
   createUser,
@@ -26,6 +26,7 @@ import { error } from '../../utils/message'
 import { HttpCode } from '../../types/response'
 
 import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
+import isEmpty from 'just-is-empty'
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -54,7 +55,7 @@ const refreshTokenCookieOptions: CookieOptions = {
 }
 
 // ? Register User Controller
-export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<object, Record<string, object>> | undefined> => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
 
@@ -81,7 +82,7 @@ export const registerUserHandler = async (req: Request<object, object, RegisterU
         user
       }
     })
-  } catch (err: any) {
+  } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
         // return error({ status: HttpCode.CONFLICT, code: 'invalid_email_or_password', message: 'Invalid email or password' })
@@ -102,7 +103,7 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
       { id: true, email: true, verified: true, password: true }
     )
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!isEmpty(user) || !(await bcrypt.compare(password, user.password))) {
       //   next(new AppError(400, 'Invalid email or password'))
       next(error({ status: HttpCode.BAD_REQUEST, code: 'invalid_email_or_password', message: 'Invalid email or password' }))
       return
@@ -123,7 +124,7 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
       status: 'success',
       accessToken
     })
-  } catch (err: any) {
+  } catch (err) {
     next(err)
   }
 }
@@ -139,7 +140,7 @@ export const refreshAccessTokenHandler = async (
 
     const message = 'Could not refresh access token'
 
-    if (!refreshToken) {
+    if (!isEmpty(refreshToken)) {
     //   next(new AppError(403, message))
       next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
       return
@@ -158,10 +159,10 @@ export const refreshAccessTokenHandler = async (
     }
 
     // Check if user has a valid session
-    const session = await userCache.getItem<string>(decoded.sub)
+    const session = await userCache.getItem<string>(decoded.sub) ?? ''
     // const session = await redisClient.get(decoded.sub)
 
-    if (!session) {
+    if (!isEmpty(session)) {
       //   next(new AppError(403, message));
       next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
       return
@@ -170,7 +171,7 @@ export const refreshAccessTokenHandler = async (
     // Check if user still exist
     const user = await findUniqueUser({ id: JSON.parse(session).id })
 
-    if (!user) {
+    if (!isEmpty(user)) {
       //   next(new AppError(403, message));
       next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
       return
@@ -194,7 +195,7 @@ export const refreshAccessTokenHandler = async (
       status: 'success',
       accessToken
     })
-  } catch (err: any) {
+  } catch (err) {
     next(err)
   }
 }
@@ -219,7 +220,7 @@ export const logoutUserHandler = async (
     res.status(200).json({
       status: 'success'
     })
-  } catch (err: any) {
+  } catch (err) {
     next(err)
   }
 }

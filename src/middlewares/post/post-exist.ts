@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { type NextFunction, type Request, type Response } from 'express'
 
 import { getPost } from '../../components/post/repository'
 
@@ -6,7 +6,7 @@ import { HttpCode } from '../../types/response'
 
 import { AppError } from '../../utils/appError'
 
-export const postExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const postExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<object, Record<string, object>> | undefined> => {
   try {
     const body = req.body
 

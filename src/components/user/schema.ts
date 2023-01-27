@@ -1,4 +1,4 @@
-import { object, string, TypeOf, z } from 'zod'
+import { object, string, type TypeOf, z } from 'zod'
 
 enum RoleEnumType {
   ADMIN = 'admin',

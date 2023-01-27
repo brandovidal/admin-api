@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { type NextFunction, type Request, type Response } from 'express'
 
 import { getUserById } from '../../components/user/repository'
 
@@ -6,7 +6,7 @@ import { HttpCode } from '../../types/response'
 
 import { AppError } from '../../utils/appError'
 
-export const userNotExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const userNotExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<object, Record<string, unknown>> | undefined> => {
   try {
     const userId: string = req.params.id
     const userFinded = await getUserById(userId)

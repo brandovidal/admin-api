@@ -1,11 +1,12 @@
-import { Router, NextFunction, Request, Response } from 'express'
+import { Router, type NextFunction, type Request, type Response } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
 import authRouter from '../components/auth/routes'
 import userRouter from '../components/user/routes'
 import postRouter from '../components/post/routes'
 
-import BaseError, { AppError } from '../utils/appError'
+import type BaseError from '../utils/appError'
+import { AppError } from '../utils/appError'
 
 const router = Router()
 

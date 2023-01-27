@@ -1,9 +1,9 @@
-import { Prisma, PrismaClient, User } from '@prisma/client'
+import { type Prisma, PrismaClient, type User } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import { UsersResponse, UserResponse } from '../../interfaces/user'
+import { type UsersResponse, type UserResponse } from '../../interfaces/user'
 
 import { accessTokenExpiresIn, PAGE_DEFAULT, redisCacheExpiresIn, refreshTokenExpiresIn, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 

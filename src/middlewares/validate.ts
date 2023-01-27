@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express'
-import { AnyZodObject, ZodError } from 'zod'
+import { type Request, type Response, type NextFunction } from 'express'
+import { type AnyZodObject, ZodError } from 'zod'
 
 import { AppError } from '../utils/appError'
 

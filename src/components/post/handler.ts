@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { type NextFunction, type Request, type Response } from 'express'
 import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
@@ -22,7 +22,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction):
 
     const result = success({ status: HttpCode.OK, data: posts, count, total, code: 'success', message: 'post list successfully' })
     res.json(result)
-  } catch (err: any) {
+  } catch (err) {
     const result = error({ status: HttpCode.FORBIDDEN, code: 'posts_not_exist', message: 'Posts not exist' })
     res.status(HttpCode.FORBIDDEN).json(result)
   }
@@ -46,7 +46,7 @@ export const getPost = async (req: Request, res: Response, next: NextFunction): 
 
     const result = success({ status: HttpCode.OK, data: post, count: 1, code: 'success', message: 'find post successfully' })
     res.json(result)
-  } catch (err: any) {
+  } catch (err) {
     const result = error({ status: HttpCode.FORBIDDEN, code: 'post_not_exist', message: 'Post not exist' })
     res.status(HttpCode.FORBIDDEN).json(result)
   }
@@ -60,7 +60,7 @@ export const getPostbyId = async (req: Request, res: Response, next: NextFunctio
 
     const result = success({ status: HttpCode.OK, data: post, code: 'success', message: 'post list successfully' })
     res.json(result)
-  } catch (err: any) {
+  } catch (err) {
     const result = error({ status: HttpCode.FORBIDDEN, code: 'post_not_exist', message: 'Post not exist' })
     res.status(HttpCode.FORBIDDEN).json(result)
   }
@@ -73,7 +73,7 @@ export const create = async (req: Request, res: Response): Promise<void> => {
 
     const result = success({ status: HttpCode.CREATED, data: createdPost, code: 'success', message: 'post created successfully' })
     res.status(200).json(result)
-  } catch (err: any) {
+  } catch (err) {
     const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
   }
@@ -87,7 +87,7 @@ export const update = async (req: Request, res: Response): Promise<void> => {
 
     const result = success({ status: HttpCode.OK, data: updatedPost, code: 'success', message: 'post updated successfully' })
     res.json(result)
-  } catch (err: any) {
+  } catch (err) {
     const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
   }
@@ -101,7 +101,7 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
 
     const result = success({ status: HttpCode.OK, data: deletedPost, code: 'success', message: 'post deleted successfully' })
     res.json(result)
-  } catch (err: any) {
+  } catch (err) {
     const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
     res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
   }

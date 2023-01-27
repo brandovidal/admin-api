@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from 'jsonwebtoken'
+import jwt, { type SignOptions } from 'jsonwebtoken'
 // import config from 'config'
 
 import dotenv from 'dotenv'

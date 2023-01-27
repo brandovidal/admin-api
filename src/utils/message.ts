@@ -1,4 +1,4 @@
-import { HttpCode, ErrorType, SuccessType } from '../types/response'
+import { HttpCode, type ErrorType, type SuccessType } from '../types/response'
 
 export class Result {
   private readonly status: number

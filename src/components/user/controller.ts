@@ -4,8 +4,8 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 
 import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } from './repository'
 
-import { UserResponse, UsersResponse } from '../../interfaces/user'
-import { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
+import { type UserResponse, type UsersResponse } from '../../interfaces/user'
+import { type ForbiddenErrorJSON, type InternalErrorJSON, type ValidateErrorJSON } from '../../interfaces/response'
 
 @Tags('User')
 @Route('users')
@@ -16,7 +16,7 @@ export default class UserController {
   * @param {string} [email] - string
   * @param [page=1] - The page number of the results to return.
   * @param [size=10] - The number of items to return per page.
-  * @returns The return type is UsersResponse.
+  * @returns The return  is UsersResponse.
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')

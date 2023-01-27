@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { type NextFunction, type Request, type Response } from 'express'
 import omit from 'just-omit'
 
 import { findUniqueUser } from '../components/user/repository'
@@ -13,6 +13,7 @@ import { verifyJwt } from '../utils/jwt'
 
 // import { error } from '../utils/message'
 import { HttpCode } from '../types/response'
+import isEmpty from 'just-is-empty'
 
 // const userCache = new CacheContainer(new MemoryStorage())
 
@@ -20,13 +21,13 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
   try {
     let accessToken = ''
 
-    if ((req.headers.authorization?.startsWith('Bearer')) ?? false) {
+    if (isEmpty(req.headers.authorization?.startsWith('Bearer'))) {
       accessToken = req.headers.authorization?.split(' ').at(1) ?? ''
-    } else if (req.cookies.accessToken) {
+    } else if (!isEmpty(req.cookies.accessToken)) {
       accessToken = req.cookies.accessToken
     }
 
-    if (!accessToken) {
+    if (!isEmpty(accessToken)) {
     //   next(new AppError(401, 'You are not logged in'))
       next({ status: HttpCode.UNAUTHORIZED, code: 'unauthorized', message: 'You are not logged in' })
       return
@@ -57,7 +58,7 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
     const user = (await findUniqueUser({ id: userId }))
     // const user = (await findUniqueUser({ id: JSON.parse(session).id }))
 
-    if (!user) {
+    if (!isEmpty(user)) {
     //   next(new AppError(401, 'Invalid token or session has expired'))
       next({ status: HttpCode.UNAUTHORIZED, code: 'unauthorized', message: 'Invalid token or session has expired' })
       return
@@ -67,7 +68,7 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
     res.locals.user = omit(user, ['password', 'verified', 'verificationCode'])
 
     next()
-  } catch (err: any) {
+  } catch (err) {
     next(err)
   }
 }

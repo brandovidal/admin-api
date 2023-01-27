@@ -1,6 +1,6 @@
 
-import { NextFunction, Request, Response } from 'express'
-import { AnyZodObject, ZodError } from 'zod'
+import { type NextFunction, type Request, type Response } from 'express'
+import { type AnyZodObject, ZodError } from 'zod'
 
 import { HttpCode } from '../../types/response'
 

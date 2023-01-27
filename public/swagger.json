@@ -826,7 +826,7 @@
 				"operationId": "getUsers",
 				"responses": {
 					"200": {
-						"description": "The return type is UsersResponse.",
+						"description": "The return  is UsersResponse.",
 						"content": {
 							"application/json": {
 								"schema": {

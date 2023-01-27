@@ -4,8 +4,8 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 
 import { createPost, getPosts, deletePost, updatePost, getPostById, getPost } from './repository'
 
-import { PostResponse, PostsResponse } from '../../interfaces/post'
-import { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
+import { type PostResponse, type PostsResponse } from '../../interfaces/post'
+import { type ForbiddenErrorJSON, type InternalErrorJSON, type ValidateErrorJSON } from '../../interfaces/response'
 
 @Tags('Post')
 @Route('posts')
