@@ -1,8 +1,10 @@
 node_modules/
 
 build/
+examples/
+config/
 
-__test__/
+# __test__/
 e2e/
 
 **/*.config.ts

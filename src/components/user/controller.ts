@@ -1,11 +1,11 @@
-import { User } from '@prisma/client'
+import type { User } from '@prisma/client'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } from './repository'
 
-import { type UserResponse, type UsersResponse } from '../../interfaces/user'
-import { type ForbiddenErrorJSON, type InternalErrorJSON, type ValidateErrorJSON } from '../../interfaces/response'
+import type { UserResponse, UsersResponse } from '../../interfaces/user'
+import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 
 @Tags('User')
 @Route('users')

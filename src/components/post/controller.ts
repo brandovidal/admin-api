@@ -1,11 +1,11 @@
-import { Post as PostSchema } from '@prisma/client'
+import type { Post as PostSchema } from '@prisma/client'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, Tags } from 'tsoa'
 
 import { createPost, getPosts, deletePost, updatePost, getPostById, getPost } from './repository'
 
-import { type PostResponse, type PostsResponse } from '../../interfaces/post'
-import { type ForbiddenErrorJSON, type InternalErrorJSON, type ValidateErrorJSON } from '../../interfaces/response'
+import type { PostResponse, PostsResponse } from '../../interfaces/post'
+import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 
 @Tags('Post')
 @Route('posts')

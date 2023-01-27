@@ -55,7 +55,7 @@ const refreshTokenCookieOptions: CookieOptions = {
 }
 
 // ? Register User Controller
-export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<object, Record<string, object>> | undefined> => {
+export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
 

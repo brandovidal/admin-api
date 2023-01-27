@@ -1,4 +1,4 @@
-import { PrismaClient, Tag, Prisma } from '@prisma/client'
+import { PrismaClient, Tag, type Prisma } from '@prisma/client'
 import { logger } from '../src/utils/logger'
 
 const prisma = new PrismaClient()

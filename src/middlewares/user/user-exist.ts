@@ -6,7 +6,7 @@ import { HttpCode } from '../../types/response'
 
 import { AppError } from '../../utils/appError'
 
-export const userExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<unknown, Record<string, unknown>> | undefined> => {
+export const userExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
     const body = req.body
 
