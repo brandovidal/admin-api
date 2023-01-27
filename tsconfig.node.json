@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "CommonJS",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "baseUrl": "./"
+  },
+  "include": ["./examples/**/*", "./config/**/*", "./__tests__/**/*"]
+}
