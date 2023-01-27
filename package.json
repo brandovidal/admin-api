@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "clean-build": "rimraf build",
-    "clean-install": "rimraf node_modules",
+    "clean-install": "rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml",
     "clean": "npm run clean-build && npm run clean-install",
     "postinstall": "prisma generate",
     "predev": "npm run swagger && dotenv -e .env.dev -- npx prisma db push",
