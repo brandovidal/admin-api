@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
-    "lib": ["es2021"],
-    "module": "CommonJS",
     "target": "es2016",
+    "lib": ["DOM", "ES2020"],
+    "module": "CommonJS",
+    // "rootDir": "./" /* Specify the root folder within your source files. */,
+    "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
+    // "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
 
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node"
+    "skipLibCheck": true
   },
   "include": ["**/*.test.ts"]
 }

@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import request from 'supertest'
 
 import { Prisma } from '@prisma/client'
 
 import { HttpCode } from '../src/types/response'
+import { app } from '../src/index'
 
-import { server } from './server'
+export const server = request(app)
 
 describe.concurrent('API methods', () => {
   describe('Auth methods', () => {
