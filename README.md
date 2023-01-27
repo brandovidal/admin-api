@@ -29,20 +29,21 @@ Inside of your project, you'll see the following folders and files:
 ## 💻 Prerequisites
 
 - Node.js 12+
-- Yarn or NPM
+- Yarn or pnpm
 
 👾 Necesary environment variables:
 
 Copy the `.env.example` file to `.env` and fill in the required environment variables.
 Replicate the `.env.example` file to `.env.test` and fill in the required environment variables.
 Replicate the `.env.example` file to `.env.dev` and fill in the required environment variables.
+Use pnpm to install the dependencies https://pnpm.io/es/installation.
 
 ## 📖 How to use
 
 - ⚡ Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 - 📂 Run prisma
@@ -54,23 +55,23 @@ npx prisma generate
 - ⚒️ Run development App
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 - 🚀 Start App
 
 ```bash
-npm run start
+pnpm run start
 ```
 
 - 🔦 Run Lint
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 - 👾 Run test
 
 ```bash
-npm run test
+pnpm run test
 ```
