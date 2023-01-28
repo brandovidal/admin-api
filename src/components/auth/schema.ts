@@ -90,10 +90,7 @@ export const resetPasswordSchema = object({
   })
 })
 
-export type RegisterUserInput = Omit<
-TypeOf<typeof registerUserSchema>['body'],
-'passwordConfirm'
->
+export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>
 
 export type LoginUserInput = TypeOf<typeof loginUserSchema>['body']
 export type VerifyEmailInput = TypeOf<typeof verifyEmailSchema>['params']
