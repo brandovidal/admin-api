@@ -57,20 +57,35 @@ describe.concurrent('API methods', () => {
     // TODO: Add test for login
     // TODO: add test for logout
     // TODO: add test for refresh token
+
+    describe('DELETE /api/users', () => {
+      it('should respond with a 200 status code', async () => {
+        const users = await server.get('/api/users').send()
+        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
+        const userId = userFinded?.id as string
+
+        expect(users.status).toBe(HttpCode.OK)
+        expect(userFinded).toBeInstanceOf(Object)
+
+        const response = await server.delete(`/api/users/${userId}`).send()
+
+        expect(response.status).toBe(HttpCode.OK)
+      })
+    })
   })
 
   describe('User methods', () => {
     // TODO: Add test for  get user me
 
-    describe('GET /users', () => {
+    describe('GET /api/users', () => {
       it('should respond with a 200 status code', async () => {
-        const response = await server.get('/users').send()
+        const response = await server.get('/api/users').send()
 
         expect(response.status).toBe(HttpCode.OK)
       })
 
       it('should respond with an array of users', async () => {
-        const response = await server.get('/users').send()
+        const response = await server.get('/api/users').send()
         const data = response.body?.data
 
         expect(response.status).toBe(HttpCode.OK)
@@ -78,7 +93,7 @@ describe.concurrent('API methods', () => {
       })
 
       it('should respond with a user with name is contain jon', async () => {
-        const response = await server.get('/users?name=jon').send()
+        const response = await server.get('/api/users?name=jon').send()
         const data = response.body?.data
 
         expect(response.status).toBe(HttpCode.OK)
@@ -88,9 +103,9 @@ describe.concurrent('API methods', () => {
 
     // TODO: Add test for update user
 
-    // describe('PUT /users', () => {
+    // describe('PUT /api/users', () => {
     //     it('should respond with a 200 status code', async () => {
-    //         const users = await server.get('/users').send()
+    //         const users = await server.get('/api/users').send()
     //         const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
     //         const { id, ...user } = userFinded
 
@@ -102,27 +117,13 @@ describe.concurrent('API methods', () => {
     //             name: 'Roger Hudson',
     //         }
 
-    //         const response = await server.put(`/users/${userFinded?.id}`).send(updatedUserInput)
+    //         const response = await server.put(`/api/users/${userFinded?.id}`).send(updatedUserInput)
 
     //         expect(response.status).toBe(HttpCode.OK)
     //         expect(response.headers['Content-Type']).contains(/json/)
     //     })
     // })
 
-    describe('DELETE /users', () => {
-      it('should respond with a 200 status code', async () => {
-        const users = await server.get('/users').send()
-        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
-        const userId = userFinded?.id as string
-
-        expect(users.status).toBe(HttpCode.OK)
-        expect(userFinded).toBeInstanceOf(Object)
-
-        const response = await server.delete(`/users/${userId}`).send()
-
-        expect(response.status).toBe(HttpCode.OK)
-      })
-    })
   })
 
   // describe('post methods', () => {
@@ -163,7 +164,7 @@ describe.concurrent('API methods', () => {
   //                     country: 'FRA'
   //                 }
   //             }
-  //             const user = await server.post('/users').send(userInput)
+  //             const user = await server.post('/api/users').send(userInput)
   //             authorId = user.body.data?.id
 
   //             expect(user.status).toBe(HttpCode.CREATED)
@@ -243,7 +244,7 @@ describe.concurrent('API methods', () => {
   //         })
 
   //         it('should remove user with post', async () => {
-  //             const response = await server.delete(`/users/${authorId}`).send()
+  //             const response = await server.delete(`/api/users/${authorId}`).send()
   //             expect(response.status).toBe(HttpCode.OK)
   //         })
   //     })
