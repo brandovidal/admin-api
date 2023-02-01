@@ -683,7 +683,7 @@
 						}
 					}
 				},
-				"description": "The `getPost` function takes in a `title` and `content` query parameter and returns a `PostResponse`\nobject",
+				"description": "The `getPost` function takes in a `title` and `content` query parameter and returns a `PostResponse`\r\nobject",
 				"tags": [
 					"Post"
 				],
@@ -818,13 +818,13 @@
 					}
 				],
 				"requestBody": {
-					"description": "- This is the body of the request. It's the data that the post is\nsending to the server.",
+					"description": "- This is the body of the request. It's the data that the post is\r\nsending to the server.",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/PostSchema",
-								"description": "- This is the body of the request. It's the data that the post is\nsending to the server."
+								"description": "- This is the body of the request. It's the data that the post is\r\nsending to the server."
 							}
 						}
 					}
@@ -861,7 +861,7 @@
 				"security": [],
 				"parameters": [
 					{
-						"description": "- string - This is the path parameter. It's the id of the post we want to\ndelete.",
+						"description": "- string - This is the path parameter. It's the id of the post we want to\r\ndelete.",
 						"in": "path",
 						"name": "id",
 						"required": true,
@@ -1044,7 +1044,7 @@
 						}
 					}
 				},
-				"description": "The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`\nobject",
+				"description": "The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`\r\nobject",
 				"tags": [
 					"User"
 				],
@@ -1179,13 +1179,13 @@
 					}
 				],
 				"requestBody": {
-					"description": "- This is the body of the request. It's the data that the user is\nsending to the server.",
+					"description": "- This is the body of the request. It's the data that the user is\r\nsending to the server.",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/User",
-								"description": "- This is the body of the request. It's the data that the user is\nsending to the server."
+								"description": "- This is the body of the request. It's the data that the user is\r\nsending to the server."
 							}
 						}
 					}
@@ -1222,7 +1222,7 @@
 				"security": [],
 				"parameters": [
 					{
-						"description": "- string - This is the path parameter. It's the id of the user we want to\ndelete.",
+						"description": "- string - This is the path parameter. It's the id of the user we want to\r\ndelete.",
 						"in": "path",
 						"name": "id",
 						"required": true,
