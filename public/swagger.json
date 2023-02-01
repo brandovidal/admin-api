@@ -6,6 +6,167 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"RoleEnumType": {
+				"type": "string",
+				"enum": [
+					"user",
+					"admin"
+				],
+				"description": "Enums"
+			},
+			"User": {
+				"properties": {
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"verificationCode": {
+						"type": "string",
+						"nullable": true
+					},
+					"role": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/RoleEnumType"
+							}
+						],
+						"nullable": true
+					},
+					"password": {
+						"type": "string"
+					},
+					"verified": {
+						"type": "boolean",
+						"nullable": true
+					},
+					"photo": {
+						"type": "string",
+						"nullable": true
+					},
+					"email": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"verificationCode",
+					"role",
+					"password",
+					"verified",
+					"photo",
+					"email",
+					"name",
+					"username",
+					"id"
+				],
+				"type": "object",
+				"description": "Model User"
+			},
+			"InternalErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							500
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"internal_server_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"Internal server error"
+						],
+						"nullable": false
+					},
+					"error": {
+						"type": "number",
+						"enum": [
+							null
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ValidateErrorJSON": {
+				"properties": {
+					"status": {
+						"type": "number",
+						"enum": [
+							400
+						],
+						"nullable": false
+					},
+					"code": {
+						"type": "string",
+						"enum": [
+							"validation_error"
+						],
+						"nullable": false
+					},
+					"message": {
+						"type": "string",
+						"enum": [
+							"User validation with erros"
+						],
+						"nullable": false
+					},
+					"error": {
+						"items": {
+							"properties": {
+								"message": {
+									"type": "string"
+								},
+								"path": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"message",
+								"path"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"status",
+					"code",
+					"message",
+					"error"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Tag": {
 				"type": "string",
 				"enum": [
@@ -129,46 +290,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"InternalErrorJSON": {
-				"properties": {
-					"status": {
-						"type": "number",
-						"enum": [
-							500
-						],
-						"nullable": false
-					},
-					"code": {
-						"type": "string",
-						"enum": [
-							"internal_server_error"
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string",
-						"enum": [
-							"Internal server error"
-						],
-						"nullable": false
-					},
-					"error": {
-						"type": "number",
-						"enum": [
-							null
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"status",
-					"code",
-					"message",
-					"error"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"ForbiddenErrorJSON": {
 				"properties": {
 					"status": {
@@ -283,127 +404,6 @@
 				"type": "object",
 				"description": "Model Post"
 			},
-			"ValidateErrorJSON": {
-				"properties": {
-					"status": {
-						"type": "number",
-						"enum": [
-							400
-						],
-						"nullable": false
-					},
-					"code": {
-						"type": "string",
-						"enum": [
-							"validation_error"
-						],
-						"nullable": false
-					},
-					"message": {
-						"type": "string",
-						"enum": [
-							"User validation with erros"
-						],
-						"nullable": false
-					},
-					"error": {
-						"items": {
-							"properties": {
-								"message": {
-									"type": "string"
-								},
-								"path": {
-									"type": "string"
-								}
-							},
-							"required": [
-								"message",
-								"path"
-							],
-							"type": "object"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"status",
-					"code",
-					"message",
-					"error"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"RoleEnumType": {
-				"type": "string",
-				"enum": [
-					"user",
-					"admin"
-				],
-				"description": "Enums"
-			},
-			"User": {
-				"properties": {
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"verificationCode": {
-						"type": "string",
-						"nullable": true
-					},
-					"role": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/RoleEnumType"
-							}
-						],
-						"nullable": true
-					},
-					"password": {
-						"type": "string"
-					},
-					"verified": {
-						"type": "boolean",
-						"nullable": true
-					},
-					"photo": {
-						"type": "string",
-						"nullable": true
-					},
-					"email": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"username": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"updatedAt",
-					"createdAt",
-					"verificationCode",
-					"role",
-					"password",
-					"verified",
-					"photo",
-					"email",
-					"name",
-					"username",
-					"id"
-				],
-				"type": "object",
-				"description": "Model User"
-			},
 			"UsersResponse": {
 				"properties": {
 					"count": {
@@ -460,6 +460,57 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/api/auth": {
+			"get": {
+				"operationId": "FindUser",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "email",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/posts": {
 			"get": {
 				"operationId": "GetPosts",
@@ -1190,12 +1241,16 @@
 	],
 	"tags": [
 		{
+			"name": "Auth",
+			"description": "Operations of authentication"
+		},
+		{
 			"name": "User",
 			"description": "Operations of users"
 		},
 		{
 			"name": "Post",
-			"description": "Operations of users"
+			"description": "Operations of posts"
 		}
 	]
 }

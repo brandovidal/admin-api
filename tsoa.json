@@ -11,12 +11,16 @@
     },
     "tags": [
       {
+        "name": "Auth",
+        "description": "Operations of authentication"
+      },
+      {
         "name": "User",
         "description": "Operations of users"
       },
       {
         "name": "Post",
-        "description": "Operations of users"
+        "description": "Operations of posts"
       }
     ]
   },

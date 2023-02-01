@@ -28,7 +28,7 @@ export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToke
   return { accessToken, refreshToken }
 }
 
-export const login = async (email: string): Promise<User> => {
+export const findUser = async (email: string): Promise<User> => {
   const user = await findUniqueUser(
     { email: email.toLowerCase() },
     { id: true, email: true, verified: true, password: true }

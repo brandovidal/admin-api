@@ -20,6 +20,10 @@ import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/rep
 
 import { AppError, AppSuccess, signJwt, verifyJwt } from '../../utils'
 
+import AuthController from './controller'
+
+const controller = new AuthController()
+
 const userCache = new CacheContainer(new MemoryStorage())
 
 // ? Cookie Options Here
@@ -84,10 +88,7 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
   try {
     const { email, password } = req.body
 
-    const user = await findUniqueUser(
-      { email: email.toLowerCase() },
-      { id: true, email: true, verified: true, password: true }
-    )
+    const user = await controller.findUser(email)
 
     if (!isEmpty(user) || !(await bcrypt.compare(password, user.password))) {
       next(AppError(HttpCode.BAD_REQUEST, 'invalid_email_or_password', 'Invalid email or password'))
