@@ -1,26 +1,22 @@
-import { type Prisma, PrismaClient, type User } from '@prisma/client'
+import type { Prisma, User } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import { type UsersResponse, type UserResponse } from '../../interfaces/user'
+import type { UsersResponse, UserResponse, UserToken } from '../../interfaces/user'
+import { signJwt } from '../../utils'
 
 import { accessTokenExpiresIn, PAGE_DEFAULT, redisCacheExpiresIn, refreshTokenExpiresIn, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import isEmpty from 'just-is-empty'
 import omit from 'just-omit'
-import { signJwt } from '../../utils/jwt'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
 const userCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
-
-interface UserToken {
-  accessToken: string
-  refreshToken: string
-}
 
 export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<UsersResponse> => {
   const take = size ?? SIZE_DEFAULT

@@ -177,7 +177,6 @@ export const logoutUserHandler = async (
 ): Promise<void> => {
   try {
     await userCache.clear()
-    // await redisClient.del(res.locals.user.id)
     logout(res)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'logout_success', 'Logout success'))
