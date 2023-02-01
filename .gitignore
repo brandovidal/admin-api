@@ -9,8 +9,10 @@ package-lock.json
 pnpm-lock.yaml
 *lock.yaml
 
+.env.*
 .env
 .env.test
 .env.development
+!.env.example
 
 .serverless/
