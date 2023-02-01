@@ -4,12 +4,12 @@ export class Result {
   private readonly status: number
   private readonly code: string
   private readonly message: string
-  private readonly data?: object | null
+  private readonly data?: object | string | null
   private readonly count?: number
   private readonly total?: number
   private readonly error?: ErrorType | ErrorType[] | null
 
-  constructor (status: number, code: string, message: string, data?: object | null, count?: number, total?: number, error?: ErrorType | ErrorType[] | null) {
+  constructor (status: number, code: string, message: string, data?: object | string | null, count?: number, total?: number, error?: ErrorType | ErrorType[] | null) {
     this.status = status
     this.code = code
     this.message = message
@@ -19,7 +19,7 @@ export class Result {
     this.error = error
   }
 
-  get (): { status: number, code: string, message: string, data: object | null | undefined, count: number | undefined, total: number | undefined, error: ErrorType | ErrorType[] | null | undefined } {
+  get (): { status: number, code: string, message: string, data: object | string | null | undefined, count: number | undefined, total: number | undefined, error: ErrorType | ErrorType[] | null | undefined } {
     return {
       status: this.status,
       code: this.code,

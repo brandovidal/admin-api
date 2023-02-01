@@ -16,7 +16,7 @@ export interface SuccessType {
   status: number
   code: string
   message: string
-  data?: object | null
+  data?: object | string | null
   count?: number
   total?: number
 }

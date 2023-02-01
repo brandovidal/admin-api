@@ -1,4 +1,4 @@
-import { HttpCode, type ErrorType, type SuccessType } from '../types/response'
+import { HttpCode, type SuccessType } from '../types/response'
 
 export default class BaseSuccess {
   private readonly status
@@ -8,7 +8,7 @@ export default class BaseSuccess {
   private readonly count?
   private readonly total?
 
-  constructor (status: number, code: string, message: string, data: object | null, count?: number, total?: number) {
+  constructor (status: number, code: string, message: string, data?: object | string | null, count?: number, total?: number) {
     this.status = status
     this.code = code
     this.message = message
@@ -33,7 +33,7 @@ export default class BaseSuccess {
   }
 }
 
-export const AppSuccess = (status = HttpCode.OK, code = '', message = 'error', data = null, count = 0, total = 0): ErrorType => {
+export const AppSuccess = (status = HttpCode.OK, code = '', message = 'error', data: object | string | null = null, count = 0, total = 0): SuccessType => {
   return new BaseSuccess(status, code, message, data, count, total).getValues()
 }
 

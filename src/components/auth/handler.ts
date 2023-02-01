@@ -8,25 +8,17 @@ import { Prisma } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
+import isEmpty from 'just-is-empty'
+
 import { type LoginUserInput, type RegisterUserInput } from './schema'
 
-import {
-  createUser,
-  findUniqueUser,
-  signTokens
-} from '../user/repository'
+import { createUser, findUniqueUser, signTokens } from '../user/repository'
 
-// import config from 'config'
-
-// import AppError from '../utils/appError'
-// import redisClient from '../utils/connectRedis'
-
-import { signJwt, verifyJwt } from '../../utils/jwt'
-import { error } from '../../utils/message'
 import { HttpCode } from '../../types/response'
 
 import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
-import isEmpty from 'just-is-empty'
+
+import { AppError, AppSuccess, signJwt, verifyJwt } from '../../utils'
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -72,21 +64,15 @@ export const registerUserHandler = async (req: Request<object, object, RegisterU
       password: hashedPassword,
       verificationCode
     }
-    // delete userInput.passwordConfirm
 
     const user = await createUser(userInput)
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        user
-      }
-    })
+    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'user_register', 'user registered', { user }))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        // return error({ status: HttpCode.CONFLICT, code: 'invalid_email_or_password', message: 'Invalid email or password' })
-        return res.status(HttpCode.CONFLICT).json({ status: HttpCode.CONFLICT, code: 'user_exist', message: 'User already exist' })
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_exist', 'User already exist'))
+        return
       }
     }
     next(err)
@@ -104,8 +90,7 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
     )
 
     if (!isEmpty(user) || !(await bcrypt.compare(password, user.password))) {
-      //   next(new AppError(400, 'Invalid email or password'))
-      next(error({ status: HttpCode.BAD_REQUEST, code: 'invalid_email_or_password', message: 'Invalid email or password' }))
+      next(AppError(HttpCode.BAD_REQUEST, 'invalid_email_or_password', 'Invalid email or password'))
       return
     }
 
@@ -115,15 +100,9 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
     res.header('Authorization', `Bearer ${accessToken}`)
     res.cookie('access_token', accessToken, accessTokenCookieOptions)
     res.cookie('refresh_token', refreshToken, refreshTokenCookieOptions)
-    res.cookie('logged_in', true, {
-      ...accessTokenCookieOptions,
-      httpOnly: false
-    })
+    res.cookie('logged_in', true, { ...accessTokenCookieOptions, httpOnly: false })
 
-    res.status(200).json({
-      status: 'success',
-      accessToken
-    })
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'login_success', 'Login success', { accessToken }))
   } catch (err) {
     next(err)
   }
@@ -141,30 +120,23 @@ export const refreshAccessTokenHandler = async (
     const message = 'Could not refresh access token'
 
     if (!isEmpty(refreshToken)) {
-    //   next(new AppError(403, message))
-      next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
     }
 
     // Validate refresh token
-    const decoded = verifyJwt<{ sub: string }>(
-      refreshToken,
-      'JWT_REFRESH_TOKEN_PRIVATE_KEY'
-    )
+    const decoded = verifyJwt<{ sub: string }>(refreshToken, 'JWT_REFRESH_TOKEN_PRIVATE_KEY')
 
     if (decoded == null) {
-    //   next(new AppError(403, message));
-      next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
     }
 
     // Check if user has a valid session
     const session = await userCache.getItem<string>(decoded.sub) ?? ''
-    // const session = await redisClient.get(decoded.sub)
 
     if (!isEmpty(session)) {
-      //   next(new AppError(403, message));
-      next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
     }
 
@@ -172,36 +144,27 @@ export const refreshAccessTokenHandler = async (
     const user = await findUniqueUser({ id: JSON.parse(session).id })
 
     if (!isEmpty(user)) {
-      //   next(new AppError(403, message));
-      next(error({ status: HttpCode.FORBIDDEN, code: 'could_not_refresh_access_token', message }))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
     }
 
     // Sign new access token
-    const accessToken = signJwt({ sub: user.id }, 'JWT_ACCESS_TOKEN_PRIVATE_KEY', {
-      expiresIn: `${15}m`
-    })
+    const accessToken = signJwt({ sub: user.id }, 'JWT_ACCESS_TOKEN_PRIVATE_KEY', { expiresIn: `${15}m` })
 
     // 4. Add Cookies
     res.header('Authorization', `Bearer ${accessToken}`)
     res.cookie('access_token', accessToken, accessTokenCookieOptions)
-    res.cookie('logged_in', true, {
-      ...accessTokenCookieOptions,
-      httpOnly: false
-    })
+    res.cookie('logged_in', true, { ...accessTokenCookieOptions, httpOnly: false })
 
     // 5. Send response
-    res.status(200).json({
-      status: 'success',
-      accessToken
-    })
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'refresh_access_success', 'Refresh access success', { accessToken }))
   } catch (err) {
     next(err)
   }
 }
 
 // ? Logout
-function logout (res: Response): void {
+const logout = (res: Response): void => {
   res.cookie('access_token', '', { maxAge: -1 })
   res.cookie('refresh_token', '', { maxAge: -1 })
   res.cookie('logged_in', '', { maxAge: -1 })
@@ -217,9 +180,7 @@ export const logoutUserHandler = async (
     // await redisClient.del(res.locals.user.id)
     logout(res)
 
-    res.status(200).json({
-      status: 'success'
-    })
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'logout_success', 'Logout success'))
   } catch (err) {
     next(err)
   }
