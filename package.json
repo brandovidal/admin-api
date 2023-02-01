@@ -16,7 +16,7 @@
     "local": "dotenv -e .env.development -- ts-node",
     "prebuild": "npm run swagger && npm run clean-build",
     "build": "tsc",
-    "prestart": "npm run build && dotenv -e .env -- npx prisma db push",
+    "prestart": "dotenv -e .env -- npx prisma db push",
     "start": "dotenv -e .env -- node build/index.js",
     "lint": "eslint src/",
     "lint-fix": "eslint src/ --fix",
