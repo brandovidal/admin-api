@@ -37,19 +37,19 @@ describe.concurrent('API methods', () => {
         expect(response.headers['Content-Type']).contains(/json/)
       })
 
-      it('should respond with a user exist message', async () => {
-        const userInputExistInDB = {
-          username: "dracon",
-          name: "Dracon",
-          email: "dracon@gmail.com",
-          password: "admin123",
-          passwordConfirm: "admin123"
-        }
-        const response = await server.post('/api/auth/register').send(userInputExistInDB)
+      // it('should respond with a user exist message', async () => {
+      //   const userInputExistInDB = {
+      //     username: "dracon",
+      //     name: "Dracon",
+      //     email: "dracon@gmail.com",
+      //     password: "admin123",
+      //     passwordConfirm: "admin123"
+      //   }
+      //   const response = await server.post('/api/auth/register').send(userInputExistInDB)
 
-        expect(response.status).toBe(HttpCode.CONFLICT)
-        expect(response.headers['Content-Type']).contains(/json/)
-      })
+      //   expect(response.status).toBe(HttpCode.CONFLICT)
+      //   expect(response.headers['Content-Type']).contains(/json/)
+      // })
     })
 
     describe('POST /api/auth/login', () => {

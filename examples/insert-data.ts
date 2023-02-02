@@ -1,62 +1,65 @@
-import { PrismaClient, Tag, type Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+
 import { logger } from '../src/utils/logger'
 
 const prisma = new PrismaClient()
 
 export const insertUserAndPost = async (): Promise<void> => {
+  await prisma.user.deleteMany()
+  await prisma.course.deleteMany()
+  await prisma.program.deleteMany()
+
   const userInput: Prisma.UserUncheckedCreateInput = {
     email: 'ian.watson@got.com',
     name: 'Ian Watson',
     username: 'ianwatson',
     password: 'password'
   }
-
-  const createdUser = await prisma.user.create({
+  
+  await prisma.user.create({
     data: userInput
   })
 
-  const commentsInput: Prisma.CommentCreateInput[] = [
-    {
-      text: 'My first comment',
-      voteCount: 14,
-      updatedAt: new Date()
-    }
-  ]
-
-  const postInput: Prisma.PostUncheckedCreateInput = {
-    authorId: createdUser.id,
-    comments: commentsInput,
-    content: 'My first post text content',
-    isPublished: false,
-    tags: [Tag.NodeJS, Tag.Docker, Tag.GraphQL],
-    title: 'My first post title',
-    viewCount: 23
-  }
-
-  const createdPost = await prisma.post.create({
-    data: postInput
-  })
-  logger.info({ createdUser })
-  logger.info({ createdPost })
-
-  const newComment: Prisma.CommentCreateInput = {
-    text: 'A new comment in the post created above',
-    updatedAt: new Date(),
-    voteCount: 32
-  }
-
-  const updatedPost = await prisma.post.update({
-    where: {
-      id: createdPost.id
-    },
-    data: {
-      comments: {
-        push: [newComment]
+  const courseInput: Prisma.CourseCreateInput ={
+    name: 'Programacion',
+    code: 'PROGRAMACION',
+    uniqueProgram: false,
+    status: false,
+    program: {
+      createMany: {
+        data: [
+          {
+            name:  'Usando Prisma',
+            code: 'USANDOPRISMA',
+            status: true
+          },
+          {
+            name:  'Implementando Prisma',
+            code: 'IMPLEMENTANDOPRISMA',
+            status: false
+          }
+        ]
       }
     }
-  })
+  }
 
-  logger.info({ updatedPost })
+  await prisma.course.create({
+    data: courseInput
+  })
+  logger.info('Course created')
+
+  const courses = await prisma.course.findMany({
+    include: {
+      program: true
+    }
+  })
+  logger.info(JSON.stringify(courses, null, 2))
+
+  await prisma.course.deleteMany({})
+  logger.info('All courses deleted')
+
+  await prisma.$disconnect()
 }
 
-// void insertUserAndPost().then()
+void insertUserAndPost().then()
