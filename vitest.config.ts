@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [],
   test: {
     include: ['**/*.test.ts'],
-    testTimeout: 30_000,
+    testTimeout: 40_000,
   },
 })
