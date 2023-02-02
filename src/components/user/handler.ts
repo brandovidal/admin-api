@@ -3,7 +3,8 @@ import type { NextFunction, Request, Response } from 'express'
 import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
-import { error, success } from '../../utils/message'
+
+import { AppError, AppSuccess } from '../../utils'
 
 import UserController from './controller'
 
@@ -21,11 +22,9 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
 
     const { count, total, users } = await controller.getUsers(name, email, page, size)
 
-    const result = success({ status: HttpCode.OK, data: users, count, total, code: 'success', message: 'user list successfully' })
-    res.json(result)
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user list successfully', { users, count, total }))
   } catch (err) {
-    const result = error({ status: HttpCode.FORBIDDEN, code: 'users_not_exist', message: 'Users not exist' })
-    res.status(HttpCode.FORBIDDEN).json(result)
+    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'users_not_exist', 'Users not exist'))
   }
 }
 
@@ -40,16 +39,13 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
     const user = await controller.getUser(name, email)
 
     if (isEmpty(user)) {
-      const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
-      res.status(HttpCode.FORBIDDEN).json(result)
+      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
       return
     }
 
-    const result = success({ status: HttpCode.OK, data: user, count: 1, code: 'success', message: 'find user successfully' })
-    res.json(result)
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find user successfully', user))
   } catch (err) {
-    const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
-    res.status(HttpCode.FORBIDDEN).json(result)
+    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
   }
 }
 
@@ -59,24 +55,9 @@ export const getUserbyId = async (req: Request, res: Response, next: NextFunctio
     const userId: string = req.params?.id
     const user = await controller.getUserId(userId)
 
-    const result = success({ status: HttpCode.OK, data: user, code: 'success', message: 'user list successfully' })
-    res.json(result)
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user list successfully', user))
   } catch (err) {
-    const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
-    res.status(HttpCode.FORBIDDEN).json(result)
-  }
-}
-
-// create user
-export const create = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const createdUser = await controller.createUser(req.body)
-
-    const result = success({ status: HttpCode.CREATED, data: createdUser, code: 'success', message: 'user created successfully' })
-    res.status(200).json(result)
-  } catch (err) {
-    const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
   }
 }
 
@@ -85,10 +66,20 @@ export const getMe = async (req: Request, res: Response, next: NextFunction): Pr
   try {
     const user = res.locals.user
 
-    const result = success({ status: HttpCode.OK, data: user, code: 'success', message: 'Get me profile' })
-    res.status(200).json(result)
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'Get me profile', user))
   } catch (err) {
     next(err)
+  }
+}
+
+// create user
+export const create = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const createdUser = await controller.createUser(req.body)
+
+    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'user created successfully', createdUser))
+  } catch (err) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
   }
 }
 
@@ -98,11 +89,9 @@ export const update = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params?.id
     const updatedUser = await controller.updateUser(userId, req.body)
 
-    const result = success({ status: HttpCode.OK, data: updatedUser, code: 'success', message: 'user updated successfully' })
-    res.json(result)
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user updated successfully', updatedUser))
   } catch (err) {
-    const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
   }
 }
 
@@ -112,10 +101,8 @@ export const remove = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params?.id
     const deletedUser = await controller.deleteUser(userId)
 
-    const result = success({ status: HttpCode.OK, data: deletedUser, code: 'success', message: 'user deleted successfully' })
-    res.json(result)
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user deleted successfully', deletedUser))
   } catch (err) {
-    const result = error({ status: HttpCode.INTERNAL_SERVER_ERROR, code: 'internal_server_error', message: 'Internal server error' })
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
   }
 }
