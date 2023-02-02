@@ -76,6 +76,22 @@
 				"type": "object",
 				"description": "Model User"
 			},
+			"UserLoggedResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"isLogged": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"user",
+					"isLogged"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"InternalErrorJSON": {
 				"properties": {
 					"status": {
@@ -166,6 +182,17 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"LoginUserInput": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"type": "object"
 			},
 			"Tag": {
 				"type": "string",
@@ -330,80 +357,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PostResponse": {
-				"properties": {
-					"post": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/Post"
-							}
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"post"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PostSchema": {
-				"properties": {
-					"authorId": {
-						"type": "string"
-					},
-					"comments": {
-						"items": {
-							"$ref": "#/components/schemas/Comment"
-						},
-						"type": "array"
-					},
-					"updatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"tags": {
-						"items": {
-							"$ref": "#/components/schemas/Tag"
-						},
-						"type": "array"
-					},
-					"isPublished": {
-						"type": "boolean"
-					},
-					"viewCount": {
-						"type": "number",
-						"format": "double"
-					},
-					"content": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"authorId",
-					"comments",
-					"updatedAt",
-					"createdAt",
-					"tags",
-					"isPublished",
-					"viewCount",
-					"content",
-					"title",
-					"id"
-				],
-				"type": "object",
-				"description": "Model Post"
-			},
 			"UsersResponse": {
 				"properties": {
 					"count": {
@@ -426,23 +379,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"UserResponse": {
-				"properties": {
-					"user": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/User"
-							}
-						],
-						"nullable": true
-					}
-				},
-				"required": [
-					"user"
-				],
-				"type": "object",
-				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -460,12 +396,67 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
-		"/api/auth": {
-			"get": {
-				"operationId": "FindUser",
+		"/api/auth/login": {
+			"post": {
+				"operationId": "Login",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Login",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserLoggedResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Validation Failed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ValidateErrorJSON"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InternalErrorJSON"
+								}
+							}
+						}
+					}
+				},
+				"description": "It takes a request body, which is a `LoginUserInput`, and returns the result of the login function,\nwhich is a Promise of a `User`",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"description": "- LoginUserInput",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginUserInput",
+								"description": "- LoginUserInput"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "Register",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -495,23 +486,27 @@
 						}
 					}
 				},
+				"description": "It takes a request body, which is a `RegisterUserInput`, and returns the result of the register\nfunction, which is a Promise of a `User`",
 				"tags": [
 					"Auth"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "email",
-						"required": true,
-						"schema": {
-							"type": "string"
+				"parameters": [],
+				"requestBody": {
+					"description": "- RegisterUserInput",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/User",
+								"description": "- RegisterUserInput"
+							}
 						}
 					}
-				]
+				}
 			}
 		},
-		"/posts": {
+		"/api/posts": {
 			"get": {
 				"operationId": "GetPosts",
 				"responses": {
@@ -593,62 +588,9 @@
 						}
 					}
 				]
-			},
-			"post": {
-				"operationId": "CreatePost",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PostSchema"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Validation Failed",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ValidateErrorJSON"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/InternalErrorJSON"
-								}
-							}
-						}
-					}
-				},
-				"description": "The `createPost` function takes in a `Post` object and returns a promise of a Post object",
-				"tags": [
-					"Post"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"description": "- Post",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PostSchema",
-								"description": "- Post"
-							}
-						}
-					}
-				}
 			}
 		},
-		"/posts/post": {
+		"/api/posts/post": {
 			"get": {
 				"operationId": "GetPost",
 				"responses": {
@@ -657,7 +599,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PostResponse"
+									"$ref": "#/components/schemas/Post"
 								}
 							}
 						}
@@ -710,7 +652,7 @@
 				]
 			}
 		},
-		"/posts/{id}": {
+		"/api/posts/{id}": {
 			"get": {
 				"operationId": "GetPostId",
 				"responses": {
@@ -719,12 +661,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/PostSchema"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/Post"
 								}
 							}
 						}
@@ -775,7 +712,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PostSchema"
+									"$ref": "#/components/schemas/Post"
 								}
 							}
 						}
@@ -823,7 +760,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/PostSchema",
+								"$ref": "#/components/schemas/Post",
 								"description": "- This is the body of the request. It's the data that the post is\nsending to the server."
 							}
 						}
@@ -838,7 +775,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PostSchema"
+									"$ref": "#/components/schemas/Post"
 								}
 							}
 						}
@@ -872,7 +809,7 @@
 				]
 			}
 		},
-		"/users": {
+		"/api/users": {
 			"get": {
 				"operationId": "getUsers",
 				"responses": {
@@ -1009,16 +946,16 @@
 				}
 			}
 		},
-		"/users/user": {
+		"/api/users/user": {
 			"get": {
 				"operationId": "GetUser",
 				"responses": {
 					"200": {
-						"description": "A promise of a UserResponse object",
+						"description": "A promise of a User object",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserResponse"
+									"$ref": "#/components/schemas/User"
 								}
 							}
 						}
@@ -1044,7 +981,7 @@
 						}
 					}
 				},
-				"description": "The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`\nobject",
+				"description": "The `getUser` function takes in a `name` and `email` query parameter and returns a `User`\nobject",
 				"tags": [
 					"User"
 				],
@@ -1071,7 +1008,7 @@
 				]
 			}
 		},
-		"/users/{id}": {
+		"/api/users/{id}": {
 			"get": {
 				"operationId": "GetUserId",
 				"responses": {
@@ -1080,12 +1017,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"allOf": [
-										{
-											"$ref": "#/components/schemas/User"
-										}
-									],
-									"nullable": true
+									"$ref": "#/components/schemas/User"
 								}
 							}
 						}

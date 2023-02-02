@@ -13,7 +13,7 @@ import bcrypt from 'bcryptjs'
 import { type LoginUserInput, type RegisterUserInput } from './schema'
 
 import { createUser, getUniqueUser } from '../user/repository'
-import { findUser, signTokens } from './repository'
+import { signTokens } from './repository'
 
 import { HttpCode } from '../../types/response'
 
@@ -28,25 +28,11 @@ const controller = new AuthController()
 const userCache = new CacheContainer(new MemoryStorage())
 
 // ? Register User Controller
-export const registerUser = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const register = async (req: Request<object, object, User>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 12)
+    const body = req.body
 
-    const verifyCode = crypto.randomBytes(32).toString('hex')
-    const verificationCode = (crypto
-      .createHash('sha256')
-      .update(verifyCode)
-      .digest('hex'))
-
-    const userInput = {
-      username: req.body.username,
-      name: req.body.name,
-      email: req.body.email.toLowerCase(),
-      password: hashedPassword,
-      verificationCode
-    }
-
-    const user = await createUser(userInput)
+    const user = await controller.register(body)
 
     res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'user_register', 'user registered', { user }))
   } catch (err) {
@@ -63,7 +49,7 @@ export const registerUser = async (req: Request<object, object, RegisterUserInpu
 // ? Login User Controller
 export const login = async (req: Request<object, object, LoginUserInput>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const body = req.body as User
+    const body = req.body
 
     const { isLogged, user } = await controller.login(body)
     if (!isLogged) {

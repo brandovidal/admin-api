@@ -1,6 +1,6 @@
-import type { Post as PostSchema } from '@prisma/client'
+import type { Post } from '@prisma/client'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, Tags } from 'tsoa'
+import { Get, Post as PostAPI, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, Tags } from 'tsoa'
 
 import { createPost, getPosts, deletePost, updatePost, getPostById, getPost } from './repository'
 
@@ -8,7 +8,7 @@ import type { PostResponse, PostsResponse } from '../../interfaces/post'
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 
 @Tags('Post')
-@Route('posts')
+@Route('/api/posts')
 export default class PostController {
   /**
    * The `getPosts` function takes in a `title`, `content`, `page` and `size` query parameter and returns a `PostsResponse`
@@ -21,7 +21,7 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
-  public async getPosts (@Query() title?: string, @Query() content?: string, @Query() page = 1, @Query() size = 10): Promise<PostsResponse> {
+  public async getPosts(@Query() title?: string, @Query() content?: string, @Query() page = 1, @Query() size = 10) {
     return await getPosts(title, content, page, size)
   }
 
@@ -35,7 +35,7 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/post')
-  public async getPost (@Query() title?: string, @Query() content?: string): Promise<PostResponse> {
+  public async getPost(@Query() title?: string, @Query() content?: string) {
     return await getPost(title, content)
   }
 
@@ -47,34 +47,34 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getPostId (@Path() id: string): Promise<PostSchema | null> {
+  public async getPostId(@Path() id: string) {
     return await getPostById(id)
   }
 
   /**
    * The `createPost` function takes in a `Post` object and returns a promise of a Post object
-   * @param {PostSchema} requestBody - Post
+   * @param {Post} requestBody - Post
    * @returns A promise of a post object
    */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
-  @Post('/')
-  public async createPost (@Body() requestBody: PostSchema): Promise<PostSchema> {
+  @PostAPI('/')
+  public async createPost(@Body() requestBody: Post) {
     return await createPost(requestBody)
   }
 
   /**
    * The `updatePost` function takes in a `id` path parameter and a `Post` object and returns a promise of a Post object
    * @param {string} id - string - This is the id of the post we want to update.
-   * @param {PostSchema} requestBody - This is the body of the request. It's the data that the post is
+   * @param {Post} requestBody - This is the body of the request. It's the data that the post is
    * sending to the server.
    * @returns The updated post
    */
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updatePost (@Path() id: string, @Body() requestBody: PostSchema): Promise<PostSchema> {
+  public async updatePost(@Path() id: string, @Body() requestBody: Post) {
     return await updatePost(id, requestBody)
   }
 
@@ -86,7 +86,7 @@ export default class PostController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deletePost (@Path() id: string): Promise<PostSchema> {
+  public async deletePost(@Path() id: string) {
     return await deletePost(id)
   }
 }

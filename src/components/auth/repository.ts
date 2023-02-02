@@ -3,19 +3,22 @@ import { PrismaClient } from '@prisma/client'
 
 import { signJwt } from '../../utils'
 
-import { UserToken } from '../../interfaces/user'
+import { UserLoggedResponse, UserResponse, UserToken } from '../../interfaces/user'
 
 import { accessTokenExpiresIn, redisCacheExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
-import { getUniqueUser } from '../user/repository'
+import { createUser, getUniqueUser } from '../user/repository'
+
+import { LoginUserInput, RegisterUserInput } from './schema'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import omit from 'just-omit'
+import isEmpty from 'just-is-empty'
 
 import bcrypt from 'bcryptjs'
-import isEmpty from 'just-is-empty'
+import crypto from 'crypto'
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -41,11 +44,30 @@ export const findUser = async (email: string): Promise<User> => {
   return user
 }
 
-
-export const login = async (userInput: Prisma.UserCreateInput) => {
-  const { email, password } = userInput
+export const login = async (loginInput: LoginUserInput): Promise<UserLoggedResponse> => {
+  const { email, password } = loginInput
 
   const user = await findUser(email)
   const isLogged = isEmpty(user) || (await bcrypt.compare(password, user.password))
   return { isLogged, user }
+}
+
+export const register = async (registerInput: User): Promise<User> => {
+  const { password } = registerInput
+
+  const hashedPassword = await bcrypt.hash(password, 12)
+
+  const verifyCode = crypto.randomBytes(32).toString('hex')
+  const verificationCode = (crypto.createHash('sha256').update(verifyCode).digest('hex'))
+
+  const userInput = {
+    username: registerInput.username,
+    name: registerInput.name,
+    email: registerInput.email.toLowerCase(),
+    password: hashedPassword,
+    verificationCode
+  }
+
+  const user = await createUser(userInput)
+  return user
 }

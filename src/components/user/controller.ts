@@ -2,13 +2,12 @@ import type { User } from '@prisma/client'
 
 import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } from './repository'
 
-import type { UserResponse, UsersResponse } from '../../interfaces/user'
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 @Tags('User')
-@Route('users')
+@Route('/api/users')
 export default class UserController {
   /**
    * The `getUsers` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `UsersResponse`
@@ -22,21 +21,21 @@ export default class UserController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getUsers')
-  public async getUsers(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<UsersResponse> {
+  public async getUsers(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10) {
     return await getUsers(name, email, page, size)
   }
 
   /**
-  * The `getUser` function takes in a `name` and `email` query parameter and returns a `UserResponse`
+  * The `getUser` function takes in a `name` and `email` query parameter and returns a `User`
   * object
   * @param {string} [name] - string - This is the name of the user.
   * @param {string} [email] - The email of the user to get.
-  * @returns A promise of a UserResponse object
+  * @returns A promise of a User object
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/user')
-  public async getUser(@Query() name?: string, @Query() email?: string): Promise<UserResponse> {
+  public async getUser(@Query() name?: string, @Query() email?: string) {
     return await getUser(name, email)
   }
 
@@ -48,7 +47,7 @@ export default class UserController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getUserId(@Path() id: string): Promise<User | null> {
+  public async getUserId(@Path() id: string) {
     return await getUserById(id)
   }
 
@@ -61,7 +60,7 @@ export default class UserController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createUser(@Body() requestBody: User): Promise<User> {
+  public async createUser(@Body() requestBody: User) {
     return await createUser(requestBody)
   }
 
@@ -75,7 +74,7 @@ export default class UserController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateUser(@Path() id: string, @Body() requestBody: User): Promise<User> {
+  public async updateUser(@Path() id: string, @Body() requestBody: User) {
     return await updateUser(id, requestBody)
   }
 
@@ -87,7 +86,7 @@ export default class UserController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteUser(@Path() id: string): Promise<User> {
+  public async deleteUser(@Path() id: string) {
     return await deleteUser(id)
   }
 }

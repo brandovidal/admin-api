@@ -3,7 +3,7 @@ import {
   login,
   logout,
   refreshAccessToken,
-  registerUser
+  register
 } from './handler'
 
 import { deserializeUser } from '../../middlewares/deserializeUser'
@@ -17,7 +17,7 @@ import {
 
 const router = express.Router()
 
-router.post('/register', validate(registerUserSchema), registerUser)
+router.post('/register', validate(registerUserSchema), register)
 
 router.post('/login', validate(loginUserSchema), login)
 

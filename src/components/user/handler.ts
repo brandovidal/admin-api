@@ -37,7 +37,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
     const name = query.name?.toString() ?? ''
     const email = query.email?.toString() ?? ''
 
-    const { user } = await controller.getUser(name, email)
+    const user = await controller.getUser(name, email)
 
     if (isEmpty(user)) {
       const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })

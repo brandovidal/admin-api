@@ -6,7 +6,7 @@ import userRouter from '../components/user/routes'
 import postRouter from '../components/post/routes'
 
 import type BaseError from '../utils/appError'
-import { AppError } from '../utils/appError'
+import { AppError, AppSuccess } from '../utils'
 
 const router = Router()
 
@@ -34,6 +34,8 @@ router.all('*', (req: Request, res: Response, next: NextFunction): void => {
 
 router.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
   const { status, code, message } = err
+
+  res.status(status).json(AppSuccess)
 
   res.status(status).json({
     status,
