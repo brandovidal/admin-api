@@ -92,14 +92,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"HttpCode.INTERNAL_SERVER_ERROR": {
+				"enum": [
+					500
+				],
+				"type": "number"
+			},
 			"InternalErrorJSON": {
 				"properties": {
 					"status": {
-						"type": "number",
-						"enum": [
-							500
-						],
-						"nullable": false
+						"$ref": "#/components/schemas/HttpCode.INTERNAL_SERVER_ERROR"
 					},
 					"code": {
 						"type": "string",
@@ -116,10 +118,7 @@
 						"nullable": false
 					},
 					"error": {
-						"type": "number",
-						"enum": [
-							null
-						],
+						"type": "string",
 						"nullable": true
 					}
 				},
@@ -132,14 +131,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"HttpCode.BAD_REQUEST": {
+				"enum": [
+					400
+				],
+				"type": "number"
+			},
 			"ValidateErrorJSON": {
 				"properties": {
 					"status": {
-						"type": "number",
-						"enum": [
-							400
-						],
-						"nullable": false
+						"$ref": "#/components/schemas/HttpCode.BAD_REQUEST"
 					},
 					"code": {
 						"type": "string",
@@ -317,14 +318,16 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"HttpCode.FORBIDDEN": {
+				"enum": [
+					403
+				],
+				"type": "number"
+			},
 			"ForbiddenErrorJSON": {
 				"properties": {
 					"status": {
-						"type": "number",
-						"enum": [
-							403
-						],
-						"nullable": false
+						"$ref": "#/components/schemas/HttpCode.FORBIDDEN"
 					},
 					"code": {
 						"type": "string",
@@ -341,10 +344,7 @@
 						"nullable": false
 					},
 					"error": {
-						"type": "number",
-						"enum": [
-							null
-						],
+						"type": "string",
 						"nullable": true
 					}
 				},
@@ -486,20 +486,20 @@
 						}
 					}
 				},
-				"description": "It takes a request body, which is a `RegisterUserInput`, and returns the result of the register\nfunction, which is a Promise of a `User`",
+				"description": "It takes a request body, which is a `User`, and returns the result of the register\nfunction, which is a Promise of a `User`",
 				"tags": [
 					"Auth"
 				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
-					"description": "- RegisterUserInput",
+					"description": "- User",
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/User",
-								"description": "- RegisterUserInput"
+								"description": "- User"
 							}
 						}
 					}

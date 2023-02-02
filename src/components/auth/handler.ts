@@ -7,12 +7,9 @@ import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import isEmpty from 'just-is-empty'
 
-import crypto from 'crypto'
-import bcrypt from 'bcryptjs'
+import type { LoginUserInput } from './schema'
 
-import { type LoginUserInput, type RegisterUserInput } from './schema'
-
-import { createUser, getUniqueUser } from '../user/repository'
+import { getUniqueUser } from '../user/repository'
 import { signTokens } from './repository'
 
 import { HttpCode } from '../../types/response'

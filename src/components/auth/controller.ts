@@ -1,7 +1,7 @@
 import { InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { login, register } from './repository'
 
-import { LoginUserInput, RegisterUserInput } from './schema'
+import { LoginUserInput } from './schema'
 
 import { Body, Post, Response, Route, SuccessResponse, Tags } from 'tsoa'
 import { User } from '@prisma/client'
@@ -24,9 +24,9 @@ export default class AuthController {
   }
 
   /**
-   * It takes a request body, which is a `RegisterUserInput`, and returns the result of the register
+   * It takes a request body, which is a `User`, and returns the result of the register
    * function, which is a Promise of a `User`
-   * @param {RegisterUserInput} requestBody - RegisterUserInput
+   * @param {User} requestBody - User
    * @returns The result of the register function
    */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')

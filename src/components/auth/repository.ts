@@ -3,13 +3,13 @@ import { PrismaClient } from '@prisma/client'
 
 import { signJwt } from '../../utils'
 
-import { UserLoggedResponse, UserResponse, UserToken } from '../../interfaces/user'
+import { UserLoggedResponse, UserToken } from '../../interfaces/user'
 
 import { accessTokenExpiresIn, redisCacheExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
 import { createUser, getUniqueUser } from '../user/repository'
 
-import { LoginUserInput, RegisterUserInput } from './schema'
+import { LoginUserInput } from './schema'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
