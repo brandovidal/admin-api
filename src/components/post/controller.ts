@@ -1,10 +1,9 @@
-import type { Post } from '@prisma/client'
+import type { Post as PostType } from '@prisma/client'
 
-import { Get, Post as PostAPI, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, Tags } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, Tags } from 'tsoa'
 
 import { createPost, getPosts, deletePost, updatePost, getPostById, getPost } from './repository'
 
-import type { PostResponse, PostsResponse } from '../../interfaces/post'
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 
 @Tags('Post')
@@ -59,8 +58,8 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
-  @PostAPI('/')
-  public async createPost(@Body() requestBody: Post) {
+  @Post('/')
+  public async createPost(@Body() requestBody: PostType) {
     return await createPost(requestBody)
   }
 
@@ -74,7 +73,7 @@ export default class PostController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updatePost(@Path() id: string, @Body() requestBody: Post) {
+  public async updatePost(@Path() id: string, @Body() requestBody: PostType) {
     return await updatePost(id, requestBody)
   }
 

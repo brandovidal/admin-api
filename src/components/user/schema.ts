@@ -1,11 +1,12 @@
-import { object, string, type TypeOf, z } from 'zod'
+import { object, string, z } from 'zod'
+import type { TypeOf } from 'zod'
 
 enum RoleEnumType {
   ADMIN = 'admin',
   USER = 'user',
 }
 
-export const createUserSchema = object({
+export const registerUserSchema = object({
   body: object({
     username: string({
       required_error: 'Name is required'
@@ -31,17 +32,23 @@ export const createUserSchema = object({
   })
 })
 
-export const loginUserSchema = object({
+export const updateUserSchema = object({
   body: object({
-    email: string({
-      required_error: 'Email address is required'
-    }).email('Invalid email address'),
-    password: string({
-      required_error: 'Password is required'
-    }).min(8, 'Invalid email or password')
+    name: string({}),
+    email: string({}).email('Invalid email address'),
+    password: string({})
+      .min(8, 'Password must be more than 8 characters')
+      .max(32, 'Password must be less than 32 characters'),
+    passwordConfirm: string({}),
+    role: z.optional(z.nativeEnum(RoleEnumType))
   })
+    .partial()
+    .refine((data) => data.password === data.passwordConfirm, {
+      path: ['passwordConfirm'],
+      message: 'Passwords do not match'
+    })
 })
 
-export type RegisterUserInput = Omit<TypeOf<typeof createUserSchema>['body'], 'passwordConfirm'>
+export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>
 
-export type LoginUserInput = TypeOf<typeof loginUserSchema>['body']
+export type UpdateUserInput = TypeOf<typeof updateUserSchema>['body']

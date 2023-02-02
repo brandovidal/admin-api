@@ -1,27 +1,28 @@
 import { Router } from 'express'
 
 // Schemas
-import { createUserSchema } from './schema'
+import { registerUserSchema, updateUserSchema } from './schema'
 
 // Middlewarea
-import { userSchemaValidaton, userExistValidaton, userNotExistValidaton } from '../../middlewares/user'
+import { userExistValidaton, userNotExistValidaton } from '../../middlewares/user'
 
 // handler
 import { create, getMe, getUser, getUserbyId, getUsers, remove, update } from './handler'
 
 import { deserializeUser } from '../../middlewares/deserializeUser'
+import { validate } from '../../middlewares/validate'
 // import { requireUser } from '../../middlewares/requireUser'
 
 const router = Router()
 
-// router.use(deserializeUser, requireUser)
+router.use(deserializeUser)
 
 router.get('/', getUsers)
 router.get('/user', getUser)
 router.get('/me', [deserializeUser], getMe)
 router.get('/:id', getUserbyId)
-router.post('/', [userSchemaValidaton(createUserSchema), userExistValidaton], create)
-router.put('/:id', [userNotExistValidaton], update)
+router.post('/', [validate(registerUserSchema), userExistValidaton], create)
+router.put('/:id', [validate(updateUserSchema), userNotExistValidaton], update)
 router.delete('/:id', [userNotExistValidaton], remove)
 
 export default router

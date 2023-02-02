@@ -16,12 +16,11 @@ export const postExistValidaton = async (req: Request, res: Response, next: Next
     const post = await getPost(title, content)
 
     if (post !== null) {
-      const result = AppError(HttpCode.FORBIDDEN, 'post_not_exist', 'Post not exist')
-      return res.status(HttpCode.FORBIDDEN).json(result)
+      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'post_not_exist', 'Post not exist'))
+      return
     }
     next()
   } catch (err) {
-    const result = AppError()
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError())
   }
 }

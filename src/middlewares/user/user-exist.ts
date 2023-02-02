@@ -16,12 +16,11 @@ export const userExistValidaton = async (req: Request, res: Response, next: Next
     const user = await getUser(name, email)
 
     if (user !== null) {
-      const result = AppError(HttpCode.FORBIDDEN, 'user_exist', 'User already exist')
-      return res.status(HttpCode.FORBIDDEN).json(result)
+      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_exist', 'User already exist'))
+      return
     }
     next()
   } catch (err) {
-    const result = AppError()
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError())
   }
 }

@@ -64,9 +64,9 @@ export const getUserbyId = async (req: Request, res: Response, next: NextFunctio
 // get me user
 export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const user = res.locals.user
+    const userProfile = res.locals.user
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'Get me profile', user))
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'Get me profile', userProfile))
   } catch (err) {
     next(err)
   }

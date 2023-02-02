@@ -1,4 +1,4 @@
-import { PrismaClient, type Post } from '@prisma/client'
+import { Prisma, PrismaClient, type Post } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'

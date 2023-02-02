@@ -12,12 +12,11 @@ export const userNotExistValidaton = async (req: Request, res: Response, next: N
     const userFinded = await getUserById(userId)
 
     if (userFinded === null) {
-      const result = AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist')
-      return res.status(HttpCode.FORBIDDEN).json(result)
+      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
+      return
     }
     next()
   } catch (err) {
-    const result = AppError()
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(result)
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError())
   }
 }
