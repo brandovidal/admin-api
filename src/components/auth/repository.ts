@@ -7,7 +7,7 @@ import { UserToken } from '../../interfaces/user'
 
 import { accessTokenExpiresIn, redisCacheExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
-import { findUniqueUser } from '../user/repository'
+import { getUniqueUser } from '../user/repository'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
@@ -29,7 +29,7 @@ export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToke
 }
 
 export const findUser = async (email: string): Promise<User> => {
-  const user = await findUniqueUser(
+  const user = await getUniqueUser(
     { email: email.toLowerCase() },
     { id: true, email: true, verified: true, password: true }
   )

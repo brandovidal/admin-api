@@ -1,4 +1,4 @@
-import { type CookieOptions, type NextFunction, type Request, type Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
@@ -12,43 +12,20 @@ import isEmpty from 'just-is-empty'
 
 import { type LoginUserInput, type RegisterUserInput } from './schema'
 
-import { createUser, findUniqueUser, signTokens } from '../user/repository'
+import { createUser, getUniqueUser } from '../user/repository'
+import { signTokens } from './repository'
 
 import { HttpCode } from '../../types/response'
-
-import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
 import { AppError, AppSuccess, signJwt, verifyJwt } from '../../utils'
 
 import AuthController from './controller'
 
+import { accessTokenCookieOptions, refreshTokenCookieOptions, refreshTokenMessage } from '../../constants/cookie'
+
 const controller = new AuthController()
 
 const userCache = new CacheContainer(new MemoryStorage())
-
-// ? Cookie Options Here
-const cookiesOptions: CookieOptions = {
-  httpOnly: true,
-  sameSite: 'lax'
-}
-
-if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true
-
-const accessTokenCookieOptions: CookieOptions = {
-  ...cookiesOptions,
-  expires: new Date(
-    Date.now() + accessTokenExpiresIn * 60 * 1000
-  ),
-  maxAge: accessTokenExpiresIn * 60 * 1000
-}
-
-const refreshTokenCookieOptions: CookieOptions = {
-  ...cookiesOptions,
-  expires: new Date(
-    Date.now() + refreshTokenExpiresIn * 60 * 1000
-  ),
-  maxAge: refreshTokenExpiresIn * 60 * 1000
-}
 
 // ? Register User Controller
 export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
@@ -116,32 +93,30 @@ export const refreshAccessTokenHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const message = 'Could not refresh access token'
-
     const refreshToken = req.cookies.refresh_token
     if (!isEmpty(refreshToken)) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
     // Validate refresh token
     const decoded = verifyJwt<{ sub: string }>(refreshToken, 'JWT_REFRESH_TOKEN_PRIVATE_KEY')
     if (decoded == null) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
     // Check if user has a valid session
     const session = await userCache.getItem<string>(decoded.sub) ?? ''
     if (!isEmpty(session)) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
     // Check if user still exist
-    const user = await findUniqueUser({ id: JSON.parse(session).id })
+    const user = await getUniqueUser({ id: JSON.parse(session).id })
     if (!isEmpty(user)) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 

@@ -1,9 +1,9 @@
 import type { User } from '@prisma/client'
 
 import { InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { Get, Query, Response, Route, SuccessResponse, Tags } from 'tsoa'
-
 import { findUser } from './repository'
+
+import { Get, Query, Response, Route, SuccessResponse, Tags } from 'tsoa'
 
 @Tags('Auth')
 @Route('api/auth')

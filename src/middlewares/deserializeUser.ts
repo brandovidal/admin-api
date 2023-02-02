@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import omit from 'just-omit'
 
-import { findUniqueUser } from '../components/user/repository'
+import { getUniqueUser } from '../components/user/repository'
 
 import { HttpCode } from '../types/response'
 
@@ -44,7 +44,7 @@ export const deserializeUser = async (req: Request, res: Response, next: NextFun
     const userId = decoded.sub
 
     // Check if the user still exist
-    const user = (await findUniqueUser({ id: userId }))
+    const user = (await getUniqueUser({ id: userId }))
 
     if (!isEmpty(user)) {
       next(AppError(HttpCode.UNAUTHORIZED, 'unauthorized', 'Invalid token or session has expired'))
