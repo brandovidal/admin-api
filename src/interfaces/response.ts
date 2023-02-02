@@ -1,4 +1,4 @@
-import { HttpCode } from "../types/response"
+import { HttpCode } from '../types/response'
 
 export interface InternalErrorJSON {
   status: HttpCode.INTERNAL_SERVER_ERROR

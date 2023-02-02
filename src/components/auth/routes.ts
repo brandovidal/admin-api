@@ -31,7 +31,6 @@ router.get('/logout', deserializeUser, requireUser, logout)
 //   verifyEmailHandler
 // )
 
-
 // router.post(
 //   '/forgotpassword',
 //   validate(forgotPasswordSchema),

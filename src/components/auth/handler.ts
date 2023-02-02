@@ -25,7 +25,7 @@ const controller = new AuthController()
 const userCache = new CacheContainer(new MemoryStorage())
 
 // ? Register User Controller
-export const register = async (req: Request<object, object, User>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const register = async (req: Request<object, object, User>, res: Response, next: NextFunction): Promise<Response<object, Record<string, object>> | undefined> => {
   try {
     const body = req.body
 
@@ -70,7 +70,7 @@ export const login = async (req: Request<object, object, LoginUserInput>, res: R
 // ? Refresh Access Token
 export const refreshAccessToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const refreshToken = req.headers['refreshToken'] as string
+    const refreshToken = req.headers.refreshToken as string
     if (!isEmpty(refreshToken)) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return

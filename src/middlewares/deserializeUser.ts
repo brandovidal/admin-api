@@ -17,8 +17,8 @@ const userCache = new CacheContainer(new MemoryStorage())
 export const deserializeUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     let accessToken = ''
-    if (!isEmpty(req.headers['authorization']?.startsWith('Bearer'))) {
-      accessToken = (req.headers['authorization']?.split(' ')?.at(1)) as string
+    if (!isEmpty(req.headers.authorization?.startsWith('Bearer'))) {
+      accessToken = (req.headers.authorization?.split(' ')?.at(1)) as string
     }
 
     if (!isEmpty(accessToken)) {

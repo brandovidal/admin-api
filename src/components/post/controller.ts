@@ -5,6 +5,7 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 import { createPost, getPosts, deletePost, updatePost, getPostById, getPost } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
+import { PostsResponse } from '../../interfaces/post'
 
 @Tags('Post')
 @Route('/api/posts')
@@ -20,7 +21,7 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
-  public async getPosts(@Query() title?: string, @Query() content?: string, @Query() page = 1, @Query() size = 10) {
+  public async getPosts (@Query() title?: string, @Query() content?: string, @Query() page = 1, @Query() size = 10): Promise<PostsResponse> {
     return await getPosts(title, content, page, size)
   }
 
@@ -34,7 +35,7 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/post')
-  public async getPost(@Query() title?: string, @Query() content?: string) {
+  public async getPost (@Query() title?: string, @Query() content?: string): Promise<PostType> {
     return await getPost(title, content)
   }
 
@@ -46,7 +47,7 @@ export default class PostController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getPostId(@Path() id: string) {
+  public async getPostId (@Path() id: string): Promise<PostType> {
     return await getPostById(id)
   }
 
@@ -59,7 +60,7 @@ export default class PostController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createPost(@Body() requestBody: PostType) {
+  public async createPost (@Body() requestBody: PostType): Promise<PostType> {
     return await createPost(requestBody)
   }
 
@@ -73,7 +74,7 @@ export default class PostController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updatePost(@Path() id: string, @Body() requestBody: PostType) {
+  public async updatePost (@Path() id: string, @Body() requestBody: PostType): Promise<PostType> {
     return await updatePost(id, requestBody)
   }
 
@@ -85,7 +86,7 @@ export default class PostController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deletePost(@Path() id: string) {
+  public async deletePost (@Path() id: string): Promise<PostType> {
     return await deletePost(id)
   }
 }

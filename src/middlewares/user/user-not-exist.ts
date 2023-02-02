@@ -6,7 +6,7 @@ import { HttpCode } from '../../types/response'
 
 import { AppError } from '../../utils/appError'
 
-export const userNotExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const userNotExistValidaton = async (req: Request, res: Response, next: NextFunction): Promise<Response<object, Record<string, object>> | undefined> => {
   try {
     const userId: string = req.params.id
     const userFinded = await getUserById(userId)

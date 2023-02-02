@@ -1,10 +1,13 @@
+import { User } from '@prisma/client'
+
 import { InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
+import { UserLoggedResponse } from '../../interfaces/user'
+
 import { login, register } from './repository'
 
 import { LoginUserInput } from './schema'
 
 import { Body, Post, Response, Route, SuccessResponse, Tags } from 'tsoa'
-import { User } from '@prisma/client'
 
 @Tags('Auth')
 @Route('/api/auth')
@@ -19,7 +22,7 @@ export default class AuthController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('200', 'Login')
   @Post('/login')
-  public async login(@Body() requestBody: LoginUserInput) {
+  public async login (@Body() requestBody: LoginUserInput): Promise<UserLoggedResponse> {
     return await login(requestBody)
   }
 
@@ -33,7 +36,7 @@ export default class AuthController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('200', 'Register')
   @Post('/register')
-  public async register(@Body() requestBody: User) {
+  public async register (@Body() requestBody: User): Promise<User> {
     return await register(requestBody)
   }
 }

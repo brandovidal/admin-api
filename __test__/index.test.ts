@@ -19,10 +19,8 @@ describe.concurrent('API methods', () => {
           password: 'admin123',
           passwordConfirm: 'admin123'
         }
-        console.log('🚀 ~ file: index.test.ts:20 ~ it ~ userInput', userInput)
 
         const response = await server.post('/api/auth/register').send(userInput)
-        console.log('🚀 ~ file: index.test.ts:22 ~ it ~ response', response.status)
 
         expect(response.status).toBe(HttpCode.CREATED)
         expect(response.headers['Content-Type']).contains(/json/)
