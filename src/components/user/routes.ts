@@ -11,11 +11,10 @@ import { create, getMe, getUser, getUserbyId, getUsers, remove, update } from '.
 
 import { deserializeUser } from '../../middlewares/deserializeUser'
 import { validate } from '../../middlewares/validate'
-// import { requireUser } from '../../middlewares/requireUser'
 
 const router = Router()
 
-router.use(deserializeUser)
+// router.use(deserializeUser)
 
 router.get('/', getUsers)
 router.get('/user', getUser)

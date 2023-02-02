@@ -5,7 +5,7 @@ import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } fr
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { UsersResponse } from '../../interfaces/user'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
 @Tags('User')
 @Route('/api/users')
@@ -22,7 +22,7 @@ export default class UserController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getUsers')
-  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<UsersResponse> {
+  public async getUsers(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<UsersResponse> {
     return await getUsers(name, email, page, size)
   }
 
@@ -36,7 +36,7 @@ export default class UserController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/user')
-  public async getUser (@Query() name?: string, @Query() email?: string): Promise<User> {
+  public async getUser(@Query() name?: string, @Query() email?: string): Promise<User> {
     return await getUser(name, email)
   }
 
@@ -48,7 +48,7 @@ export default class UserController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getUserId (@Path() id: string): Promise<User | null> {
+  public async getUserId(@Path() id: string): Promise<User | null> {
     return await getUserById(id)
   }
 
@@ -61,7 +61,7 @@ export default class UserController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createUser (@Body() requestBody: User): Promise<User> {
+  public async createUser(@Body() requestBody: User): Promise<User> {
     return await createUser(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class UserController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateUser (@Path() id: string, @Body() requestBody: User): Promise<User> {
+  public async updateUser(@Path() id: string, @Body() requestBody: User): Promise<User> {
     return await updateUser(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class UserController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteUser (@Path() id: string): Promise<User> {
+  public async deleteUser(@Path() id: string): Promise<User> {
     return await deleteUser(id)
   }
 }
