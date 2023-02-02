@@ -116,10 +116,9 @@ export const refreshAccessTokenHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const refreshToken = req.cookies.refresh_token
-
     const message = 'Could not refresh access token'
 
+    const refreshToken = req.cookies.refresh_token
     if (!isEmpty(refreshToken)) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
@@ -127,7 +126,6 @@ export const refreshAccessTokenHandler = async (
 
     // Validate refresh token
     const decoded = verifyJwt<{ sub: string }>(refreshToken, 'JWT_REFRESH_TOKEN_PRIVATE_KEY')
-
     if (decoded == null) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
@@ -135,7 +133,6 @@ export const refreshAccessTokenHandler = async (
 
     // Check if user has a valid session
     const session = await userCache.getItem<string>(decoded.sub) ?? ''
-
     if (!isEmpty(session)) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return
@@ -143,7 +140,6 @@ export const refreshAccessTokenHandler = async (
 
     // Check if user still exist
     const user = await findUniqueUser({ id: JSON.parse(session).id })
-
     if (!isEmpty(user)) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
       return

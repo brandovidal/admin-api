@@ -1,10 +1,9 @@
-import { type NextFunction, type Request, type Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 
-import { error } from '../utils/message'
-import { HttpCode } from '../types/response'
 import isEmpty from 'just-is-empty'
 
-// import AppError from '../utils/appError'
+import { HttpCode } from '../types/response'
+import { AppError } from '../utils'
 
 export const requireUser = (
   req: Request,
@@ -15,8 +14,7 @@ export const requireUser = (
     const user = res.locals.user
 
     if (!isEmpty(user)) {
-    //   next(new AppError(401, 'Session has expired or user doesn\'t exist'))
-      next(error({ status: HttpCode.UNAUTHORIZED, code: 'session_expired', message: 'Session has expired or user doesn\'t exist' }))
+      next(AppError(HttpCode.UNAUTHORIZED, 'session_expired', 'Session has expired or user doesn\'t exist'))
       return
     }
 

@@ -77,7 +77,7 @@ export const getUserById = async (userId: string): Promise<User | null> => {
     where: {
       id: userId
     }
-  })
+  }) as User
 
   await userCache.setItem('get-user-by-id', user, { ttl: TTL_DEFAULT })
 

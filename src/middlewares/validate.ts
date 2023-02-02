@@ -1,9 +1,9 @@
-import { type Request, type Response, type NextFunction } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import { type AnyZodObject, ZodError } from 'zod'
 
-import { AppError } from '../utils/appError'
-
 import { HttpCode } from '../types/response'
+
+import { AppError } from '../utils/appError'
 
 export const validate = (schema: AnyZodObject) => (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,10 +16,8 @@ export const validate = (schema: AnyZodObject) => (req: Request, res: Response, 
   } catch (err) {
     if (err instanceof ZodError) {
       const validations = err.errors?.map(({ path, code, message }) => ({ name: path.at(1) ?? 'error', code, message }))
-
       const result = AppError(HttpCode.BAD_REQUEST, 'validation_error', 'Validation with errors', validations)
       res.status(HttpCode.BAD_REQUEST).json(result)
-      return result
     }
     next(err)
   }
