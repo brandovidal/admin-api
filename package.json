@@ -21,7 +21,7 @@
     "lint": "eslint src/",
     "lint-fix": "eslint src/ --fix",
     "prepare": "husky install",
-    "prisma-generate": "dotenv -e .env.development -- npx prisma db push",
+    "prisma-generate": "dotenv -e .env.development -- npx prisma generate && npx prisma db push",
     "pretest": "concurrently 'dotenv -e .env.test -- npx prisma db push'",
     "test": "dotenv -e .env.test -- vitest",
     "test-ci": "dotenv -e .env.test -- vitest run",
@@ -51,7 +51,7 @@
     "lint-staged": "13.1.0",
     "morgan": "1.10.0",
     "nodemon": "2.0.20",
-    "prisma": "4.9.0",
+    "prisma": "^4.9.0",
     "rimraf": "4.1.2",
     "supertest": "6.3.3",
     "ts-node": "10.9.1",
@@ -59,7 +59,7 @@
     "vitest": "0.27.2"
   },
   "dependencies": {
-    "@prisma/client": "4.9.0",
+    "@prisma/client": "^4.9.0",
     "bcryptjs": "2.4.3",
     "cookie-parser": "1.4.6",
     "cors": "2.8.5",

@@ -4,7 +4,6 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
-  output        = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -141,7 +140,7 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  Program Program?
+  program Program[]
 
   @@unique([code])
   @@map("courses")
@@ -166,13 +165,13 @@ model Program {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  courseId String @unique @db.ObjectId
-
   enrollment   Enrollment?   @relation("programEnrollments")
   certificates Certificates? @relation("certificatePrograms")
 
-  @@unique([code, courseId])
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId String @db.ObjectId
+
+  @@unique([code])
   @@map("programs")
 }
 
