@@ -10,7 +10,7 @@
     "clean-build": "rimraf build",
     "clean-install": "rimraf node_modules package-lock.json yarn.lock pnpm-lock.yaml",
     "clean": "npm run clean-build && npm run clean-install",
-    "postinstall": "prisma generate",
+    "postinstall": "npx prisma generate && npx prisma db push",
     "predev": "npm run swagger && dotenv -e .env.development -- npx prisma db push",
     "dev": "dotenv -e .env.development -- nodemon --watch src/ --exec ts-node src/index.ts",
     "local": "dotenv -e .env.development -- ts-node",

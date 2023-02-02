@@ -17,27 +17,6 @@ enum RoleEnumType {
   admin
 }
 
-enum Tag {
-  NodeJS
-  Java
-  React
-  GraphQL
-  Spring
-  Typescript
-  Express
-  Docker
-  Jest
-  Jenkins
-  AWS
-}
-
-type Comment {
-  text      String
-  voteCount Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-}
-
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -61,47 +40,216 @@ model User {
 }
 
 model Student {
-  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  name               String
-  lastname           String
-  birthday           DateTime
-  phone              Int
-  phoneWithFormat    String
-  dni                Int
-  email              String
-  ruc                Int
-  country            String
-  businessName       String
-  ladline            Int
-  ladlineWithFormat  String
-  address            String
-  postgradoTraining  Boolean?
-  qualifiedTraining  Boolean?
-  highSchoolTraining Boolean?
-  studentTraining    Boolean?
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  lastname String
+  birthday DateTime
+  dni      Int
+  email    String
+
+  ruc          Int?
+  businessName String?
+  address      String?
+
+  country           String
+  phone             Int
+  phoneWithFormat   String
+  ladline           Int
+  ladlineWithFormat String
+
+  postgradoTraining  Boolean? @default(false)
+  qualifiedTraining  Boolean? @default(false)
+  highSchoolTraining Boolean? @default(false)
+  studentTraining    Boolean? @default(false)
+
+  studyCenter  String?
+  workplace    String?
+  workPosition String?
+  workAddress  String?
+
+  status Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  // comments          Comment[]
-  // author            User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  // authorId          String    @db.ObjectId
+  enrollment   Enrollment[]  @relation("studentEnrollments")
+  certificates Certificates? @relation("studentPrograms")
+  membership   Membership?   @relation("studentMemberships")
 
-  // @@index([authorId])
-  @@map("posts")
+  @@unique([email])
+  @@map("students")
 }
 
-model Category {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  code  String
-  name  String
-  model Model
-
-  @@index([code])
-  @@map("categories")
+enum MartketingMediaEnumType {
+  email
+  facebook
+  recemendation
+  website
+  google
+  other
 }
 
-type Model {
-  name        String
-  description String
+model Enrollment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  faceToFaceModality     Boolean? @default(false)
+  semiFaceToFaceModality Boolean? @default(false)
+  virtualModality        Boolean? @default(false)
+
+  enableMarketingAds Boolean                   @default(false)
+  marketingAds       MartketingMediaEnumType[]
+  marketingMedia     String
+  marketingEmail     String
+
+  enrolled Boolean? @default(false)
+  status   Boolean? @default(true)
+
+  amount   Float? @default(0.00)
+  discount Float? @default(0.00)
+  total    Float? @default(0.00)
+
+  student   Student @relation("studentEnrollments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String  @unique @db.ObjectId
+
+  program   Program @relation("programEnrollments", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  programId String  @unique @db.ObjectId
+
+  payment Payment? @relation("enrollmentPayments")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  @@unique([marketingEmail, studentId])
+  @@map("enrollments")
+}
+
+model Course {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String
+  code String
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  uniqueProgram Boolean? @default(false)
+  status        Boolean? @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  Program Program?
+
+  @@unique([code])
+  @@map("courses")
+}
+
+model Program {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name String
+  code String
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  amount   Float @default(0.00)
+  discount Float @default(0.00)
+  total    Float @default(0.00)
+
+  status       Boolean? @default(true)
+  observations String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId String @unique @db.ObjectId
+
+  enrollment   Enrollment?   @relation("programEnrollments")
+  certificates Certificates? @relation("certificatePrograms")
+
+  @@unique([code, courseId])
+  @@map("programs")
+}
+
+model Country {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name      String
+  otherName String
+  iso2      String
+  iso3      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  status Boolean? @default(true)
+
+  @@unique([name, iso2, iso3])
+  @@map("countries")
+}
+
+model Certificates {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  url         String
+  dateOfIssue DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  status Boolean? @default(true)
+
+  program   Program @relation("certificatePrograms", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  programId String  @unique @db.ObjectId
+
+  student   Student @relation("studentPrograms", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String  @unique @db.ObjectId
+
+  @@unique([url])
+  @@map("certificates")
+}
+
+model Membership {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  status Boolean? @default(true)
+
+  student   Student @relation("studentMemberships", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String  @unique @db.ObjectId
+
+  @@map("memberships")
+}
+
+model Payment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  voucher String
+  amount  Float
+
+  paymentMethod    String
+  paymentDate      DateTime
+  paymentCondition String?
+  placeOfPayment   String?
+  observations     String?
+
+  status Boolean? @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  enrollment   Enrollment @relation("enrollmentPayments", fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  enrollmentId String     @unique @db.ObjectId
+
+  @@map("payments")
 }
