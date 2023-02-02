@@ -1,19 +1,19 @@
 import type { NextFunction, Request, Response } from 'express'
 
-import crypto from 'crypto'
-import bcrypt from 'bcryptjs'
-
-import { Prisma } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import isEmpty from 'just-is-empty'
 
+import crypto from 'crypto'
+import bcrypt from 'bcryptjs'
+
 import { type LoginUserInput, type RegisterUserInput } from './schema'
 
 import { createUser, getUniqueUser } from '../user/repository'
-import { signTokens } from './repository'
+import { findUser, signTokens } from './repository'
 
 import { HttpCode } from '../../types/response'
 
@@ -21,14 +21,14 @@ import { AppError, AppSuccess, signJwt, verifyJwt } from '../../utils'
 
 import AuthController from './controller'
 
-import { accessTokenCookieOptions, refreshTokenCookieOptions, refreshTokenMessage } from '../../constants/cookie'
+import { refreshTokenMessage } from '../../constants/cookie'
 
 const controller = new AuthController()
 
 const userCache = new CacheContainer(new MemoryStorage())
 
 // ? Register User Controller
-export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const registerUser = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 12)
 
@@ -61,13 +61,12 @@ export const registerUserHandler = async (req: Request<object, object, RegisterU
 }
 
 // ? Login User Controller
-export const loginUserHandler = async (req: Request<object, object, LoginUserInput>, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (req: Request<object, object, LoginUserInput>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { email, password } = req.body
+    const body = req.body as User
 
-    const user = await controller.findUser(email)
-
-    if (!isEmpty(user) || !(await bcrypt.compare(password, user.password))) {
+    const { isLogged, user } = await controller.login(body)
+    if (!isLogged) {
       next(AppError(HttpCode.BAD_REQUEST, 'invalid_email_or_password', 'Invalid email or password'))
       return
     }
@@ -76,9 +75,8 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
     const { accessToken, refreshToken } = await signTokens(user)
 
     res.header('Authorization', `Bearer ${accessToken}`)
-    res.cookie('access_token', accessToken, accessTokenCookieOptions)
-    res.cookie('refresh_token', refreshToken, refreshTokenCookieOptions)
-    res.cookie('logged_in', true, { ...accessTokenCookieOptions, httpOnly: false })
+    res.header('refreshToken', refreshToken)
+    res.header('loggedIn', 'true')
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'login_success', 'Login success', { accessToken }))
   } catch (err) {
@@ -87,13 +85,9 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
 }
 
 // ? Refresh Access Token
-export const refreshAccessTokenHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const refreshAccessToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const refreshToken = req.cookies.refresh_token
+    const refreshToken = req.headers['refreshToken'] as string
     if (!isEmpty(refreshToken)) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
@@ -107,7 +101,7 @@ export const refreshAccessTokenHandler = async (
     }
 
     // Check if user has a valid session
-    const session = await userCache.getItem<string>(decoded.sub) ?? ''
+    const session = await userCache.getItem<string>(decoded.sub) as string
     if (!isEmpty(session)) {
       next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
@@ -125,8 +119,7 @@ export const refreshAccessTokenHandler = async (
 
     // 4. Add Cookies
     res.header('Authorization', `Bearer ${accessToken}`)
-    res.cookie('access_token', accessToken, accessTokenCookieOptions)
-    res.cookie('logged_in', true, { ...accessTokenCookieOptions, httpOnly: false })
+    res.header('loggedIn', 'true')
 
     // 5. Send response
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'refresh_access_success', 'Refresh access success', { accessToken }))
@@ -136,20 +129,12 @@ export const refreshAccessTokenHandler = async (
 }
 
 // ? Logout
-const logout = (res: Response): void => {
-  res.cookie('access_token', '', { maxAge: -1 })
-  res.cookie('refresh_token', '', { maxAge: -1 })
-  res.cookie('logged_in', '', { maxAge: -1 })
-}
-
-export const logoutUserHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await userCache.clear()
-    logout(res)
+
+    res.removeHeader('Authorization')
+    res.removeHeader('loggedIn')
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'logout_success', 'Logout success'))
   } catch (err) {

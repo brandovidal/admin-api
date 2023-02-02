@@ -14,7 +14,11 @@ import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import omit from 'just-omit'
 
+import bcrypt from 'bcryptjs'
+import isEmpty from 'just-is-empty'
+
 const userCache = new CacheContainer(new MemoryStorage())
+
 const prisma = new PrismaClient()
 
 export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToken> => {
@@ -35,4 +39,13 @@ export const findUser = async (email: string): Promise<User> => {
   )
   void prisma.$disconnect()
   return user
+}
+
+
+export const login = async (userInput: Prisma.UserCreateInput) => {
+  const { email, password } = userInput
+
+  const user = await findUser(email)
+  const isLogged = isEmpty(user) || (await bcrypt.compare(password, user.password))
+  return { isLogged, user }
 }
