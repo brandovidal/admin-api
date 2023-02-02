@@ -36,7 +36,7 @@ export const getPost = async (req: Request, res: Response, next: NextFunction): 
     const title = query.title?.toString() ?? ''
     const content = query.content?.toString() ?? ''
 
-    const { post } = await controller.getPost(title, content)
+    const post = await controller.getPost(title, content)
 
     if (isEmpty(post)) {
       const result = error({ status: HttpCode.FORBIDDEN, code: 'post_not_exist', message: 'Post not exist' })

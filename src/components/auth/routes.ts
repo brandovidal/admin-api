@@ -1,9 +1,9 @@
 import express from 'express'
 import {
-  loginUserHandler,
-  logoutUserHandler,
-  refreshAccessTokenHandler,
-  registerUserHandler
+  login,
+  logout,
+  refreshAccessToken,
+  register
 } from './handler'
 
 import { deserializeUser } from '../../middlewares/deserializeUser'
@@ -17,11 +17,13 @@ import {
 
 const router = express.Router()
 
-router.post('/register', validate(registerUserSchema), registerUserHandler)
+router.post('/register', validate(registerUserSchema), register)
 
-router.post('/login', validate(loginUserSchema), loginUserHandler)
+router.post('/login', validate(loginUserSchema), login)
 
-router.get('/refresh', refreshAccessTokenHandler)
+router.get('/refresh', refreshAccessToken)
+
+router.get('/logout', deserializeUser, requireUser, logout)
 
 // router.get(
 //   '/verifyemail/:verificationCode',
@@ -29,7 +31,6 @@ router.get('/refresh', refreshAccessTokenHandler)
 //   verifyEmailHandler
 // )
 
-router.get('/logout', deserializeUser, requireUser, logoutUserHandler)
 
 // router.post(
 //   '/forgotpassword',

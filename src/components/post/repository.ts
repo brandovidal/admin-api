@@ -3,7 +3,7 @@ import { PrismaClient, type Post } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import { type PostsResponse, type PostResponse } from '../../interfaces/post'
+import type { PostsResponse } from '../../interfaces/post'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
@@ -60,9 +60,9 @@ export const getPosts = async (title?: string, content?: string, page = PAGE_DEF
   return { count, total, posts }
 }
 
-export const getPostById = async (postId: string): Promise<Post | null> => {
-  const cachedPostById = await postCache.getItem<Post>('get-post-by-id') ?? null
-  const cachedPostId = await postCache.getItem<string>('get-id-post')
+export const getPostById = async (postId: string): Promise<Post> => {
+  const cachedPostById = await postCache.getItem<Post>('get-post-by-id') as Post
+  const cachedPostId = await postCache.getItem<string>('get-id-post') as string
 
   if (!isEmpty(cachedPostById) && cachedPostId === postId) {
     return cachedPostById
@@ -72,7 +72,7 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
     where: {
       id: postId
     }
-  })
+  }) as Post
 
   await postCache.setItem('get-post-by-id', post, { ttl: TTL_DEFAULT })
 
@@ -83,15 +83,15 @@ export const getPostById = async (postId: string): Promise<Post | null> => {
   return post
 }
 
-export const getPost = async (title?: string, content?: string): Promise<PostResponse> => {
-  const cachedPost = await postCache.getItem<Post>('get-only-post') ?? null
+export const getPost = async (title?: string, content?: string): Promise<Post> => {
+  const cachedPost = await postCache.getItem<Post>('get-only-post') as Post
 
   // params
   const cachedTitle = await postCache.getItem<number>('get-only-title')
   const cachedEmail = await postCache.getItem<number>('get-only-content')
 
   if (!isEmpty(cachedPost) && cachedTitle === title && cachedEmail === content) {
-    return { post: cachedPost }
+    return cachedPost
   }
 
   const post = await prisma.post.findFirst({
@@ -99,7 +99,7 @@ export const getPost = async (title?: string, content?: string): Promise<PostRes
       title: { contains: title?.toString(), mode: 'insensitive' },
       content: { contains: content?.toString(), mode: 'insensitive' }
     }
-  })
+  }) as Post
 
   await postCache.setItem('get-only-post', post, { ttl: TTL_DEFAULT })
 
@@ -108,7 +108,7 @@ export const getPost = async (title?: string, content?: string): Promise<PostRes
   await postCache.setItem('get-only-content', content, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
-  return { post }
+  return post
 }
 
 export const createPost = async (postInput: Post): Promise<Post> => {

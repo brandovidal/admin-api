@@ -13,7 +13,7 @@ export const postExistValidaton = async (req: Request, res: Response, next: Next
     const title = body.title?.toString() ?? ''
     const content = body.content?.toString() ?? ''
 
-    const { post } = await getPost(title, content)
+    const post = await getPost(title, content)
 
     if (post !== null) {
       const result = AppError(HttpCode.FORBIDDEN, 'post_not_exist', 'Post not exist')

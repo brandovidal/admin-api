@@ -4,13 +4,11 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { UsersResponse, UserResponse, UserToken } from '../../interfaces/user'
-import { signJwt } from '../../utils'
+import type { UsersResponse } from '../../interfaces/user'
 
-import { accessTokenExpiresIn, PAGE_DEFAULT, redisCacheExpiresIn, refreshTokenExpiresIn, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
+import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import isEmpty from 'just-is-empty'
-import omit from 'just-omit'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -77,7 +75,7 @@ export const getUserById = async (userId: string): Promise<User | null> => {
     where: {
       id: userId
     }
-  })
+  }) as User
 
   await userCache.setItem('get-user-by-id', user, { ttl: TTL_DEFAULT })
 
@@ -88,15 +86,15 @@ export const getUserById = async (userId: string): Promise<User | null> => {
   return user
 }
 
-export const getUser = async (name?: string, email?: string): Promise<UserResponse> => {
-  const cachedUser = await userCache.getItem<User>('get-only-user') ?? null
+export const getUser = async (name?: string, email?: string): Promise<User> => {
+  const cachedUser = await userCache.getItem<User>('get-only-user') as User
 
   // params
   const cachedName = await userCache.getItem<number>('get-only-name')
   const cachedEmail = await userCache.getItem<number>('get-only-email')
 
   if (!isEmpty(cachedUser) && cachedName === name && cachedEmail === email) {
-    return { user: cachedUser }
+    return cachedUser
   }
 
   const user = await prisma.user.findFirst({
@@ -104,7 +102,7 @@ export const getUser = async (name?: string, email?: string): Promise<UserRespon
       name: { contains: name, mode: 'insensitive' },
       email: { contains: email, mode: 'insensitive' }
     }
-  })
+  }) as User
 
   await userCache.setItem('get-only-user', user, { ttl: TTL_DEFAULT })
 
@@ -113,10 +111,10 @@ export const getUser = async (name?: string, email?: string): Promise<UserRespon
   await userCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
-  return { user }
+  return user
 }
 
-export const findUniqueUser = async (where: Prisma.UserWhereUniqueInput, select?: Prisma.UserSelect): Promise<User> => {
+export const getUniqueUser = async (where: Prisma.UserWhereUniqueInput, select?: Prisma.UserSelect): Promise<User> => {
   const user = (await prisma.user.findUnique({
     where,
     select
@@ -124,27 +122,6 @@ export const findUniqueUser = async (where: Prisma.UserWhereUniqueInput, select?
 
   void prisma.$disconnect()
   return user
-}
-
-export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToken> => {
-  // 1. Create Session
-  const userId = user.id as string
-
-  await userCache.setItem(`${userId}`, JSON.stringify(omit(user, ['password', 'verified', 'verificationCode'])), { ttl: redisCacheExpiresIn * 60 })
-  // redisClient.set(`${user.id}`, JSON.stringify(omit(user, excludedFields)), {
-  //   EX: config.get<number>('redisCacheExpiresIn') * 60
-  // })
-
-  // 2. Create Access and Refresh tokens
-  const accessToken = signJwt({ sub: user.id }, 'JWT_ACCESS_TOKEN_PRIVATE_KEY', {
-    expiresIn: `${accessTokenExpiresIn}m`
-  })
-
-  const refreshToken = signJwt({ sub: user.id }, 'JWT_REFRESH_TOKEN_PRIVATE_KEY', {
-    expiresIn: `${refreshTokenExpiresIn}m`
-  })
-
-  return { accessToken, refreshToken }
 }
 
 export const createUser = async (userInput: Prisma.UserCreateInput): Promise<User> => {

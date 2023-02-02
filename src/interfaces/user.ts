@@ -5,8 +5,20 @@ export interface UserWhereParams extends User {
   size?: number
 }
 
-export interface UsersResponse { count?: number, total?: number, users: User[] }
-export interface UserResponse { user: User | null }
+export interface UsersResponse {
+  count?: number,
+  total?: number,
+  users: User[]
+}
+export interface UserResponse {
+  user: User | null
+}
+
+export interface UserLoggedResponse {
+  user: User,
+  isLogged: boolean
+}
+
 
 export interface UserToken {
   accessToken: string

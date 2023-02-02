@@ -1,75 +1,35 @@
-import { type CookieOptions, type NextFunction, type Request, type Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 
-import crypto from 'crypto'
-import bcrypt from 'bcryptjs'
-
-import { Prisma } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import isEmpty from 'just-is-empty'
 
-import { type LoginUserInput, type RegisterUserInput } from './schema'
+import type { LoginUserInput } from './schema'
 
-import { createUser, findUniqueUser, signTokens } from '../user/repository'
+import { getUniqueUser } from '../user/repository'
+import { signTokens } from './repository'
 
 import { HttpCode } from '../../types/response'
-
-import { accessTokenExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
 import { AppError, AppSuccess, signJwt, verifyJwt } from '../../utils'
 
 import AuthController from './controller'
 
+import { refreshTokenMessage } from '../../constants/cookie'
+
 const controller = new AuthController()
 
 const userCache = new CacheContainer(new MemoryStorage())
 
-// ? Cookie Options Here
-const cookiesOptions: CookieOptions = {
-  httpOnly: true,
-  sameSite: 'lax'
-}
-
-if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true
-
-const accessTokenCookieOptions: CookieOptions = {
-  ...cookiesOptions,
-  expires: new Date(
-    Date.now() + accessTokenExpiresIn * 60 * 1000
-  ),
-  maxAge: accessTokenExpiresIn * 60 * 1000
-}
-
-const refreshTokenCookieOptions: CookieOptions = {
-  ...cookiesOptions,
-  expires: new Date(
-    Date.now() + refreshTokenExpiresIn * 60 * 1000
-  ),
-  maxAge: refreshTokenExpiresIn * 60 * 1000
-}
-
 // ? Register User Controller
-export const registerUserHandler = async (req: Request<object, object, RegisterUserInput>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
+export const register = async (req: Request<object, object, User>, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined> => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 12)
+    const body = req.body
 
-    const verifyCode = crypto.randomBytes(32).toString('hex')
-    const verificationCode = (crypto
-      .createHash('sha256')
-      .update(verifyCode)
-      .digest('hex'))
-
-    const userInput = {
-      username: req.body.username,
-      name: req.body.name,
-      email: req.body.email.toLowerCase(),
-      password: hashedPassword,
-      verificationCode
-    }
-
-    const user = await createUser(userInput)
+    const user = await controller.register(body)
 
     res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'user_register', 'user registered', { user }))
   } catch (err) {
@@ -84,13 +44,12 @@ export const registerUserHandler = async (req: Request<object, object, RegisterU
 }
 
 // ? Login User Controller
-export const loginUserHandler = async (req: Request<object, object, LoginUserInput>, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (req: Request<object, object, LoginUserInput>, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { email, password } = req.body
+    const body = req.body
 
-    const user = await controller.findUser(email)
-
-    if (!isEmpty(user) || !(await bcrypt.compare(password, user.password))) {
+    const { isLogged, user } = await controller.login(body)
+    if (!isLogged) {
       next(AppError(HttpCode.BAD_REQUEST, 'invalid_email_or_password', 'Invalid email or password'))
       return
     }
@@ -99,9 +58,8 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
     const { accessToken, refreshToken } = await signTokens(user)
 
     res.header('Authorization', `Bearer ${accessToken}`)
-    res.cookie('access_token', accessToken, accessTokenCookieOptions)
-    res.cookie('refresh_token', refreshToken, refreshTokenCookieOptions)
-    res.cookie('logged_in', true, { ...accessTokenCookieOptions, httpOnly: false })
+    res.header('refreshToken', refreshToken)
+    res.header('loggedIn', 'true')
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'login_success', 'Login success', { accessToken }))
   } catch (err) {
@@ -110,42 +68,32 @@ export const loginUserHandler = async (req: Request<object, object, LoginUserInp
 }
 
 // ? Refresh Access Token
-export const refreshAccessTokenHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const refreshAccessToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const refreshToken = req.cookies.refresh_token
-
-    const message = 'Could not refresh access token'
-
+    const refreshToken = req.headers['refreshToken'] as string
     if (!isEmpty(refreshToken)) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
     // Validate refresh token
     const decoded = verifyJwt<{ sub: string }>(refreshToken, 'JWT_REFRESH_TOKEN_PRIVATE_KEY')
-
     if (decoded == null) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
     // Check if user has a valid session
-    const session = await userCache.getItem<string>(decoded.sub) ?? ''
-
+    const session = await userCache.getItem<string>(decoded.sub) as string
     if (!isEmpty(session)) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
     // Check if user still exist
-    const user = await findUniqueUser({ id: JSON.parse(session).id })
-
+    const user = await getUniqueUser({ id: JSON.parse(session).id })
     if (!isEmpty(user)) {
-      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', message))
+      next(AppError(HttpCode.FORBIDDEN, 'could_not_refresh_access_token', refreshTokenMessage))
       return
     }
 
@@ -154,8 +102,7 @@ export const refreshAccessTokenHandler = async (
 
     // 4. Add Cookies
     res.header('Authorization', `Bearer ${accessToken}`)
-    res.cookie('access_token', accessToken, accessTokenCookieOptions)
-    res.cookie('logged_in', true, { ...accessTokenCookieOptions, httpOnly: false })
+    res.header('loggedIn', 'true')
 
     // 5. Send response
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'refresh_access_success', 'Refresh access success', { accessToken }))
@@ -165,20 +112,12 @@ export const refreshAccessTokenHandler = async (
 }
 
 // ? Logout
-const logout = (res: Response): void => {
-  res.cookie('access_token', '', { maxAge: -1 })
-  res.cookie('refresh_token', '', { maxAge: -1 })
-  res.cookie('logged_in', '', { maxAge: -1 })
-}
-
-export const logoutUserHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     await userCache.clear()
-    logout(res)
+
+    res.removeHeader('Authorization')
+    res.removeHeader('loggedIn')
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'logout_success', 'Logout success'))
   } catch (err) {

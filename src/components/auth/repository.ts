@@ -3,18 +3,25 @@ import { PrismaClient } from '@prisma/client'
 
 import { signJwt } from '../../utils'
 
-import { UserToken } from '../../interfaces/user'
+import { UserLoggedResponse, UserToken } from '../../interfaces/user'
 
 import { accessTokenExpiresIn, redisCacheExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 
-import { findUniqueUser } from '../user/repository'
+import { createUser, getUniqueUser } from '../user/repository'
+
+import { LoginUserInput } from './schema'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import omit from 'just-omit'
+import isEmpty from 'just-is-empty'
+
+import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 
 const userCache = new CacheContainer(new MemoryStorage())
+
 const prisma = new PrismaClient()
 
 export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToken> => {
@@ -29,10 +36,38 @@ export const signTokens = async (user: Prisma.UserCreateInput): Promise<UserToke
 }
 
 export const findUser = async (email: string): Promise<User> => {
-  const user = await findUniqueUser(
+  const user = await getUniqueUser(
     { email: email.toLowerCase() },
     { id: true, email: true, verified: true, password: true }
   )
   void prisma.$disconnect()
+  return user
+}
+
+export const login = async (loginInput: LoginUserInput): Promise<UserLoggedResponse> => {
+  const { email, password } = loginInput
+
+  const user = await findUser(email)
+  const isLogged = isEmpty(user) || (await bcrypt.compare(password, user.password))
+  return { isLogged, user }
+}
+
+export const register = async (registerInput: User): Promise<User> => {
+  const { password } = registerInput
+
+  const hashedPassword = await bcrypt.hash(password, 12)
+
+  const verifyCode = crypto.randomBytes(32).toString('hex')
+  const verificationCode = (crypto.createHash('sha256').update(verifyCode).digest('hex'))
+
+  const userInput = {
+    username: registerInput.username,
+    name: registerInput.name,
+    email: registerInput.email.toLowerCase(),
+    password: hashedPassword,
+    verificationCode
+  }
+
+  const user = await createUser(userInput)
   return user
 }

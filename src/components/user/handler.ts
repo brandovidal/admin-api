@@ -1,4 +1,5 @@
-import { type NextFunction, type Request, type Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
+
 import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
@@ -36,7 +37,7 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
     const name = query.name?.toString() ?? ''
     const email = query.email?.toString() ?? ''
 
-    const { user } = await controller.getUser(name, email)
+    const user = await controller.getUser(name, email)
 
     if (isEmpty(user)) {
       const result = error({ status: HttpCode.FORBIDDEN, code: 'user_not_exist', message: 'User not exist' })
@@ -79,11 +80,12 @@ export const create = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-export const getMeHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// get me user
+export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const user = res.locals.user
 
-    const result = success({ status: HttpCode.OK, data: user, code: 'success', message: 'get User Me' })
+    const result = success({ status: HttpCode.OK, data: user, code: 'success', message: 'Get me profile' })
     res.status(200).json(result)
   } catch (err) {
     next(err)
