@@ -51,10 +51,10 @@ model Student {
   address      String?
 
   country           String
-  phone             Int
-  phoneWithFormat   String
-  ladline           Int
-  ladlineWithFormat String
+  phone             Int?
+  phoneWithFormat   String?
+  ladline           Int?
+  ladlineWithFormat String?
 
   postgradoTraining  Boolean? @default(false)
   qualifiedTraining  Boolean? @default(false)

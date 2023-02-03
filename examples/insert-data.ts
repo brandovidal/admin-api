@@ -48,18 +48,35 @@ export const insertUserAndPost = async (): Promise<void> => {
     data: courseInput
   })
   logger.info('Course created')
-  logger.info(JSON.stringify(course, null, 2))
+  // logger.info(JSON.stringify(course, null, 2))
 
   const program = await prisma.program.findFirst()
   logger.info('Program created')
-  logger.info(JSON.stringify(program, null, 2))
+  // logger.info(JSON.stringify(program, null, 2))
 
-  await prisma.program.delete({
-    where: {
-      id: program?.id
-    }
+  // await prisma.program.delete({
+  //   where: {
+  //     id: program?.id
+  //   }
+  // })
+  // logger.info('Program deleted')
+
+  const studentInput: Prisma.StudentCreateInput = {
+    name: 'Juan',
+    lastname: 'Perez',
+    email: 'juan@email.com',
+    phone: 123456789,
+    phoneWithFormat: '+51 123456789',
+    country: 'PEN',
+    dni: 87654321,
+    birthday: new Date(),
+  }
+
+  const student = await prisma.student.create({
+    data: studentInput
   })
-  logger.info('Program deleted')
+  logger.info(JSON.stringify(student, null, 2))
+  logger.info('Student created')
 
   await prisma.$disconnect()
 }
