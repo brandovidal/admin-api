@@ -82,7 +82,7 @@ model Student {
 enum MartketingMediaEnumType {
   email
   facebook
-  recemendation
+  recomendation
   website
   google
   other
@@ -98,10 +98,10 @@ model Enrollment {
   semiFaceToFaceModality Boolean? @default(false)
   virtualModality        Boolean? @default(false)
 
-  enableMarketingAds Boolean                   @default(false)
+  enableMarketingAds Boolean?                  @default(false)
   marketingAds       MartketingMediaEnumType[]
-  marketingMedia     String
-  marketingEmail     String
+  marketingMedia     String?
+  marketingEmail     String?
 
   enrolled Boolean? @default(false)
   status   Boolean? @default(true)
@@ -110,18 +110,19 @@ model Enrollment {
   discount Float? @default(0.00)
   total    Float? @default(0.00)
 
-  student   Student @relation("studentEnrollments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String  @unique @db.ObjectId
+  student   Student? @relation("studentEnrollments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String?  @unique @db.ObjectId
 
-  program   Program @relation("programEnrollments", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  programId String  @unique @db.ObjectId
+  program   Program? @relation("programEnrollments", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  programId String?  @unique @db.ObjectId
 
-  payment Payment? @relation("enrollmentPayments")
+  payment   Payment? @relation("enrollmentPayments", fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  paymentId String?  @unique @db.ObjectId
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  @@unique([marketingEmail, studentId])
+  @@unique([marketingEmail, studentId, programId, paymentId])
   @@map("enrollments")
 }
 
@@ -168,8 +169,8 @@ model Program {
   enrollment   Enrollment?   @relation("programEnrollments")
   certificates Certificates? @relation("certificatePrograms")
 
-  course   Course @relation("programCourses", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  courseId String @db.ObjectId
+  course   Course? @relation("programCourses", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId String? @db.ObjectId
 
   @@unique([code, courseId])
   @@map("programs")
@@ -247,8 +248,7 @@ model Payment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  enrollment   Enrollment @relation("enrollmentPayments", fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  enrollmentId String     @unique @db.ObjectId
+  enrollment Enrollment? @relation("enrollmentPayments")
 
   @@map("payments")
 }
