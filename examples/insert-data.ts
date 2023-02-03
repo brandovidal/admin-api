@@ -44,20 +44,22 @@ export const insertUserAndPost = async (): Promise<void> => {
     }
   }
 
-  await prisma.course.create({
+  const course = await prisma.course.create({
     data: courseInput
   })
   logger.info('Course created')
+  logger.info(JSON.stringify(course, null, 2))
 
-  const courses = await prisma.course.findMany({
-    include: {
-      program: true
+  const program = await prisma.program.findFirst()
+  logger.info('Program created')
+  logger.info(JSON.stringify(program, null, 2))
+
+  await prisma.program.delete({
+    where: {
+      id: program?.id
     }
   })
-  logger.info(JSON.stringify(courses, null, 2))
-
-  await prisma.course.deleteMany({})
-  logger.info('All courses deleted')
+  logger.info('Program deleted')
 
   await prisma.$disconnect()
 }
