@@ -16,6 +16,15 @@ enum RoleEnumType {
   admin
 }
 
+enum MartketingMediaEnumType {
+  email
+  facebook
+  recomendation
+  website
+  google
+  other
+}
+
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -50,7 +59,7 @@ model Student {
   businessName String?
   address      String?
 
-  country           String
+  country           String?
   phone             Int?
   phoneWithFormat   String?
   ladline           Int?
@@ -77,15 +86,6 @@ model Student {
 
   @@unique([email])
   @@map("students")
-}
-
-enum MartketingMediaEnumType {
-  email
-  facebook
-  recomendation
-  website
-  google
-  other
 }
 
 model Enrollment {
@@ -169,8 +169,8 @@ model Program {
   enrollment   Enrollment?   @relation("programEnrollments")
   certificates Certificates? @relation("certificatePrograms")
 
-  course   Course? @relation("programCourses", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  courseId String? @db.ObjectId
+  course   Course @relation("programCourses", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId String @db.ObjectId
 
   @@unique([code, courseId])
   @@map("programs")
