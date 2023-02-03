@@ -59,49 +59,62 @@ export const insertUserAndPost = async (): Promise<void> => {
   })
   logger.info('Programs created')
 
-  const program = await prisma.program.findFirst({})
-  logger.info(JSON.stringify(program, null, 2))
-
-  const studentInput: Prisma.StudentCreateInput = {
-    name: 'Juan',
-    lastname: 'Perez',
-    email: 'juan@email.com',
-    phone: 123456789,
-    phoneWithFormat: '+51 123456789',
-    country: 'PEN',
-    dni: 87654321,
-    birthday: new Date(),
-  }
-
-  const student = await prisma.student.create({
-    data: studentInput
-  })
-  logger.info(JSON.stringify(student, null, 2))
-  logger.info('Student created')
-
-  const enrollemntInput: Prisma.EnrollmentCreateInput = {
-    faceToFaceModality: true,
-    marketingAds: ['recomendation', 'email'],
-    marketingEmail: 'juan@email.com',
-    marketingMedia: 'Correo electronico',
-    enableMarketingAds: true,
-    student: {
-      connect: {
-        id: student.id
-      }
-    },
-    program: {
-      connect: {
-        id: program?.id
+  const program = await prisma.program.findFirst({
+    select: {
+      id: true,
+      code: true,
+      name: true,
+      amount: true,
+      status: true,
+      course: {
+        select: {
+          name: true,
+          code: true,
+          uniqueProgram: true
+        }
       }
     }
-  }
-
-  const enrollment = await prisma.enrollment.create({
-    data: enrollemntInput
   })
-  logger.info(JSON.stringify(enrollment, null, 2))
-  logger.info('Enrollment created')
+  logger.info(JSON.stringify(program, null, 2))
+
+  // const studentInput: Prisma.StudentCreateInput = {
+  //   name: 'Juan',
+  //   lastname: 'Perez',
+  //   email: 'juan@email.com',
+  //   phone: 123456789,
+  //   phoneWithFormat: '+51 123456789',
+  //   country: 'PEN',
+  //   dni: 87654321,
+  //   birthday: new Date(),
+  // }
+  // const student = await prisma.student.create({
+  //   data: studentInput
+  // })
+  // logger.info(JSON.stringify(student, null, 2))
+  // logger.info('Student created')
+
+  // const enrollemntInput: Prisma.EnrollmentCreateInput = {
+  //   faceToFaceModality: true,
+  //   marketingAds: ['recomendation', 'email'],
+  //   marketingEmail: 'juan@email.com',
+  //   marketingMedia: 'Correo electronico',
+  //   enableMarketingAds: true,
+  //   student: {
+  //     connect: {
+  //       id: student.id
+  //     }
+  //   },
+  //   program: {
+  //     connect: {
+  //       id: program?.id
+  //     }
+  //   }
+  // }
+  // const enrollment = await prisma.enrollment.create({
+  //   data: enrollemntInput
+  // })
+  // logger.info(JSON.stringify(enrollment, null, 2))
+  // logger.info('Enrollment created')
 
   // await prisma.student.delete({
   //   where: {
