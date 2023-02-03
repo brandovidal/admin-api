@@ -7,8 +7,16 @@ const prisma = new PrismaClient()
 
 export const insertUserAndPost = async (): Promise<void> => {
   await prisma.user.deleteMany()
-  await prisma.course.deleteMany()
+
+  await prisma.country.deleteMany()
   await prisma.program.deleteMany()
+
+  await prisma.course.deleteMany()
+
+  await prisma.enrollment.deleteMany()
+  await prisma.student.deleteMany()
+
+  // await prisma.payment.deleteMany()
 
   const userInput: Prisma.UserUncheckedCreateInput = {
     email: 'ian.watson@got.com',
@@ -16,48 +24,163 @@ export const insertUserAndPost = async (): Promise<void> => {
     username: 'ianwatson',
     password: 'password'
   }
-  
   await prisma.user.create({
     data: userInput
   })
+  logger.info('User created')
+
+  const countryInput: Prisma.CountryCreateInput = {
+    name: 'Peru',
+    otherName: 'Peru',
+    iso2: 'PE',
+    iso3: 'PER',
+    status: true
+  }
+  await prisma.country.create({
+    data: countryInput
+  })
+  logger.info('country created')
 
   const courseInput: Prisma.CourseCreateInput ={
     name: 'Programacion',
     code: 'PROGRAMACION',
     uniqueProgram: false,
-    status: false,
-    program: {
-      createMany: {
-        data: [
-          {
-            name:  'Usando Prisma',
-            code: 'USANDOPRISMA',
-            status: true
-          },
-          {
-            name:  'Implementando Prisma',
-            code: 'IMPLEMENTANDOPRISMA',
-            status: false
-          }
-        ]
-      }
-    }
+    status: false
   }
-
-  await prisma.course.create({
+  const course = await prisma.course.create({
     data: courseInput
   })
   logger.info('Course created')
 
-  const courses = await prisma.course.findMany({
-    include: {
-      program: true
+  const programInput: Prisma.ProgramCreateManyInput[] = [
+    {
+      name:  'Usando Prisma',
+      code: 'USANDOPRISMA',
+      status: true,
+      courseId: course.id
+    },
+    {
+      name:  'Implementando Prisma',
+      code: 'IMPLEMENTANDOPRISMA',
+      status: false,
+      courseId: course.id
+    }
+  ]
+
+  await prisma.program.createMany({
+    data: programInput
+  })
+  logger.info('Programs created')
+
+  const program = await prisma.program.findFirst({
+    select: {
+      id: true,
+      code: true,
+      name: true,
+      amount: true,
+      status: true,
+      course: {
+        select: {
+          name: true,
+          code: true,
+          uniqueProgram: true
+        }
+      }
     }
   })
-  logger.info(JSON.stringify(courses, null, 2))
+  // logger.info(JSON.stringify(program, null, 2))
 
-  await prisma.course.deleteMany({})
-  logger.info('All courses deleted')
+  const studentInput: Prisma.StudentCreateInput = {
+    name: 'Juan',
+    lastname: 'Perez',
+    email: 'juan@email.com',
+    phone: 123456789,
+    phoneWithFormat: '+51 123456789',
+    country: 'PEN',
+    dni: 87654321,
+    birthday: new Date(),
+  }
+  const student = await prisma.student.create({
+    data: studentInput
+  })
+  // logger.info(JSON.stringify(student, null, 2))
+  logger.info('Student created')
+
+  const enrollemntInput: Prisma.EnrollmentCreateInput = {
+    faceToFaceModality: true,
+    marketingAds: ['recomendation', 'email'],
+    marketingEmail: 'juan@email.com',
+    marketingMedia: 'Correo electronico',
+    enableMarketingAds: true,
+    amount: 100,
+    discount: 5,
+    total: 95,
+    student: {
+      connect: {
+        id: student.id
+      }
+    },
+    program: {
+      connect: {
+        id: program?.id
+      }
+    }
+  }
+  const enrollment = await prisma.enrollment.create({
+    data: enrollemntInput
+  })
+  // logger.info(JSON.stringify(enrollment, null, 2))
+  logger.info('Enrollment created')
+
+  const paymentInput: Prisma.PaymentCreateInput = {
+    voucher: '123456789',
+    amount: 100,
+    paymentDate: new Date(),
+    paymentMethod: 'VISA',
+    enrollment: {
+      connect: {
+        id: enrollment.id
+      }
+    }
+  }
+  const payment = await prisma.payment.create({
+    data: paymentInput,
+    select: {
+      voucher: true,
+      amount: true,
+      paymentDate: true,
+      paymentMethod: true,
+      enrollment: {
+        select: {
+          amount: true,
+          discount: true,
+          total: true,
+          student: {
+            select: {
+              name: true,
+              lastname: true,
+              email: true,
+            }
+          },
+          program: {
+            select: {
+              name: true,
+              code: true,
+            }
+          }
+        }
+      }
+    }
+  })
+  // logger.info(JSON.stringify(payment, null, 2))
+  logger.info('payment created')
+
+  await prisma.student.delete({
+    where: {
+      id: student.id
+    }
+  })
+  logger.info('Student created')
 
   await prisma.$disconnect()
 }
