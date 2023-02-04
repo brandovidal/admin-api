@@ -7,14 +7,14 @@ const prisma = new PrismaClient()
 
 export const insertUserAndPost = async (): Promise<void> => {
   await prisma.user.deleteMany()
+  await prisma.student.deleteMany()
+  await prisma.enrollment.deleteMany()
 
   await prisma.country.deleteMany()
   await prisma.program.deleteMany()
 
   await prisma.course.deleteMany()
-
-  await prisma.enrollment.deleteMany()
-  await prisma.student.deleteMany()
+  await prisma.payment.deleteMany()
 
   // await prisma.payment.deleteMany()
 
@@ -141,46 +141,63 @@ export const insertUserAndPost = async (): Promise<void> => {
       connect: {
         id: enrollment.id
       }
+    },
+    student: {
+      connect: {
+        id: student.id
+      }
     }
   }
   const payment = await prisma.payment.create({
     data: paymentInput,
-    select: {
-      voucher: true,
-      amount: true,
-      paymentDate: true,
-      paymentMethod: true,
-      enrollment: {
-        select: {
-          amount: true,
-          discount: true,
-          total: true,
-          student: {
-            select: {
-              name: true,
-              lastname: true,
-              email: true,
-            }
-          },
-          program: {
-            select: {
-              name: true,
-              code: true,
-            }
-          }
-        }
-      }
+    include: {
+      enrollment: true
     }
   })
   // logger.info(JSON.stringify(payment, null, 2))
   logger.info('payment created')
 
-  await prisma.student.delete({
-    where: {
-      id: student.id
+  const certificateInput: Prisma.CertificateCreateInput = {
+    dateOfIssue: new Date(),
+    url: 'https://www.google.com',
+    student: {
+      connect: {
+        id: student.id
+      }
+    },
+    program: {
+      connect: {
+        id: program?.id
+      }
     }
+  }
+  const certificate = await prisma.certificate.create({
+    data: certificateInput
   })
-  logger.info('Student created')
+  // logger.info(JSON.stringify(certificate, null, 2))
+  logger.info('certificate created')
+
+  const membershipInput: Prisma.MembershipCreateInput = {
+    startDate: new Date(),
+    endDate: new Date(),
+    student: {
+      connect: {
+        id: student.id
+      }
+    }
+  }
+  const membership = await prisma.membership.create({
+    data: membershipInput
+  })
+  // logger.info(JSON.stringify(membership, null, 2))
+  logger.info('membership created')
+
+  // await prisma.student.delete({
+  //   where: {
+  //     id: student.id
+  //   }
+  // })
+  // logger.info('Student deleted')
 
   await prisma.$disconnect()
 }
