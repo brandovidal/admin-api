@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 // Schemas
-import { registerUserSchema, updateUserSchema } from './schema'
+import { findUserByIDSchema, findUserSchema, registerUserSchema, updateUserSchema } from './schema'
 
 // Middlewarea
 import { deserializeUser } from '../../middlewares/deserializeUser'
@@ -15,9 +15,11 @@ const router = Router()
 // router.use(deserializeUser)
 
 router.get('/', getUsers)
-router.get('/user', getUser)
+
+router.get('/user', [validate(findUserSchema)], getUser)
 router.get('/me', [deserializeUser], getMe)
-router.get('/:id', getUserbyId)
+router.get('/:id', [validate(findUserByIDSchema)], getUserbyId)
+
 router.post('/', [validate(registerUserSchema)], create)
 router.put('/:id', [validate(updateUserSchema)], update)
 router.delete('/:id', remove)

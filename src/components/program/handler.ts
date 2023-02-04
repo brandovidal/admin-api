@@ -21,7 +21,6 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
     const size = parseInt(query.size?.toString() ?? '10')
 
     const { count, total, programs } = await controller.getPrograms(name, email, page, size)
-    console.log("🚀 ~ file: handler.ts:24 ~ getPrograms ~ programs", programs)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program list successfully', { programs, count, total }))
   } catch (err) {

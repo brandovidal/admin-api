@@ -43,7 +43,7 @@ export const insertUserAndPost = async (): Promise<void> => {
   })
   logger.info('country created')
 
-  const courseInput: Prisma.CourseCreateInput ={
+  const courseInput: Prisma.CourseCreateInput = {
     name: 'Programacion',
     code: 'PROGRAMACION',
     uniqueProgram: false,
@@ -56,13 +56,13 @@ export const insertUserAndPost = async (): Promise<void> => {
 
   const programInput: Prisma.ProgramCreateManyInput[] = [
     {
-      name:  'Usando Prisma',
+      name: 'Usando Prisma',
       code: 'USANDOPRISMA',
       status: true,
       courseId: course.id
     },
     {
-      name:  'Implementando Prisma',
+      name: 'Implementando Prisma',
       code: 'IMPLEMENTANDOPRISMA',
       status: false,
       courseId: course.id
@@ -194,12 +194,12 @@ export const insertUserAndPost = async (): Promise<void> => {
   // logger.info(JSON.stringify(membership, null, 2))
   logger.info('membership created')
 
-  await prisma.student.delete({
-    where: {
-      id: student.id
-    }
-  })
-  logger.info('Student deleted')
+  // await prisma.student.delete({
+  //   where: {
+  //     id: student.id
+  //   }
+  // })
+  // logger.info('Student deleted')
 
   await prisma.$disconnect()
 }

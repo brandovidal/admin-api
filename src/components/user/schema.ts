@@ -1,6 +1,8 @@
 import { object, string, z } from 'zod'
 import type { TypeOf } from 'zod'
 
+import isEmpty from 'just-is-empty'
+
 enum RoleEnumType {
   ADMIN = 'admin',
   USER = 'user',
@@ -49,6 +51,29 @@ export const updateUserSchema = object({
     })
 })
 
+export const findUserByIDSchema = object({
+  params: object({
+    id: string({
+      required_error: 'ID is required'
+    }),
+  })
+})
+
+export const findUserSchema = object({
+  query: object({
+    name: string({}).nullish(),
+    email: string({}).nullish()
+  }).superRefine((val, ctx) => {
+    const { name, email } = val
+    if (isEmpty(name) && isEmpty(email)) {
+      return ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Name or email is required',
+        fatal: true
+      })
+    }
+  })
+})
 export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>
 
 export type UpdateUserInput = TypeOf<typeof updateUserSchema>['body']

@@ -1,12 +1,17 @@
 import { Router, type NextFunction, type Request, type Response } from 'express'
 import swaggerUi from 'swagger-ui-express'
 
+// Component
 import authRouter from '../components/auth/routes'
 import userRouter from '../components/user/routes'
 import programRouter from '../components/program/routes'
 
+// Util
 import type BaseError from '../utils/appError'
-import { AppError, AppSuccess } from '../utils'
+import { AppError } from '../utils'
+
+// Type
+import { HttpCode } from '../types/response'
 
 const router = Router()
 
@@ -29,19 +34,12 @@ router.use(
 )
 
 router.all('*', (req: Request, res: Response, next: NextFunction): void => {
-  next(AppError(404, 'not_found', `Route ${req.originalUrl} not found`))
+  next(AppError(HttpCode.NOT_FOUND, 'route_not_found', `Route ${req.originalUrl} not found`))
 })
 
 router.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
   const { status, code, message } = err
-
-  res.status(status).json(AppSuccess)
-
-  res.status(status).json({
-    status,
-    code,
-    message
-  })
+  res.status(status).json(AppError(status, code, message))
 })
 
 export { router }

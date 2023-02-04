@@ -40,13 +40,13 @@ export const getUser = async (req: Request, res: Response, next: NextFunction): 
     const user = await controller.getUser(name, email)
 
     if (isEmpty(user)) {
-      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
       return
     }
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find user successfully', user))
   } catch (err) {
-    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
+    next(err)
   }
 }
 
@@ -56,9 +56,20 @@ export const getUserbyId = async (req: Request, res: Response, next: NextFunctio
     const userId: string = req.params?.id
     const user = await controller.getUserId(userId)
 
+    if (isEmpty(user)) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
+      return
+    }
+
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user list successfully', user))
   } catch (err) {
-    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'user_not_exist', 'User not exist'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2023') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_id_error', 'User  id malformed, please check again'))
+        return
+      }
+    }
+    next(err)
   }
 }
 

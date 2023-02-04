@@ -72,11 +72,12 @@ export const getUserById = async (userId: string): Promise<User | null> => {
     return cachedUserById
   }
 
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUnique({
     where: {
       id: userId
     }
   }) as User
+  console.log("🚀 ~ file: repository.ts:80 ~ getUserById ~ user", user)
 
   await userCache.setItem('get-user-by-id', user, { ttl: TTL_DEFAULT })
 
