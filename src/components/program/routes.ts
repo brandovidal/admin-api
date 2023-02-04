@@ -15,7 +15,7 @@ const router = Router()
 // router.use(deserializeProgram)
 
 router.get('/', getPrograms)
-router.get('/user', getProgram)
+router.get('/program', getProgram)
 router.get('/:id', getProgrambyId)
 router.post('/', [validate(registerProgramSchema)], create)
 router.put('/:id', [validate(updateProgramSchema)], update)

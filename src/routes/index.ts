@@ -3,6 +3,7 @@ import swaggerUi from 'swagger-ui-express'
 
 import authRouter from '../components/auth/routes'
 import userRouter from '../components/user/routes'
+import programRouter from '../components/program/routes'
 
 import type BaseError from '../utils/appError'
 import { AppError, AppSuccess } from '../utils'
@@ -11,6 +12,7 @@ const router = Router()
 
 router.use('/api/auth', authRouter)
 router.use('/api/users', userRouter)
+router.use('/api/programs', programRouter)
 
 router.get('/', function (req, res) {
   res.send('Node API is running!')

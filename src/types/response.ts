@@ -17,8 +17,6 @@ export interface SuccessType {
   code: string
   message: string
   data?: object | string | null
-  count?: number
-  total?: number
 }
 
 export enum HttpCode {

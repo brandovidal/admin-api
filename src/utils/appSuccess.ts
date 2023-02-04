@@ -5,30 +5,24 @@ export default class BaseSuccess {
   private readonly code
   private readonly message
   private readonly data
-  private readonly count?
-  private readonly total?
 
-  constructor (status: number, code: string, message: string, data?: object | string | null, count?: number, total?: number) {
+  constructor(status: number, code: string, message: string, data?: object | string | null, count?: number, total?: number) {
     this.status = status
     this.code = code
     this.message = message
     this.data = data
-    this.count = count
-    this.total = total
   }
 
-  getValues (): SuccessType {
+  getValues(): SuccessType {
     return {
       status: this.status,
       code: this.code,
       message: this.message,
       data: this.data,
-      count: this.count,
-      total: this.total
     }
   }
 
-  stringify (): string {
+  stringify(): string {
     return JSON.stringify(this.getValues())
   }
 }
