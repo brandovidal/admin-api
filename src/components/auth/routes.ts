@@ -1,19 +1,15 @@
 import express from 'express'
-import {
-  login,
-  logout,
-  refreshAccessToken,
-  register
-} from './handler'
 
+// Schemas
+import { loginUserSchema, registerUserSchema } from './schema'
+
+// Middlewarea
 import { deserializeUser } from '../../middlewares/deserializeUser'
 import { requireUser } from '../../middlewares/requireUser'
 import { validate } from '../../middlewares/validate'
 
-import {
-  loginUserSchema,
-  registerUserSchema
-} from './schema'
+// Handler
+import { login, logout, refreshAccessToken, register } from './handler'
 
 const router = express.Router()
 

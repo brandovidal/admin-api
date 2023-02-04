@@ -1,10 +1,11 @@
+import { Prisma } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
 
 import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import UserController from './controller'
 
@@ -73,36 +74,54 @@ export const getMe = async (req: Request, res: Response, next: NextFunction): Pr
 }
 
 // create user
-export const create = async (req: Request, res: Response): Promise<void> => {
+export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const createdUser = await controller.createUser(req.body)
 
     res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'user created successfully', createdUser))
   } catch (err) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_exist', 'User already exist'))
+        return
+      }
+    }
+    next(err)
   }
 }
 
 // update user
-export const update = async (req: Request, res: Response): Promise<void> => {
+export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId: string = req.params?.id
     const updatedUser = await controller.updateUser(userId, req.body)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user updated successfully', updatedUser))
   } catch (err) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2025') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
+        return
+      }
+    }
+    next(err)
   }
 }
 
 // delete user
-export const remove = async (req: Request, res: Response): Promise<void> => {
+export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId: string = req.params?.id
     const deletedUser = await controller.deleteUser(userId)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user deleted successfully', deletedUser))
   } catch (err) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2025') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
+        return
+      }
+    }
+    next(err)
   }
 }

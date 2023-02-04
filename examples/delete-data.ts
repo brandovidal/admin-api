@@ -1,35 +1,22 @@
 import { PrismaClient } from '@prisma/client'
+import { logger } from '../src/utils/logger'
 
 const prisma = new PrismaClient()
 
 export const deleteData = async (): Promise<void> => {
-//   await prisma.user.delete({
-//     where: {
-//       id: '63ca41917e23d6b105fe5f1d'
-//     }
-//   })
+  await prisma.user.deleteMany()
+  await prisma.student.deleteMany()
+  await prisma.enrollment.deleteMany()
 
-  await prisma.user.delete({
-    where: {
-      email: 'jon.snow@got.com'
-    }
-  })
+  await prisma.country.deleteMany()
+  await prisma.program.deleteMany()
 
-  // Delete all the posts of an author
-  //   await prisma.post.deleteMany({
-  //     where: {
-  //       authorId: '63ca42996191dc33f46dbedc'
-  //     }
-  //   })
+  await prisma.course.deleteMany()
+  await prisma.payment.deleteMany()
+  await prisma.membership.deleteMany()
+  await prisma.certificate.deleteMany()
 
-  // Delete all posts where the title content "how to"
-//   await prisma.post.deleteMany({
-//     where: {
-//       title: {
-//         contains: 'how to'
-//       }
-//     }
-//   })
+  logger.info('delete data')
 }
 
 void deleteData().then()

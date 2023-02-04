@@ -4,13 +4,11 @@ import { Router } from 'express'
 import { registerUserSchema, updateUserSchema } from './schema'
 
 // Middlewarea
-import { userExistValidaton, userNotExistValidaton } from '../../middlewares/user'
-
-// handler
-import { create, getMe, getUser, getUserbyId, getUsers, remove, update } from './handler'
-
 import { deserializeUser } from '../../middlewares/deserializeUser'
 import { validate } from '../../middlewares/validate'
+
+// Handler
+import { create, getMe, getUser, getUserbyId, getUsers, remove, update } from './handler'
 
 const router = Router()
 
@@ -20,8 +18,8 @@ router.get('/', getUsers)
 router.get('/user', getUser)
 router.get('/me', [deserializeUser], getMe)
 router.get('/:id', getUserbyId)
-router.post('/', [validate(registerUserSchema), userExistValidaton], create)
-router.put('/:id', [validate(updateUserSchema), userNotExistValidaton], update)
-router.delete('/:id', [userNotExistValidaton], remove)
+router.post('/', [validate(registerUserSchema)], create)
+router.put('/:id', [validate(updateUserSchema)], update)
+router.delete('/:id', remove)
 
 export default router

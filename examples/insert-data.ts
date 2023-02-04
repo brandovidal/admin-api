@@ -15,6 +15,8 @@ export const insertUserAndPost = async (): Promise<void> => {
 
   await prisma.course.deleteMany()
   await prisma.payment.deleteMany()
+  await prisma.membership.deleteMany()
+  await prisma.certificate.deleteMany()
 
   // await prisma.payment.deleteMany()
 
