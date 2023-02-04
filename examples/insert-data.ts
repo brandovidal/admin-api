@@ -192,12 +192,12 @@ export const insertUserAndPost = async (): Promise<void> => {
   // logger.info(JSON.stringify(membership, null, 2))
   logger.info('membership created')
 
-  // await prisma.student.delete({
-  //   where: {
-  //     id: student.id
-  //   }
-  // })
-  // logger.info('Student deleted')
+  await prisma.student.delete({
+    where: {
+      id: student.id
+    }
+  })
+  logger.info('Student deleted')
 
   await prisma.$disconnect()
 }
