@@ -1,10 +1,11 @@
+import { Prisma } from '@prisma/client'
 import type { NextFunction, Request, Response } from 'express'
 
 import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import ProgramController from './controller'
 
@@ -50,59 +51,86 @@ export const getProgram = async (req: Request, res: Response, next: NextFunction
 }
 
 // Find programs
-export const getProgrambyId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getProgramById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
     const program = await controller.getProgramId(programId)
 
+    if (isEmpty(program)) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Program not exist'))
+      return
+    }
+
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program list successfully', program))
   } catch (err) {
-    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'program_not_exist', 'Program not exist'))
-  }
-}
-
-// get me program
-export const getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const programProfile = res.locals.program
-
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'Get me profile', programProfile))
-  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2023') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'id_error', 'ID malformed, please check again'))
+        return
+      }
+    }
     next(err)
   }
 }
 
 // create program
-export const create = async (req: Request, res: Response): Promise<void> => {
+export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const createdProgram = await controller.createProgram(req.body)
 
     res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'program created successfully', createdProgram))
   } catch (err) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_exist', 'Program already exist'))
+        return
+      }
+    }
+    if (err instanceof Prisma.PrismaClientValidationError) {
+      logger.error(err.message)
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos'))
+      return
+    }
+    next(err)
   }
 }
 
 // update program
-export const update = async (req: Request, res: Response): Promise<void> => {
+export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
     const updatedProgram = await controller.updateProgram(programId, req.body)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program updated successfully', updatedProgram))
   } catch (err) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2025') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Program not exist'))
+        return
+      }
+    }
+    if (err instanceof Prisma.PrismaClientValidationError) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos'))
+      return
+    }
+    next(err)
   }
 }
 
 // delete program
-export const remove = async (req: Request, res: Response): Promise<void> => {
+export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
     const deletedProgram = await controller.deleteProgram(programId)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program deleted successfully', deletedProgram))
   } catch (err) {
-    res.status(HttpCode.INTERNAL_SERVER_ERROR).json(AppError(HttpCode.INTERNAL_SERVER_ERROR, 'internal_server_error', 'Internal server error'))
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2025') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Program not exist'))
+        return
+      }
+    }
+    next(err)
   }
 }

@@ -11,7 +11,7 @@ enum RoleEnumType {
 export const registerUserSchema = object({
   body: object({
     username: string({
-      required_error: 'Name is required'
+      required_error: 'Username is required'
     }),
     name: string({
       required_error: 'Name is required'
@@ -36,12 +36,20 @@ export const registerUserSchema = object({
 
 export const updateUserSchema = object({
   body: object({
-    name: string({}),
-    email: string({}).email('Invalid email address'),
-    password: string({})
+    name: string({
+      required_error: 'Name is required'
+    }),
+    email: string({
+      required_error: 'Email address is required'
+    }).email('Invalid email address'),
+    password: string({
+      required_error: 'Password is required'
+    })
       .min(8, 'Password must be more than 8 characters')
       .max(32, 'Password must be less than 32 characters'),
-    passwordConfirm: string({}),
+    passwordConfirm: string({
+      required_error: 'Please confirm your password'
+    }),
     role: z.optional(z.nativeEnum(RoleEnumType))
   })
     .partial()
@@ -51,7 +59,7 @@ export const updateUserSchema = object({
     })
 })
 
-export const findUserByIDSchema = object({
+export const findUserByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
@@ -74,6 +82,7 @@ export const findUserSchema = object({
     }
   })
 })
+
 export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>
 
 export type UpdateUserInput = TypeOf<typeof updateUserSchema>['body']

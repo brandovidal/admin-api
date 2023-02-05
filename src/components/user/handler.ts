@@ -57,7 +57,7 @@ export const getUserbyId = async (req: Request, res: Response, next: NextFunctio
     const user = await controller.getUserId(userId)
 
     if (isEmpty(user)) {
-      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'id_error', 'ID malformed, please check again'))
       return
     }
 
@@ -97,6 +97,10 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
         return
       }
     }
+    if (err instanceof Prisma.PrismaClientValidationError) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos'))
+      return
+    }
     next(err)
   }
 }
@@ -114,6 +118,10 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
         res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
         return
       }
+    }
+    if (err instanceof Prisma.PrismaClientValidationError) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos'))
+      return
     }
     next(err)
   }
