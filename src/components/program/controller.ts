@@ -41,14 +41,14 @@ export default class ProgramController {
   }
 
   /**
-   * The `getProgramId` function takes in a `id` path parameter and returns a promise of a Program object
+   * The `getProgramById` function takes in a `id` path parameter and returns a promise of a Program object
    * @param {string} id - string - This is the path parameter. It's the id of the program we want to get.
    * @returns The program object
    */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getProgramId(@Path() id: string): Promise<Program | null> {
+  public async getProgramById(@Path() id: string): Promise<Program> {
     return await getProgramById(id)
   }
 

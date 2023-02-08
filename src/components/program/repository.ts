@@ -63,8 +63,8 @@ export const getPrograms = async (name?: string, email?: string, page = PAGE_DEF
   return { count, total, programs }
 }
 
-export const getProgramById = async (programId: string): Promise<Program | null> => {
-  const cachedProgramById = await programCache.getItem<Program>('get-program-by-id') ?? null
+export const getProgramById = async (programId: string): Promise<Program> => {
+  const cachedProgramById = await programCache.getItem<Program>('get-program-by-id') as Program
   const cachedProgramId = await programCache.getItem<string>('get-id-program')
 
   if (!isEmpty(cachedProgramById) && cachedProgramId === programId) {

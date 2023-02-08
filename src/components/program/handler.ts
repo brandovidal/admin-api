@@ -54,7 +54,7 @@ export const getProgram = async (req: Request, res: Response, next: NextFunction
 export const getProgramById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
-    const program = await controller.getProgramId(programId)
+    const program = await controller.getProgramById(programId)
 
     if (isEmpty(program)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Program not exist'))
