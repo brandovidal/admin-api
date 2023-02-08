@@ -40,24 +40,24 @@ export const getCourse = async (req: Request, res: Response, next: NextFunction)
     const course = await controller.getCourse(name, email)
 
     if (isEmpty(course)) {
-      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'program_not_exist', 'Course not exist'))
+      res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'course_not_exist', 'Course not exist'))
       return
     }
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find course successfully', course))
   } catch (err) {
-    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'program_not_exist', 'Course not exist'))
+    res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'course_not_exist', 'Course not exist'))
   }
 }
 
 // Find courses
 export const getCourseById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const programId: string = req.params?.id
-    const course = await controller.getCourseById(programId)
+    const courseId: string = req.params?.id
+    const course = await controller.getCourseById(courseId)
 
     if (isEmpty(course)) {
-      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Course not exist'))
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_not_exist', 'Course not exist'))
       return
     }
 
@@ -82,7 +82,7 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_exist', 'Course already exist'))
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_exist', 'Course already exist'))
         return
       }
     }
@@ -98,14 +98,14 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 // update course
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const programId: string = req.params?.id
-    const updatedCourse = await controller.updateCourse(programId, req.body)
+    const courseId: string = req.params?.id
+    const updatedCourse = await controller.updateCourse(courseId, req.body)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course updated successfully', updatedCourse))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
-        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Course not exist'))
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_not_exist', 'Course not exist'))
         return
       }
     }
@@ -120,14 +120,23 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 // delete course
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const programId: string = req.params?.id
-    const deletedCourse = await controller.deleteCourse(programId)
+    const courseId: string = req.params?.id
+    const deletedCourse = await controller.deleteCourse(courseId)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course deleted successfully', deletedCourse))
+    if (deletedCourse === 0) {
+      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'course_not_exist', 'course not exist'))
+      return
+    }
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course deleted successfully'))
+
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2014') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_relation_error', 'Course has relation with other table'))
+        return
+      }
       if (err.code === 'P2025') {
-        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Course not exist'))
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_not_exist', 'Course not exist'))
         return
       }
     }

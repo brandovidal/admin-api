@@ -140,12 +140,14 @@ export const updateCourse = async (programId: string, programInput: Course): Pro
   return course
 }
 
-export const deleteCourse = async (programId: string): Promise<Course> => {
-  const course = await prisma.course.delete({
+export const deleteCourse = async (programId: string): Promise<number> => {
+  const course = await prisma.course.deleteMany({
     where: {
-      id: programId
-    }
+      id: {
+        in: [programId]
+      }
+    },
   })
   void prisma.$disconnect()
-  return course
+  return course.count
 }

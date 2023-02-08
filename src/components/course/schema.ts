@@ -2,11 +2,6 @@ import { number, object, string, z } from 'zod'
 import type { TypeOf } from 'zod'
 import isEmpty from 'just-is-empty'
 
-enum RoleEnumType {
-  ADMIN = 'admin',
-  USER = 'user',
-}
-
 export const registerCourseSchema = object({
   body: object({
     name: string({
@@ -15,41 +10,40 @@ export const registerCourseSchema = object({
     code: string({
       required_error: 'Code is required'
     }),
-    amount: number({
-      required_error: 'Amount is required'
-    }),
-    discount: number({
-      required_error: 'Discount is required'
-    }),
-    total: number({
-      required_error: 'Total is required'
-    }),
-    courseId: string({
-      required_error: 'Course ID is required'
-    }).length(24),
+    startDate: string({
+      required_error: 'StartDate is required'
+    }).datetime({ offset: true }).optional(),
+    endDate: string({
+      required_error: 'EndDte is required'
+    }).datetime({ offset: true }).optional(),
+    programId: string({
+      required_error: 'Program ID is required'
+    }).length(24).optional()
   })
 })
 
 export const updateCourseSchema = object({
+  params: object({
+    id: string({
+      required_error: 'ID is required'
+    }).length(24, { message: 'ID must be 24 characters' })
+  }),
   body: object({
     name: string({
       required_error: 'Name is required'
-    }),
+    }).optional(),
     code: string({
       required_error: 'Code is required'
-    }),
-    amount: number({
-      required_error: 'Amount is required'
-    }),
-    discount: number({
-      required_error: 'Discount is required'
-    }),
-    total: number({
-      required_error: 'Total is required'
-    }),
-    courseId: string({
-      required_error: 'Course ID is required'
-    }).length(24),
+    }).optional(),
+    startDate: string({
+      required_error: 'StartDate is required'
+    }).datetime({ offset: true }).optional(),
+    endDate: string({
+      required_error: 'EndDte is required'
+    }).datetime({ offset: true }).optional(),
+    programId: string({
+      required_error: 'Program ID is required'
+    }).length(24, { message: 'ID must be 24 characters' }).optional()
   })
 })
 
@@ -57,7 +51,7 @@ export const findCourseByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
-    }),
+    }).length(24, { message: 'ID must be 24 characters' }),
   })
 })
 

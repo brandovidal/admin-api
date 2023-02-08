@@ -80,14 +80,14 @@ export default class CourseController {
   }
 
   /**
-   * The `deleteCourse` function takes in a `id` path parameter and returns a promise of a Course object
+   * The `deleteCourse` function takes in a `id` path parameter and returns a promise of a number object
    * @param {string} id - string - This is the path parameter. It's the id of the course we want to
    * delete.
-   * @returns The course that was deleted
+   * @returns The number that was deleted
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteCourse(@Path() id: string): Promise<Course> {
+  public async deleteCourse(@Path() id: string): Promise<number> {
     return await deleteCourse(id)
   }
 }

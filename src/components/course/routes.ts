@@ -19,6 +19,6 @@ router.get('/course', [validate(findCourseSchema)], getCourse)
 router.get('/:id', [validate(findCourseByIdSchema)], getCourseById)
 router.post('/', [validate(registerCourseSchema)], create)
 router.put('/:id', [validate(updateCourseSchema)], update)
-router.delete('/:id', remove)
+router.delete('/:id', [validate(findCourseByIdSchema)], remove)
 
 export default router
