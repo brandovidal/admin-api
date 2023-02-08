@@ -11,9 +11,9 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/programs')
 export default class ProgramController {
   /**
-   * The `getPrograms` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `ProgramsResponse`
+   * The `getPrograms` function takes in a `name`, `code`, `page` and `size` query parameter and returns a `ProgramsResponse`
   * @param {string} [name] - string
-  * @param {string} [email] - string
+  * @param {string} [code] - string
   * @param [page=1] - The page number of the results to return.
   * @param [size=10] - The number of items to return per page.
   * @returns The return  is ProgramsResponse.
@@ -22,22 +22,22 @@ export default class ProgramController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getPrograms')
-  public async getPrograms(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<ProgramsResponse> {
-    return await getPrograms(name, email, page, size)
+  public async getPrograms(@Query() name?: string, @Query() code?: string, @Query() page = 1, @Query() size = 10): Promise<ProgramsResponse> {
+    return await getPrograms(name, code, page, size)
   }
 
   /**
-  * The `getProgram` function takes in a `name` and `email` query parameter and returns a `Program`
+  * The `getProgram` function takes in a `name` and `code` query parameter and returns a `Program`
   * object
   * @param {string} [name] - string - This is the name of the program.
-  * @param {string} [email] - The email of the program to get.
+  * @param {string} [code] - The code of the program to get.
   * @returns A promise of a Program object
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/program')
-  public async getProgram(@Query() name?: string, @Query() email?: string): Promise<Program> {
-    return await getProgram(name, email)
+  public async getProgram(@Query() name?: string, @Query() code?: string): Promise<Program> {
+    return await getProgram(name, code)
   }
 
   /**

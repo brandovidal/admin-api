@@ -17,7 +17,7 @@ const programCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getPrograms = async (name?: string, email?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<ProgramsResponse> => {
+export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<ProgramsResponse> => {
   const take = size ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
@@ -26,11 +26,11 @@ export const getPrograms = async (name?: string, email?: string, page = PAGE_DEF
 
   // params
   const cachedName = await programCache.getItem<number>('get-name-programs')
-  const cachedEmail = await programCache.getItem<number>('get-email-programs')
+  const cachedEmail = await programCache.getItem<number>('get-code-programs')
   const cachedSize = await programCache.getItem<number>('get-size-programs')
   const cachedPage = await programCache.getItem<number>('get-page-programs')
 
-  if (!isEmpty(cachedPrograms) && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedPrograms) && cachedName === name && cachedEmail === code && cachedSize === size && cachedPage === page) {
     return { count: cachedPrograms.length, total: cachedTotalPrograms, programs: cachedPrograms }
   }
 
@@ -55,7 +55,7 @@ export const getPrograms = async (name?: string, email?: string, page = PAGE_DEF
 
   // params
   await programCache.setItem('get-name-programs', name, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-email-programs', email, { ttl: TTL_DEFAULT })
+  await programCache.setItem('get-code-programs', code, { ttl: TTL_DEFAULT })
   await programCache.setItem('get-size-programs', size, { ttl: TTL_DEFAULT })
   await programCache.setItem('get-page-programs', page, { ttl: TTL_DEFAULT })
 
@@ -86,14 +86,14 @@ export const getProgramById = async (programId: string): Promise<Program> => {
   return program
 }
 
-export const getProgram = async (name?: string, email?: string): Promise<Program> => {
+export const getProgram = async (name?: string, code?: string): Promise<Program> => {
   const cachedProgram = await programCache.getItem<Program>('get-only-program') as Program
 
   // params
   const cachedName = await programCache.getItem<number>('get-only-name')
-  const cachedEmail = await programCache.getItem<number>('get-only-email')
+  const cachedEmail = await programCache.getItem<number>('get-only-code')
 
-  if (!isEmpty(cachedProgram) && cachedName === name && cachedEmail === email) {
+  if (!isEmpty(cachedProgram) && cachedName === name && cachedEmail === code) {
     return cachedProgram
   }
 
@@ -107,7 +107,7 @@ export const getProgram = async (name?: string, email?: string): Promise<Program
 
   // params
   await programCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
+  await programCache.setItem('get-only-code', code, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return program

@@ -19,8 +19,12 @@
         "description": "Operations of users"
       },
       {
-        "name": "Post",
-        "description": "Operations of posts"
+        "name": "Program",
+        "description": "Operations of programs"
+      },
+      {
+        "name": "Course",
+        "description": "Operations of courses"
       }
     ]
   },

@@ -2,7 +2,12 @@ import { number, object, string, z } from 'zod'
 import type { TypeOf } from 'zod'
 import isEmpty from 'just-is-empty'
 
-export const registerProgramSchema = object({
+enum RoleEnumType {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
+export const registerCourseSchema = object({
   body: object({
     name: string({
       required_error: 'Name is required'
@@ -25,7 +30,7 @@ export const registerProgramSchema = object({
   })
 })
 
-export const updateProgramSchema = object({
+export const updateCourseSchema = object({
   body: object({
     name: string({
       required_error: 'Name is required'
@@ -48,7 +53,7 @@ export const updateProgramSchema = object({
   })
 })
 
-export const findProgramByIdSchema = object({
+export const findCourseByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
@@ -56,7 +61,7 @@ export const findProgramByIdSchema = object({
   })
 })
 
-export const findProgramSchema = object({
+export const findCourseSchema = object({
   query: object({
     name: string({}).nullish(),
     code: string({}).nullish()
@@ -72,6 +77,6 @@ export const findProgramSchema = object({
   })
 })
 
-export type RegisterProgramInput = TypeOf<typeof registerProgramSchema>['body']
+export type RegisterCourseInput = TypeOf<typeof registerCourseSchema>['body']
 
-export type UpdateProgramInput = TypeOf<typeof updateProgramSchema>['body']
+export type UpdateCourseInput = TypeOf<typeof updateCourseSchema>['body']

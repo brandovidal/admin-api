@@ -17,11 +17,11 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
     const query = req.query
 
     const name = query.name?.toString()
-    const email = query.email?.toString()
+    const code = query.code?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
     const size = parseInt(query.size?.toString() ?? '10')
 
-    const { count, total, programs } = await controller.getPrograms(name, email, page, size)
+    const { count, total, programs } = await controller.getPrograms(name, code, page, size)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program list successfully', { programs, count, total }))
   } catch (err) {
@@ -35,9 +35,9 @@ export const getProgram = async (req: Request, res: Response, next: NextFunction
     const query = req.query
 
     const name = query.name?.toString() ?? ''
-    const email = query.email?.toString() ?? ''
+    const code = query.code?.toString() ?? ''
 
-    const program = await controller.getProgram(name, email)
+    const program = await controller.getProgram(name, code)
 
     if (isEmpty(program)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'program_not_exist', 'Program not exist'))
