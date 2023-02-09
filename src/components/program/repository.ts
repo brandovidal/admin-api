@@ -26,11 +26,11 @@ export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFA
 
   // params
   const cachedName = await programCache.getItem<number>('get-name-programs')
-  const cachedEmail = await programCache.getItem<number>('get-code-programs')
+  const cachedCode = await programCache.getItem<number>('get-code-programs')
   const cachedSize = await programCache.getItem<number>('get-size-programs')
   const cachedPage = await programCache.getItem<number>('get-page-programs')
 
-  if (!isEmpty(cachedPrograms) && cachedName === name && cachedEmail === code && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedPrograms) && cachedName === name && cachedCode === code && cachedSize === size && cachedPage === page) {
     return { count: cachedPrograms.length, total: cachedTotalPrograms, programs: cachedPrograms }
   }
 
@@ -91,9 +91,9 @@ export const getProgram = async (name?: string, code?: string): Promise<Program>
 
   // params
   const cachedName = await programCache.getItem<number>('get-only-name')
-  const cachedEmail = await programCache.getItem<number>('get-only-code')
+  const cachedCode = await programCache.getItem<number>('get-only-code')
 
-  if (!isEmpty(cachedProgram) && cachedName === name && cachedEmail === code) {
+  if (!isEmpty(cachedProgram) && cachedName === name && cachedCode === code) {
     return cachedProgram
   }
 

@@ -9,11 +9,10 @@ import type { CoursesResponse } from '../../interfaces/course'
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import isEmpty from 'just-is-empty'
-import { Response } from 'express'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
-const programCache = new CacheContainer(new MemoryStorage())
+const courseCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
@@ -21,16 +20,16 @@ export const getCourses = async (name?: string, email?: string, page = PAGE_DEFA
   const take = size ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedCourses = await programCache.getItem<Course[]>('get-courses') ?? []
-  const cachedTotalCourses = await programCache.getItem<number>('total-courses') ?? 0
+  const cachedCourses = await courseCache.getItem<Course[]>('get-courses') ?? []
+  const cachedTotalCourses = await courseCache.getItem<number>('total-courses') ?? 0
 
   // params
-  const cachedName = await programCache.getItem<number>('get-name-courses')
-  const cachedEmail = await programCache.getItem<number>('get-email-courses')
-  const cachedSize = await programCache.getItem<number>('get-size-courses')
-  const cachedPage = await programCache.getItem<number>('get-page-courses')
+  const cachedName = await courseCache.getItem<number>('get-name-courses')
+  const cachedCode = await courseCache.getItem<number>('get-email-courses')
+  const cachedSize = await courseCache.getItem<number>('get-size-courses')
+  const cachedPage = await courseCache.getItem<number>('get-page-courses')
 
-  if (!isEmpty(cachedCourses) && cachedName === name && cachedEmail === email && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedCourses) && cachedName === name && cachedCode === email && cachedSize === size && cachedPage === page) {
     return { count: cachedCourses.length, total: cachedTotalCourses, courses: cachedCourses }
   }
 
@@ -50,50 +49,50 @@ export const getCourses = async (name?: string, email?: string, page = PAGE_DEFA
 
   const count = courses.length
 
-  await programCache.setItem('get-courses', courses, { ttl: TTL_DEFAULT })
-  await programCache.setItem('total-courses', total, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-courses', courses, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('total-courses', total, { ttl: TTL_DEFAULT })
 
   // params
-  await programCache.setItem('get-name-courses', name, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-email-courses', email, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-size-courses', size, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-page-courses', page, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-name-courses', name, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-email-courses', email, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-size-courses', size, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-page-courses', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return { count, total, courses }
 }
 
-export const getCourseById = async (programId: string): Promise<Course> => {
-  const cachedCourseById = await programCache.getItem<Course>('get-course-by-id') as Course
-  const cachedCourseId = await programCache.getItem<string>('get-id-course')
+export const getCourseById = async (courseId: string): Promise<Course> => {
+  const cachedCourseById = await courseCache.getItem<Course>('get-course-by-id') as Course
+  const cachedCourseId = await courseCache.getItem<string>('get-id-course')
 
-  if (!isEmpty(cachedCourseById) && cachedCourseId === programId) {
+  if (!isEmpty(cachedCourseById) && cachedCourseId === courseId) {
     return cachedCourseById
   }
 
   const course = await prisma.course.findFirst({
     where: {
-      id: programId
+      id: courseId
     }
   }) as Course
 
-  await programCache.setItem('get-course-by-id', course, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-course-by-id', course, { ttl: TTL_DEFAULT })
 
   // params
-  await programCache.setItem('get-id-course', programId, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-id-course', courseId, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return course
 }
 
 export const getCourse = async (name?: string, email?: string): Promise<Course> => {
-  const cachedCourse = await programCache.getItem<Course>('get-only-course') as Course
+  const cachedCourse = await courseCache.getItem<Course>('get-only-course') as Course
 
   // params
-  const cachedName = await programCache.getItem<number>('get-only-name')
-  const cachedEmail = await programCache.getItem<number>('get-only-email')
+  const cachedName = await courseCache.getItem<number>('get-only-name')
+  const cachedCode = await courseCache.getItem<number>('get-only-email')
 
-  if (!isEmpty(cachedCourse) && cachedName === name && cachedEmail === email) {
+  if (!isEmpty(cachedCourse) && cachedName === name && cachedCode === email) {
     return cachedCourse
   }
 
@@ -103,11 +102,11 @@ export const getCourse = async (name?: string, email?: string): Promise<Course> 
     }
   }) as Course
 
-  await programCache.setItem('get-only-course', course, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-only-course', course, { ttl: TTL_DEFAULT })
 
   // params
-  await programCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
+  await courseCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return course
@@ -123,28 +122,28 @@ export const getUniqueCourse = async (where: Prisma.CourseWhereUniqueInput, sele
   return course
 }
 
-export const createCourse = async (programInput: Prisma.CourseCreateInput): Promise<Course> => {
-  const course = await prisma.course.create({ data: programInput })
+export const createCourse = async (courseInput: Prisma.CourseCreateInput): Promise<Course> => {
+  const course = await prisma.course.create({ data: courseInput })
   void prisma.$disconnect()
   return course
 }
 
-export const updateCourse = async (programId: string, programInput: Course): Promise<Course> => {
+export const updateCourse = async (courseId: string, courseInput: Course): Promise<Course> => {
   const course = await prisma.course.update({
     where: {
-      id: programId
+      id: courseId
     },
-    data: programInput
+    data: courseInput
   })
   void prisma.$disconnect()
   return course
 }
 
-export const deleteCourse = async (programId: string): Promise<number> => {
+export const deleteCourse = async (courseId: string): Promise<number> => {
   const course = await prisma.course.deleteMany({
     where: {
       id: {
-        in: [programId]
+        in: [courseId]
       }
     },
   })
