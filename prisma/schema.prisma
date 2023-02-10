@@ -204,11 +204,11 @@ model Certificate {
 
   status Boolean? @default(true)
 
-  program   Program @relation("certificatePrograms", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  programId String  @unique @db.ObjectId
+  program   Program? @relation("certificatePrograms", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+  programId String   @unique @db.ObjectId
 
-  student   Student @relation("studentCertificates", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String  @unique @db.ObjectId
+  student   Student? @relation("studentCertificates", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String   @unique @db.ObjectId
 
   @@unique([url])
   @@map("certificates")
