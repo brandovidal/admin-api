@@ -16,12 +16,12 @@ export const getCertificates = async (req: Request, res: Response, next: NextFun
   try {
     const query = req.query
 
-    const name = query.name?.toString()
-    const email = query.email?.toString()
+    const dateOfIssue = query.dateOfIssue?.toString()
+    const url = query.url?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
     const size = parseInt(query.size?.toString() ?? '10')
 
-    const { count, total, certificates } = await controller.getCertificates(name, email, page, size)
+    const { count, total, certificates } = await controller.getCertificates(dateOfIssue, url, page, size)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate list successfully', { certificates, count, total }))
   } catch (err) {
@@ -34,10 +34,10 @@ export const getCertificate = async (req: Request, res: Response, next: NextFunc
   try {
     const query = req.query
 
-    const name = query.name?.toString() ?? ''
-    const email = query.email?.toString() ?? ''
+    const dateOfIssue = query.dateOfIssue?.toString() ?? ''
+    const url = query.url?.toString() ?? ''
 
-    const certificate = await controller.getCertificate(name, email)
+    const certificate = await controller.getCertificate(dateOfIssue, url)
 
     if (isEmpty(certificate)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'certificate_not_exist', 'Certificate not exist'))

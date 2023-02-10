@@ -11,9 +11,9 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/certificates')
 export default class CertificateController {
   /**
-   * The `getCertificates` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `CertificatesResponse`
-  * @param {string} [name] - string
-  * @param {string} [email] - string
+   * The `getCertificates` function takes in a `dateOfIssue`, `url`, `page` and `size` query parameter and returns a `CertificatesResponse`
+  * @param {string} [dateOfIssue] - string
+  * @param {string} [url] - string
   * @param [page=1] - The page number of the results to return.
   * @param [size=10] - The number of items to return per page.
   * @returns The return  is CertificatesResponse.
@@ -22,22 +22,22 @@ export default class CertificateController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCertificates')
-  public async getCertificates(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<CertificatesResponse> {
-    return await getCertificates(name, email, page, size)
+  public async getCertificates(@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() size = 10): Promise<CertificatesResponse> {
+    return await getCertificates(dateOfIssue, url, page, size)
   }
 
   /**
-  * The `getCertificate` function takes in a `name` and `email` query parameter and returns a `Certificate`
+  * The `getCertificate` function takes in a `dateOfIssue` and `url` query parameter and returns a `Certificate`
   * object
-  * @param {string} [name] - string - This is the name of the certificate.
-  * @param {string} [email] - The email of the certificate to get.
+  * @param {string} [dateOfIssue] - string - This is the dateOfIssue of the certificate.
+  * @param {string} [url] - The url of the certificate to get.
   * @returns A promise of a Certificate object
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/certificate')
-  public async getCertificate(@Query() name?: string, @Query() email?: string): Promise<Certificate> {
-    return await getCertificate(name, email)
+  public async getCertificate(@Query() dateOfIssue?: string, @Query() url?: string): Promise<Certificate> {
+    return await getCertificate(dateOfIssue, url)
   }
 
   /**

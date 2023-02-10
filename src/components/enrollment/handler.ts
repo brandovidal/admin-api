@@ -16,12 +16,12 @@ export const getEnrollments = async (req: Request, res: Response, next: NextFunc
   try {
     const query = req.query
 
-    const name = query.name?.toString()
-    const email = query.email?.toString()
+    const startDate = query.startDate?.toString()
+    const endDate = query.endDate?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
     const size = parseInt(query.size?.toString() ?? '10')
 
-    const { count, total, enrollments } = await controller.getEnrollments(name, email, page, size)
+    const { count, total, enrollments } = await controller.getEnrollments(startDate, endDate, page, size)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'enrollment list successfully', { enrollments, count, total }))
   } catch (err) {
@@ -34,10 +34,10 @@ export const getEnrollment = async (req: Request, res: Response, next: NextFunct
   try {
     const query = req.query
 
-    const name = query.name?.toString() ?? ''
-    const email = query.email?.toString() ?? ''
+    const startDate = query.startDate?.toString() ?? ''
+    const endDate = query.endDate?.toString() ?? ''
 
-    const enrollment = await controller.getEnrollment(name, email)
+    const enrollment = await controller.getEnrollment(startDate, endDate)
 
     if (isEmpty(enrollment)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'enrollment_not_exist', 'Enrollment not exist'))

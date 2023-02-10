@@ -225,8 +225,8 @@ model Membership {
 
   status Boolean? @default(true)
 
-  student   Student @relation("studentMemberships", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String  @unique @db.ObjectId
+  student   Student? @relation("studentMemberships", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String   @unique @db.ObjectId
 
   @@map("memberships")
 }
@@ -243,11 +243,11 @@ model Payment {
   placeOfPayment   String?
   observations     String?
 
-  enrollment   Enrollment @relation("enrollmentPayments", fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  enrollmentId String     @unique @db.ObjectId
+  enrollment   Enrollment? @relation("enrollmentPayments", fields: [enrollmentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  enrollmentId String      @unique @db.ObjectId
 
-  student   Student @relation("studentPayments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String  @unique @db.ObjectId
+  student   Student? @relation("studentPayments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  studentId String   @unique @db.ObjectId
 
   status Boolean? @default(true)
 

@@ -11,9 +11,9 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/enrollments')
 export default class EnrollmentController {
   /**
-   * The `getEnrollments` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `EnrollmentsResponse`
-  * @param {string} [name] - string
-  * @param {string} [email] - string
+   * The `getEnrollments` function takes in a `startDate`, `endDate`, `page` and `size` query parameter and returns a `EnrollmentsResponse`
+  * @param {string} [startDate] - string
+  * @param {string} [endDate] - string
   * @param [page=1] - The page number of the results to return.
   * @param [size=10] - The number of items to return per page.
   * @returns The return  is EnrollmentsResponse.
@@ -22,22 +22,22 @@ export default class EnrollmentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getEnrollments')
-  public async getEnrollments(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<EnrollmentsResponse> {
-    return await getEnrollments(name, email, page, size)
+  public async getEnrollments(@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() size = 10): Promise<EnrollmentsResponse> {
+    return await getEnrollments(startDate, endDate, page, size)
   }
 
   /**
-  * The `getEnrollment` function takes in a `name` and `email` query parameter and returns a `Enrollment`
+  * The `getEnrollment` function takes in a `startDate` and `endDate` query parameter and returns a `Enrollment`
   * object
-  * @param {string} [name] - string - This is the name of the enrollment.
-  * @param {string} [email] - The email of the enrollment to get.
+  * @param {string} [startDate] - string - This is the startDate of the enrollment.
+  * @param {string} [endDate] - The endDate of the enrollment to get.
   * @returns A promise of a Enrollment object
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/enrollment')
-  public async getEnrollment(@Query() name?: string, @Query() email?: string): Promise<Enrollment> {
-    return await getEnrollment(name, email)
+  public async getEnrollment(@Query() startDate?: string, @Query() endDate?: string): Promise<Enrollment> {
+    return await getEnrollment(startDate, endDate)
   }
 
   /**
