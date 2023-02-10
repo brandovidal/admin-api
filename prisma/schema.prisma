@@ -81,7 +81,7 @@ model Student {
   updatedAt DateTime @updatedAt()
 
   enrollment  Enrollment[]  @relation("studentEnrollments")
-  certificate Certificate[] @relation("studentPrograms")
+  certificate Certificate[] @relation("studentCertificates")
   membership  Membership[]  @relation("studentMemberships")
   payment     Payment[]     @relation("studentPayments")
 
@@ -207,7 +207,7 @@ model Certificate {
   program   Program @relation("certificatePrograms", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   programId String  @unique @db.ObjectId
 
-  student   Student @relation("studentPrograms", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  student   Student @relation("studentCertificates", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   studentId String  @unique @db.ObjectId
 
   @@unique([url])

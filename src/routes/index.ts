@@ -7,6 +7,7 @@ import userRouter from '../components/user/routes'
 import programRouter from '../components/program/routes'
 import courseRouter from '../components/course/routes'
 import countryRouter from '../components/country/routes'
+import studentsRouter from '../components/student/routes'
 
 // Util
 import type BaseError from '../utils/appError'
@@ -22,6 +23,7 @@ router.use('/api/users', userRouter)
 router.use('/api/programs', programRouter)
 router.use('/api/courses', courseRouter)
 router.use('/api/countries', countryRouter)
+router.use('/api/students', studentsRouter)
 
 router.get('/', function (req, res) {
   res.send('Node API is running!')
