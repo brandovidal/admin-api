@@ -10,6 +10,8 @@ import countryRouter from '../components/country/routes'
 import studentRouter from '../components/student/routes'
 import enrollmentRouter from '../components/enrollment/routes'
 import certificateRouter from '../components/certificate/routes'
+import membershipRouter from '../components/membership/routes'
+import paymentRouter from '../components/payment/routes'
 
 // Util
 import type BaseError from '../utils/appError'
@@ -28,6 +30,8 @@ router.use('/api/countries', countryRouter)
 router.use('/api/students', studentRouter)
 router.use('/api/enrollments', enrollmentRouter)
 router.use('/api/certificates', certificateRouter)
+router.use('/api/memberships', membershipRouter)
+router.use('/api/payments', paymentRouter)
 
 router.get('/', function (req, res) {
   res.send('Node API is running!')

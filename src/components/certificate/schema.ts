@@ -13,13 +13,13 @@ export const registerCertificateSchema = z.object({
     status: z.boolean({
       required_error: 'Status is required',
       invalid_type_error: 'Status must be boolean'
-    }),
+    }).optional(),
     programId: z.string({
       required_error: 'Program ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }).optional(),
+    }).length(24, { message: 'ID must be 24 characters' }),
     studentId: z.string({
       required_error: 'Student ID is required'
-    }).length(24, { message: 'Student ID must be 24 characters' }).optional(),
+    }).length(24, { message: 'Student ID must be 24 characters' }),
   })
 })
 
@@ -32,14 +32,14 @@ export const updateCertificateSchema = z.object({
   body: z.object({
     url: z.string({
       required_error: 'URL is required'
-    }).url({ message: 'URL is invalid' }),
+    }).url({ message: 'URL is invalid' }).optional(),
     dateOfIssue: z.string({
       required_error: 'StartDate is required'
-    }).datetime({ offset: true, message: 'Date of issue is invalid' }),
+    }).datetime({ offset: true, message: 'Date of issue is invalid' }).optional(),
     status: z.boolean({
       required_error: 'Status is required',
       invalid_type_error: 'Status must be boolean'
-    }),
+    }).optional(),
     programId: z.string({
       required_error: 'Program ID is required'
     }).length(24, { message: 'ID must be 24 characters' }).optional(),

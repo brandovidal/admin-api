@@ -166,8 +166,8 @@ model Program {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  enrollment  Enrollment?  @relation("programEnrollments")
-  certificate Certificate? @relation("certificatePrograms")
+  enrollment  Enrollment?   @relation("programEnrollments")
+  Certificate Certificate[] @relation("certificatePrograms")
 
   course   Course? @relation("programCourses", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId String? @db.ObjectId
@@ -205,10 +205,10 @@ model Certificate {
   status Boolean? @default(true)
 
   program   Program? @relation("certificatePrograms", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  programId String   @unique @db.ObjectId
+  programId String   @db.ObjectId
 
   student   Student? @relation("studentCertificates", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String   @unique @db.ObjectId
+  studentId String   @db.ObjectId
 
   @@unique([url])
   @@map("certificates")

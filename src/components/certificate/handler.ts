@@ -85,6 +85,13 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
         res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'certificate_exist', 'Certificate already exist'))
         return
       }
+      if (err.code === 'P2032') {
+        const name = err.meta?.field as string ?? ''
+        const message = err.message
+
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos', [{ name, message }]))
+        return
+      }
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
       logger.error(err.message)
