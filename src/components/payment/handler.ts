@@ -104,6 +104,10 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'payment updated successfully', updatedPayment))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2002') {
+        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'payment_exist', 'Voucher already exist in other payment'))
+        return
+      }
       if (err.code === 'P2025') {
         res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'payment_not_exist', 'Payment not exist'))
         return
