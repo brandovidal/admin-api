@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import request from 'supertest'
 
-import { Prisma } from '@prisma/client'
+import { Course, Prisma, Program, Student } from '@prisma/client'
 
 import { HttpCode } from '../src/types/response'
 import { app } from '../src/index'
@@ -88,42 +88,123 @@ describe.concurrent('API methods', () => {
     })
   })
 
-  describe('User methods', () => {
-    describe('GET /api/users', () => {
-      it('should respond with an array of users', async () => {
-        const response = await server.get('/api/users').send()
-        const data = response.body?.data?.users
+  describe('Course methods', () => {
+    describe('POST /api/courses', () => {
+      it('should respond with a 201 status code', async () => {
+        const courseInput: Prisma.CourseCreateInput = {
+          name: 'React',
+          code: 'REACT',
+          uniqueProgram: true,
+        }
 
-        expect(response.status).toBe(HttpCode.OK)
-        expect(data).toBeInstanceOf(Array)
+        const response = await server.post('/api/courses').send(courseInput)
+
+        expect(response.status).toBe(HttpCode.CREATED)
+        expect(response.headers['Content-Type']).contains(/json/)
       })
 
-      it('should respond with a user with name is contain jon', async () => {
-        const response = await server.get('/api/users?name=jon').send()
-        const data = response.body?.data
+    })
+  })
 
+  describe('Program methods', () => {
+    describe('POST /api/programs', () => {
+      it('should respond with a 201 status code', async () => {
+        const courses = await server.get('/api/courses').send()
+        const courseFinded = courses?.body?.data?.courses?.[0]
+        const courseId = courseFinded?.id as string
+
+        const programInput = {
+          name: 'Fullstack',
+          code: 'FS',
+          courseId
+        }
+
+        const response = await server.post('/api/programs').send(programInput)
+
+        expect(response.status).toBe(HttpCode.CREATED)
+        expect(response.headers['Content-Type']).contains(/json/)
+      })
+
+    })
+
+  })
+
+  describe('Student methods', () => {
+    describe('POST /api/students', () => {
+      it('should respond with a 201 status code', async () => {
+        const studentInput: Prisma.StudentCreateInput = {
+          name: 'Ofelio',
+          lastname: 'diaz',
+          email: 'ofelio@correo.com',
+          birthday: new Date(),
+          dni: 12345678,
+        }
+
+        const response = await server.post('/api/students').send(studentInput)
+
+        expect(response.status).toBe(HttpCode.CREATED)
+        expect(response.headers['Content-Type']).contains(/json/)
+      })
+    })
+  })
+
+  describe('Enrollment methods', () => {
+    describe('POST /api/enrollments', () => {
+      it('should respond with a 201 status code', async () => {
+        const students = await server.get('/api/students').send()
+        const studentFinded: Student = students?.body?.data?.students?.[0]
+        const studentId = studentFinded?.id as string
+
+        const programs = await server.get('/api/programs').send()
+        const programFinded: Program = programs?.body?.data?.programs?.[0]
+        const programId = programFinded?.id as string
+
+        const enrollmentInput = {
+          studentId,
+          programId,
+          startDate: new Date(),
+          endDate: new Date(),
+
+        }
+
+        const response = await server.post('/api/enrollments').send(enrollmentInput)
+
+        expect(response.status).toBe(HttpCode.CREATED)
+        expect(response.headers['Content-Type']).contains(/json/)
+      })
+
+    })
+
+  })
+
+
+  describe('Delete all data', () => {
+    describe('DELETE /api/students', () => {
+      it('should respond with a 200 status code', async () => {
+        const students = await server.get('/api/students').send()
+        const studentFinded: Student = students?.body?.data?.students?.[0]
+        const studentId = studentFinded?.id as string
+
+        expect(students.status).toBe(HttpCode.OK)
+        expect(studentFinded).toBeInstanceOf(Object)
+
+        const response = await server.delete(`/api/students/${studentId}`).send()
         expect(response.status).toBe(HttpCode.OK)
-        expect(data).toBeInstanceOf(Object)
       })
     })
 
-    describe('PUT /api/users', () => {
+    describe('DELETE /api/courses', () => {
       it('should respond with a 200 status code', async () => {
-        const users = await server.get('/api/users').send()
-        const userFinded: Prisma.UserCreateInput = users?.body?.data?.users?.[0]
-        const userId = userFinded?.id as string
+        const courses = await server.get('/api/courses').send()
+        const courseFinded: Course = courses?.body?.data?.courses?.[0]
+        const courseId = courseFinded?.id as string
 
-        expect(users.status).toBe(HttpCode.OK)
-        expect(userFinded).toBeInstanceOf(Object)
+        expect(courses.status).toBe(HttpCode.OK)
+        expect(courseFinded).toBeInstanceOf(Object)
 
-        const updatedUserInput = {
-          name: 'Roger Hudson'
-        }
-
-        const response = await server.put(`/api/users/${userId}`).send(updatedUserInput)
-
+        const response = await server.delete(`/api/courses/${courseId}`).send()
+        console.log("🚀 ~ file: index.test.ts:282 ~ it ~ response", response.body)
         expect(response.status).toBe(HttpCode.OK)
-        expect(response.headers['Content-Type']).contains(/json/)
       })
     })
 
@@ -142,3 +223,4 @@ describe.concurrent('API methods', () => {
     })
   })
 })
+
