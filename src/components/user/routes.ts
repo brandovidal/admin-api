@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 // Schemas
-import { findUserByIdSchema as findUserByIdSchema, findUserSchema, registerUserSchema, updateUserSchema } from './schema'
+import { findUserByIdSchema, findUserSchema, registerUserSchema, updateUserSchema } from './schema'
 
 // Middlewarea
 import { deserializeUser } from '../../middlewares/deserializeUser'

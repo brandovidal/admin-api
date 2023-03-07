@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 enum RoleEnumType {
   ADMIN = 'admin',
-  USER = 'user',
+  USER = 'user'
 }
 
 export const registerUserSchema = object({
@@ -28,7 +28,7 @@ export const registerUserSchema = object({
       required_error: 'Please confirm your password'
     }),
     role: z.optional(z.nativeEnum(RoleEnumType))
-  }).refine((data) => data.password === data.passwordConfirm, {
+  }).refine(data => data.password === data.passwordConfirm, {
     path: ['passwordConfirm'],
     message: 'Passwords do not match'
   })
@@ -53,7 +53,7 @@ export const updateUserSchema = object({
     role: z.optional(z.nativeEnum(RoleEnumType))
   })
     .partial()
-    .refine((data) => data.password === data.passwordConfirm, {
+    .refine(data => data.password === data.passwordConfirm, {
       path: ['passwordConfirm'],
       message: 'Passwords do not match'
     })
@@ -63,7 +63,7 @@ export const findUserByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
-    }),
+    })
   })
 })
 
@@ -74,7 +74,7 @@ export const findUserSchema = object({
   }).superRefine((val, ctx) => {
     const { name, email } = val
     if (isEmpty(name) && isEmpty(email)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Name or email is required',
         fatal: true
