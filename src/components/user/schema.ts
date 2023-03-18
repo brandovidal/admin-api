@@ -8,6 +8,48 @@ enum RoleEnumType {
   USER = 'user'
 }
 
+export const findUserByIdSchema = object({
+  params: object({
+    id: string({
+      required_error: 'ID is required'
+    })
+  })
+})
+
+export const findUserSchema = object({
+  query: object({
+    name: string({}).nullish(),
+    email: string({}).nullish()
+  }).superRefine((val, ctx) => {
+    const { name, email } = val
+    if (isEmpty(name) && isEmpty(email)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Name or email is required',
+        fatal: true
+      })
+    }
+  })
+})
+
+export const createUserSchema = object({
+  body: object({
+    username: string({
+      required_error: 'Username is required'
+    }),
+    name: string({
+      required_error: 'Name is required'
+    }),
+    email: string({
+      required_error: 'Email address is required'
+    }).email('Invalid email address'),
+    password: string({
+      required_error: 'Password is required'
+    }).min(6, 'Password must be more than 6 characters')
+      .max(32, 'Password must be less than 32 characters')
+  })
+})
+
 export const registerUserSchema = object({
   body: object({
     username: string({
@@ -22,7 +64,7 @@ export const registerUserSchema = object({
     password: string({
       required_error: 'Password is required'
     })
-      .min(8, 'Password must be more than 8 characters')
+      .min(6, 'Password must be more than 6 characters')
       .max(32, 'Password must be less than 32 characters'),
     passwordConfirm: string({
       required_error: 'Please confirm your password'
@@ -57,30 +99,6 @@ export const updateUserSchema = object({
       path: ['passwordConfirm'],
       message: 'Passwords do not match'
     })
-})
-
-export const findUserByIdSchema = object({
-  params: object({
-    id: string({
-      required_error: 'ID is required'
-    })
-  })
-})
-
-export const findUserSchema = object({
-  query: object({
-    name: string({}).nullish(),
-    email: string({}).nullish()
-  }).superRefine((val, ctx) => {
-    const { name, email } = val
-    if (isEmpty(name) && isEmpty(email)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Name or email is required',
-        fatal: true
-      })
-    }
-  })
 })
 
 export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>

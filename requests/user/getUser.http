@@ -1,5 +1,5 @@
 # get all Users
-GET http://localhost:5000/users
+GET http://localhost:5000/api/users
 
 # get Users from page 1  with 10 items per page
 # GET http://localhost:5000/users
