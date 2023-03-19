@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import request from 'supertest'
 
-import { Course, Prisma, Program, Student } from '@prisma/client'
+import type { Course, Prisma, Program, Student } from '@prisma/client'
 
 import { HttpCode } from '../src/types/response'
 import { app } from '../src/index'
@@ -28,10 +28,12 @@ describe.concurrent('API methods', () => {
 
       it('should respond with a missing param', async () => {
         const userInputWithParamsMissing = {
-          username: "dracon",
-          email: "dracon@gmail.com",
+          username: 'dracon',
+          email: 'dracon@gmail.com'
         }
-        const response = await server.post('/api/auth/register').send(userInputWithParamsMissing)
+        const response = await server
+          .post('/api/auth/register')
+          .send(userInputWithParamsMissing)
 
         expect(response.status).toBe(HttpCode.BAD_REQUEST)
         expect(response.headers['Content-Type']).contains(/json/)
@@ -56,7 +58,7 @@ describe.concurrent('API methods', () => {
       it('should respond with login', async () => {
         const loginInput = {
           email: 'dracon@gmail.com',
-          password: 'admin123',
+          password: 'admin123'
         }
 
         const response = await server.post('/api/auth/login').send(loginInput)
@@ -67,9 +69,11 @@ describe.concurrent('API methods', () => {
 
       it('should respond with a missing input', async () => {
         const userInputWithParamsMissing = {
-          email: "dracon@gmail.com",
+          email: 'dracon@gmail.com'
         }
-        const response = await server.post('/api/auth/login').send(userInputWithParamsMissing)
+        const response = await server
+          .post('/api/auth/login')
+          .send(userInputWithParamsMissing)
 
         expect(response.status).toBe(HttpCode.BAD_REQUEST)
         expect(response.headers['Content-Type']).contains(/json/)
@@ -77,10 +81,12 @@ describe.concurrent('API methods', () => {
 
       it('should respond with email or password incorrect', async () => {
         const userInputExistInDB = {
-          email: "dracon@gmail.com",
-          password: "admin1234",
+          email: 'dracon@gmail.com',
+          password: 'admin1234'
         }
-        const response = await server.post('/api/auth/login').send(userInputExistInDB)
+        const response = await server
+          .post('/api/auth/login')
+          .send(userInputExistInDB)
 
         expect(response.status).toBe(HttpCode.BAD_REQUEST)
         expect(response.headers['Content-Type']).contains(/json/)
@@ -94,7 +100,7 @@ describe.concurrent('API methods', () => {
         const courseInput: Prisma.CourseCreateInput = {
           name: 'React',
           code: 'REACT',
-          uniqueProgram: true,
+          uniqueProgram: true
         }
 
         const response = await server.post('/api/courses').send(courseInput)
@@ -102,7 +108,6 @@ describe.concurrent('API methods', () => {
         expect(response.status).toBe(HttpCode.CREATED)
         expect(response.headers['Content-Type']).contains(/json/)
       })
-
     })
   })
 
@@ -124,9 +129,7 @@ describe.concurrent('API methods', () => {
         expect(response.status).toBe(HttpCode.CREATED)
         expect(response.headers['Content-Type']).contains(/json/)
       })
-
     })
-
   })
 
   describe('Student methods', () => {
@@ -137,7 +140,7 @@ describe.concurrent('API methods', () => {
           lastname: 'diaz',
           email: 'ofelio@correo.com',
           birthday: new Date(),
-          dni: 12345678,
+          dni: 12345678
         }
 
         const response = await server.post('/api/students').send(studentInput)
@@ -153,42 +156,42 @@ describe.concurrent('API methods', () => {
       it('should respond with a 201 status code', async () => {
         const students = await server.get('/api/students').send()
         const studentFinded: Student = students?.body?.data?.students?.[0]
-        const studentId = studentFinded?.id as string
+        const studentId = studentFinded?.id
 
         const programs = await server.get('/api/programs').send()
         const programFinded: Program = programs?.body?.data?.programs?.[0]
-        const programId = programFinded?.id as string
+        const programId = programFinded?.id
 
         const enrollmentInput = {
           studentId,
           programId,
           startDate: new Date(),
-          endDate: new Date(),
-
+          endDate: new Date()
         }
 
-        const response = await server.post('/api/enrollments').send(enrollmentInput)
+        const response = await server
+          .post('/api/enrollments')
+          .send(enrollmentInput)
 
         expect(response.status).toBe(HttpCode.CREATED)
         expect(response.headers['Content-Type']).contains(/json/)
       })
-
     })
-
   })
-
 
   describe('Delete all data', () => {
     describe('DELETE /api/students', () => {
       it('should respond with a 200 status code', async () => {
         const students = await server.get('/api/students').send()
         const studentFinded: Student = students?.body?.data?.students?.[0]
-        const studentId = studentFinded?.id as string
+        const studentId = studentFinded?.id
 
         expect(students.status).toBe(HttpCode.OK)
         expect(studentFinded).toBeInstanceOf(Object)
 
-        const response = await server.delete(`/api/students/${studentId}`).send()
+        const response = await server
+          .delete(`/api/students/${studentId}`)
+          .send()
         expect(response.status).toBe(HttpCode.OK)
       })
     })
@@ -197,13 +200,12 @@ describe.concurrent('API methods', () => {
       it('should respond with a 200 status code', async () => {
         const courses = await server.get('/api/courses').send()
         const courseFinded: Course = courses?.body?.data?.courses?.[0]
-        const courseId = courseFinded?.id as string
+        const courseId = courseFinded?.id
 
         expect(courses.status).toBe(HttpCode.OK)
         expect(courseFinded).toBeInstanceOf(Object)
 
         const response = await server.delete(`/api/courses/${courseId}`).send()
-        console.log("🚀 ~ file: index.test.ts:282 ~ it ~ response", response.body)
         expect(response.status).toBe(HttpCode.OK)
       })
     })
@@ -211,7 +213,7 @@ describe.concurrent('API methods', () => {
     describe('DELETE /api/users', () => {
       it('should respond with a 200 status code', async () => {
         const users = await server.get('/api/users').send()
-        const userFinded: Prisma.UserCreateInput = users?.body?.data?.users?.[0]
+        const userFinded: Prisma.UserCreateInput = users?.body?.data?.[0]
         const userId = userFinded?.id as string
 
         expect(users.status).toBe(HttpCode.OK)
@@ -223,4 +225,3 @@ describe.concurrent('API methods', () => {
     })
   })
 })
-
