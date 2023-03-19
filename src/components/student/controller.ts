@@ -11,19 +11,19 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/students')
 export default class StudentController {
   /**
-   * The `getStudents` function takes in a `name`, `email`, `page` and `size` query parameter and returns a `StudentsResponse`
+   * The `getStudents` function takes in a `name`, `email`, `page` and `limit` query parameter and returns a `StudentsResponse`
   * @param {string} [name] - string
   * @param {string} [email] - string
   * @param [page=1] - The page number of the results to return.
-  * @param [size=10] - The number of items to return per page.
+  * @param [limit=10] - The number of items to return per page.
   * @returns The return  is StudentsResponse.
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getStudents')
-  public async getStudents(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() size = 10): Promise<StudentsResponse> {
-    return await getStudents(name, email, page, size)
+  public async getStudents(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<StudentsResponse> {
+    return await getStudents(name, email, page, limit)
   }
 
   /**

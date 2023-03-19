@@ -16,8 +16,8 @@ const membershipCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getMemberships = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<MembershipsResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getMemberships = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<MembershipsResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedMemberships = await membershipCache.getItem<Membership[]>('get-memberships') ?? []
@@ -26,10 +26,10 @@ export const getMemberships = async (startDate?: string, endDate?: string, page 
   // params
   const cachedName = await membershipCache.getItem<number>('get-startDate-memberships')
   const cachedCode = await membershipCache.getItem<number>('get-endDate-memberships')
-  const cachedSize = await membershipCache.getItem<number>('get-size-memberships')
+  const cachedSize = await membershipCache.getItem<number>('get-limit-memberships')
   const cachedPage = await membershipCache.getItem<number>('get-page-memberships')
 
-  if (!isEmpty(cachedMemberships) && cachedName === startDate && cachedCode === endDate && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedMemberships) && cachedName === startDate && cachedCode === endDate && cachedSize === limit && cachedPage === page) {
     return { count: cachedMemberships.length, total: cachedTotalMemberships, memberships: cachedMemberships }
   }
 
@@ -56,7 +56,7 @@ export const getMemberships = async (startDate?: string, endDate?: string, page 
   // params
   await membershipCache.setItem('get-startDate-memberships', startDate, { ttl: TTL_DEFAULT })
   await membershipCache.setItem('get-endDate-memberships', endDate, { ttl: TTL_DEFAULT })
-  await membershipCache.setItem('get-size-memberships', size, { ttl: TTL_DEFAULT })
+  await membershipCache.setItem('get-limit-memberships', limit, { ttl: TTL_DEFAULT })
   await membershipCache.setItem('get-page-memberships', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()

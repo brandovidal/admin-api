@@ -11,19 +11,19 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/countries')
 export default class CountryController {
   /**
-   * The `getCountries` function takes in a `name`, `iso3`, `page` and `size` query parameter and returns a `CountriesResponse`
+   * The `getCountries` function takes in a `name`, `iso3`, `page` and `limit` query parameter and returns a `CountriesResponse`
   * @param {string} [name] - string
   * @param {string} [iso3] - string
   * @param [page=1] - The page number of the results to return.
-  * @param [size=10] - The number of items to return per page.
+  * @param [limit=10] - The number of items to return per page.
   * @returns The return  is CountriesResponse.
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCountries')
-  public async getCountries(@Query() name?: string, @Query() iso3?: string, @Query() page = 1, @Query() size = 10): Promise<CountriesResponse> {
-    return await getCountries(name, iso3, page, size)
+  public async getCountries(@Query() name?: string, @Query() iso3?: string, @Query() page = 1, @Query() limit = 10): Promise<CountriesResponse> {
+    return await getCountries(name, iso3, page, limit)
   }
 
   /**

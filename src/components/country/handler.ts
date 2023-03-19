@@ -19,9 +19,9 @@ export const getCountries = async (req: Request, res: Response, next: NextFuncti
     const name = query.name?.toString()
     const iso3 = query.iso3?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, countries } = await controller.getCountries(name, iso3, page, size)
+    const { count, total, countries } = await controller.getCountries(name, iso3, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'country list successfully', { countries, count, total }))
   } catch (err) {

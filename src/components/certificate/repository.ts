@@ -16,8 +16,8 @@ const certificateCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getCertificates = async (dateOfIssue?: string, url?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<CertificatesResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getCertificates = async (dateOfIssue?: string, url?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<CertificatesResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedCertificates = await certificateCache.getItem<Certificate[]>('get-certificates') ?? []
@@ -26,10 +26,10 @@ export const getCertificates = async (dateOfIssue?: string, url?: string, page =
   // params
   const cachedName = await certificateCache.getItem<number>('get-dateOfIssue-certificates')
   const cachedCode = await certificateCache.getItem<number>('get-url-certificates')
-  const cachedSize = await certificateCache.getItem<number>('get-size-certificates')
+  const cachedSize = await certificateCache.getItem<number>('get-limit-certificates')
   const cachedPage = await certificateCache.getItem<number>('get-page-certificates')
 
-  if (!isEmpty(cachedCertificates) && cachedName === dateOfIssue && cachedCode === url && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedCertificates) && cachedName === dateOfIssue && cachedCode === url && cachedSize === limit && cachedPage === page) {
     return { count: cachedCertificates.length, total: cachedTotalCertificates, certificates: cachedCertificates }
   }
 
@@ -56,7 +56,7 @@ export const getCertificates = async (dateOfIssue?: string, url?: string, page =
   // params
   await certificateCache.setItem('get-dateOfIssue-certificates', dateOfIssue, { ttl: TTL_DEFAULT })
   await certificateCache.setItem('get-url-certificates', url, { ttl: TTL_DEFAULT })
-  await certificateCache.setItem('get-size-certificates', size, { ttl: TTL_DEFAULT })
+  await certificateCache.setItem('get-limit-certificates', limit, { ttl: TTL_DEFAULT })
   await certificateCache.setItem('get-page-certificates', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()

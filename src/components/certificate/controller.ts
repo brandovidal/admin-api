@@ -11,19 +11,19 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/certificates')
 export default class CertificateController {
   /**
-   * The `getCertificates` function takes in a `dateOfIssue`, `url`, `page` and `size` query parameter and returns a `CertificatesResponse`
+   * The `getCertificates` function takes in a `dateOfIssue`, `url`, `page` and `limit` query parameter and returns a `CertificatesResponse`
   * @param {string} [dateOfIssue] - string
   * @param {string} [url] - string
   * @param [page=1] - The page number of the results to return.
-  * @param [size=10] - The number of items to return per page.
+  * @param [limit=10] - The number of items to return per page.
   * @returns The return  is CertificatesResponse.
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCertificates')
-  public async getCertificates(@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() size = 10): Promise<CertificatesResponse> {
-    return await getCertificates(dateOfIssue, url, page, size)
+  public async getCertificates(@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() limit = 10): Promise<CertificatesResponse> {
+    return await getCertificates(dateOfIssue, url, page, limit)
   }
 
   /**

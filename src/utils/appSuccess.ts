@@ -5,6 +5,8 @@ export default class BaseSuccess {
   private readonly code
   private readonly message
   private readonly data
+  private readonly count
+  private readonly total
 
   constructor (
     status: number,
@@ -18,6 +20,8 @@ export default class BaseSuccess {
     this.code = code
     this.message = message
     this.data = data
+    this.count = count
+    this.total = total
   }
 
   getValues (): SuccessType {
@@ -25,7 +29,9 @@ export default class BaseSuccess {
       status: this.status,
       code: this.code,
       message: this.message,
-      data: this.data
+      data: this.data,
+      count: this.count,
+      total: this.total
     }
   }
 

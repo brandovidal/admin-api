@@ -19,9 +19,9 @@ export const getMemberships = async (req: Request, res: Response, next: NextFunc
     const startDate = query.startDate?.toString()
     const endDate = query.endDate?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, memberships } = await controller.getMemberships(startDate, endDate, page, size)
+    const { count, total, memberships } = await controller.getMemberships(startDate, endDate, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'membership list successfully', { memberships, count, total }))
   } catch (err) {

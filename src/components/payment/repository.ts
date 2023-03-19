@@ -16,8 +16,8 @@ const paymentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getPayments = async (voucher?: string, amount?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<PaymentsResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getPayments = async (voucher?: string, amount?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<PaymentsResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedPayments = await paymentCache.getItem<Payment[]>('get-payments') ?? []
@@ -26,10 +26,10 @@ export const getPayments = async (voucher?: string, amount?: string, page = PAGE
   // params
   const cachedName = await paymentCache.getItem<number>('get-voucher-payments')
   const cachedCode = await paymentCache.getItem<number>('get-amount-payments')
-  const cachedSize = await paymentCache.getItem<number>('get-size-payments')
+  const cachedSize = await paymentCache.getItem<number>('get-limit-payments')
   const cachedPage = await paymentCache.getItem<number>('get-page-payments')
 
-  if (!isEmpty(cachedPayments) && cachedName === voucher && cachedCode === amount && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedPayments) && cachedName === voucher && cachedCode === amount && cachedSize === limit && cachedPage === page) {
     return { count: cachedPayments.length, total: cachedTotalPayments, payments: cachedPayments }
   }
 
@@ -55,7 +55,7 @@ export const getPayments = async (voucher?: string, amount?: string, page = PAGE
   // params
   await paymentCache.setItem('get-voucher-payments', voucher, { ttl: TTL_DEFAULT })
   await paymentCache.setItem('get-amount-payments', amount, { ttl: TTL_DEFAULT })
-  await paymentCache.setItem('get-size-payments', size, { ttl: TTL_DEFAULT })
+  await paymentCache.setItem('get-limit-payments', limit, { ttl: TTL_DEFAULT })
   await paymentCache.setItem('get-page-payments', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()

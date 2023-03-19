@@ -19,9 +19,9 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
     const name = query.name?.toString()
     const email = query.email?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, students } = await controller.getStudents(name, email, page, size)
+    const { count, total, students } = await controller.getStudents(name, email, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'student list successfully', { students, count, total }))
   } catch (err) {

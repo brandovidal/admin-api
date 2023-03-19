@@ -16,8 +16,8 @@ const studentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getStudents = async (name?: string, email?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<StudentsResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getStudents = async (name?: string, email?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<StudentsResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedStudents = await studentCache.getItem<Student[]>('get-students') ?? []
@@ -26,10 +26,10 @@ export const getStudents = async (name?: string, email?: string, page = PAGE_DEF
   // params
   const cachedName = await studentCache.getItem<number>('get-name-students')
   const cachedCode = await studentCache.getItem<number>('get-email-students')
-  const cachedSize = await studentCache.getItem<number>('get-size-students')
+  const cachedSize = await studentCache.getItem<number>('get-limit-students')
   const cachedPage = await studentCache.getItem<number>('get-page-students')
 
-  if (!isEmpty(cachedStudents) && cachedName === name && cachedCode === email && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedStudents) && cachedName === name && cachedCode === email && cachedSize === limit && cachedPage === page) {
     return { count: cachedStudents.length, total: cachedTotalStudents, students: cachedStudents }
   }
 
@@ -55,7 +55,7 @@ export const getStudents = async (name?: string, email?: string, page = PAGE_DEF
   // params
   await studentCache.setItem('get-name-students', name, { ttl: TTL_DEFAULT })
   await studentCache.setItem('get-email-students', email, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-size-students', size, { ttl: TTL_DEFAULT })
+  await studentCache.setItem('get-limit-students', limit, { ttl: TTL_DEFAULT })
   await studentCache.setItem('get-page-students', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()

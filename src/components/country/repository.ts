@@ -16,8 +16,8 @@ const countryCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<CountriesResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<CountriesResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedCountries = await countryCache.getItem<Country[]>('get-countries') ?? []
@@ -26,10 +26,10 @@ export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEF
   // params
   const cachedName = await countryCache.getItem<number>('get-name-countries')
   const cachedIso3 = await countryCache.getItem<number>('get-iso3-countries')
-  const cachedSize = await countryCache.getItem<number>('get-size-countries')
+  const cachedSize = await countryCache.getItem<number>('get-limit-countries')
   const cachedPage = await countryCache.getItem<number>('get-page-countries')
 
-  if (!isEmpty(cachedCountries) && cachedName === name && cachedIso3 === iso3 && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedCountries) && cachedName === name && cachedIso3 === iso3 && cachedSize === limit && cachedPage === page) {
     return { count: cachedCountries.length, total: cachedTotalCountries, countries: cachedCountries }
   }
 
@@ -55,7 +55,7 @@ export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEF
   // params
   await countryCache.setItem('get-name-countries', name, { ttl: TTL_DEFAULT })
   await countryCache.setItem('get-iso3-countries', iso3, { ttl: TTL_DEFAULT })
-  await countryCache.setItem('get-size-countries', size, { ttl: TTL_DEFAULT })
+  await countryCache.setItem('get-limit-countries', limit, { ttl: TTL_DEFAULT })
   await countryCache.setItem('get-page-countries', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()

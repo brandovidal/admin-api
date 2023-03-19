@@ -16,8 +16,8 @@ const enrollmentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getEnrollments = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<EnrollmentsResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getEnrollments = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<EnrollmentsResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedEnrollments = await enrollmentCache.getItem<Enrollment[]>('get-enrollments') ?? []
@@ -26,10 +26,10 @@ export const getEnrollments = async (startDate?: string, endDate?: string, page 
   // params
   const cachedName = await enrollmentCache.getItem<number>('get-startDate-enrollments')
   const cachedCode = await enrollmentCache.getItem<number>('get-endDate-enrollments')
-  const cachedSize = await enrollmentCache.getItem<number>('get-size-enrollments')
+  const cachedSize = await enrollmentCache.getItem<number>('get-limit-enrollments')
   const cachedPage = await enrollmentCache.getItem<number>('get-page-enrollments')
 
-  if (!isEmpty(cachedEnrollments) && cachedName === startDate && cachedCode === endDate && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedEnrollments) && cachedName === startDate && cachedCode === endDate && cachedSize === limit && cachedPage === page) {
     return { count: cachedEnrollments.length, total: cachedTotalEnrollments, enrollments: cachedEnrollments }
   }
 
@@ -56,7 +56,7 @@ export const getEnrollments = async (startDate?: string, endDate?: string, page 
   // params
   await enrollmentCache.setItem('get-startDate-enrollments', startDate, { ttl: TTL_DEFAULT })
   await enrollmentCache.setItem('get-endDate-enrollments', endDate, { ttl: TTL_DEFAULT })
-  await enrollmentCache.setItem('get-size-enrollments', size, { ttl: TTL_DEFAULT })
+  await enrollmentCache.setItem('get-limit-enrollments', limit, { ttl: TTL_DEFAULT })
   await enrollmentCache.setItem('get-page-enrollments', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()

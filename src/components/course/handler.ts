@@ -19,9 +19,9 @@ export const getCourses = async (req: Request, res: Response, next: NextFunction
     const name = query.name?.toString()
     const email = query.email?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, courses } = await controller.getCourses(name, email, page, size)
+    const { count, total, courses } = await controller.getCourses(name, email, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course list successfully', { courses, count, total }))
   } catch (err) {

@@ -19,9 +19,9 @@ export const getEnrollments = async (req: Request, res: Response, next: NextFunc
     const startDate = query.startDate?.toString()
     const endDate = query.endDate?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, enrollments } = await controller.getEnrollments(startDate, endDate, page, size)
+    const { count, total, enrollments } = await controller.getEnrollments(startDate, endDate, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'enrollment list successfully', { enrollments, count, total }))
   } catch (err) {

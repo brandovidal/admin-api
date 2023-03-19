@@ -19,11 +19,11 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction):
     const name = query.name?.toString()
     const email = query.email?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, users } = await controller.getUsers(name, email, page, size)
+    const { count, total, users } = await controller.getUsers(name, email, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user list successfully', { users, count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'user list successfully', users, count, total))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'users_not_exist', 'Users not exist'))
   }

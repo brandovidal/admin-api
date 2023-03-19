@@ -19,9 +19,9 @@ export const getCertificates = async (req: Request, res: Response, next: NextFun
     const dateOfIssue = query.dateOfIssue?.toString()
     const url = query.url?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, certificates } = await controller.getCertificates(dateOfIssue, url, page, size)
+    const { count, total, certificates } = await controller.getCertificates(dateOfIssue, url, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate list successfully', { certificates, count, total }))
   } catch (err) {

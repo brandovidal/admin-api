@@ -19,9 +19,9 @@ export const getPayments = async (req: Request, res: Response, next: NextFunctio
     const voucher = query.voucher?.toString()
     const amount = query.amount?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, payments } = await controller.getPayments(voucher, amount, page, size)
+    const { count, total, payments } = await controller.getPayments(voucher, amount, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'payment list successfully', { payments, count, total }))
   } catch (err) {

@@ -19,9 +19,9 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
     const name = query.name?.toString()
     const code = query.code?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
-    const size = parseInt(query.size?.toString() ?? '10')
+    const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, programs } = await controller.getPrograms(name, code, page, size)
+    const { count, total, programs } = await controller.getPrograms(name, code, page, limit)
 
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program list successfully', { programs, count, total }))
   } catch (err) {

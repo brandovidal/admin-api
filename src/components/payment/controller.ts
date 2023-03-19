@@ -11,19 +11,19 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/payments')
 export default class PaymentController {
   /**
-   * The `getPayments` function takes in a `voucher`, `amount`, `page` and `size` query parameter and returns a `PaymentsResponse`
+   * The `getPayments` function takes in a `voucher`, `amount`, `page` and `limit` query parameter and returns a `PaymentsResponse`
   * @param {string} [voucher] - string
   * @param {string} [amount] - string
   * @param [page=1] - The page number of the results to return.
-  * @param [size=10] - The number of items to return per page.
+  * @param [limit=10] - The number of items to return per page.
   * @returns The return  is PaymentsResponse.
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getPayments')
-  public async getPayments(@Query() voucher?: string, @Query() amount?: string, @Query() page = 1, @Query() size = 10): Promise<PaymentsResponse> {
-    return await getPayments(voucher, amount, page, size)
+  public async getPayments(@Query() voucher?: string, @Query() amount?: string, @Query() page = 1, @Query() limit = 10): Promise<PaymentsResponse> {
+    return await getPayments(voucher, amount, page, limit)
   }
 
   /**

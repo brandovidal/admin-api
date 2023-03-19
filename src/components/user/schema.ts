@@ -10,9 +10,9 @@ enum RoleEnumType {
 
 export const findUserByIdSchema = object({
   params: object({
-    id: string({
+    id: z.string({
       required_error: 'ID is required'
-    })
+    }).length(24, { message: 'ID must be 24 characters' })
   })
 })
 

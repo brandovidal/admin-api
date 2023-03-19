@@ -17,8 +17,8 @@ const programCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFAULT, size = SIZE_DEFAULT): Promise<ProgramsResponse> => {
-  const take = size ?? SIZE_DEFAULT
+export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<ProgramsResponse> => {
+  const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
   const cachedPrograms = await programCache.getItem<Program[]>('get-programs') ?? []
@@ -27,10 +27,10 @@ export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFA
   // params
   const cachedName = await programCache.getItem<number>('get-name-programs')
   const cachedCode = await programCache.getItem<number>('get-code-programs')
-  const cachedSize = await programCache.getItem<number>('get-size-programs')
+  const cachedSize = await programCache.getItem<number>('get-limit-programs')
   const cachedPage = await programCache.getItem<number>('get-page-programs')
 
-  if (!isEmpty(cachedPrograms) && cachedName === name && cachedCode === code && cachedSize === size && cachedPage === page) {
+  if (!isEmpty(cachedPrograms) && cachedName === name && cachedCode === code && cachedSize === limit && cachedPage === page) {
     return { count: cachedPrograms.length, total: cachedTotalPrograms, programs: cachedPrograms }
   }
 
@@ -56,7 +56,7 @@ export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFA
   // params
   await programCache.setItem('get-name-programs', name, { ttl: TTL_DEFAULT })
   await programCache.setItem('get-code-programs', code, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-size-programs', size, { ttl: TTL_DEFAULT })
+  await programCache.setItem('get-limit-programs', limit, { ttl: TTL_DEFAULT })
   await programCache.setItem('get-page-programs', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
