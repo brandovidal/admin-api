@@ -177,7 +177,7 @@ export const create = async (
         .json(
           AppError(
             HttpCode.CONFLICT,
-            'error_validation',
+            'prisma_validation_error',
             'Error de validación de campos'
           )
         )
@@ -217,12 +217,13 @@ export const update = async (
       }
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
+      console.error(err)
       res
         .status(HttpCode.CONFLICT)
         .json(
           AppError(
             HttpCode.CONFLICT,
-            'error_validation',
+            'prisma_validation_error',
             'Error de validación de campos'
           )
         )

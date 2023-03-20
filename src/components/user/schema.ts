@@ -78,6 +78,9 @@ export const registerUserSchema = object({
 
 export const updateUserSchema = object({
   body: object({
+    username: string({
+      required_error: 'Username is required'
+    }),
     name: string({
       required_error: 'Name is required'
     }),
@@ -87,18 +90,9 @@ export const updateUserSchema = object({
     password: string({
       required_error: 'Password is required'
     })
-      .min(8, 'Password must be more than 8 characters')
-      .max(32, 'Password must be less than 32 characters'),
-    passwordConfirm: string({
-      required_error: 'Please confirm your password'
-    }),
-    role: z.optional(z.nativeEnum(RoleEnumType))
+      .min(6, 'Password must be more than 6 characters')
+      .max(32, 'Password must be less than 32 characters')
   })
-    .partial()
-    .refine(data => data.password === data.passwordConfirm, {
-      path: ['passwordConfirm'],
-      message: 'Passwords do not match'
-    })
 })
 
 export type RegisterUserInput = Omit<TypeOf<typeof registerUserSchema>['body'], 'passwordConfirm'>

@@ -88,7 +88,7 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
       logger.error(err.message)
-      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos'))
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'prisma_validation_error', 'Error de validación de campos'))
       return
     }
     next(err)
@@ -110,7 +110,7 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
       }
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
-      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'error_validation', 'Error de validación de campos'))
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'prisma_validation_error', 'Error de validación de campos'))
       return
     }
     next(err)
