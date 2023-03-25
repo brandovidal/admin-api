@@ -24,13 +24,14 @@ export const getUsers = async (
     const email = query.email?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
-    console.log('🚀 ~ file: handler.ts:23 ~ getUsers ~ limit:', limit)
+    const revalidate = query.revalidate?.toString()
 
     const { count, total, users } = await controller.getUsers(
       name,
       email,
       page,
-      limit
+      limit,
+      revalidate
     )
 
     res
