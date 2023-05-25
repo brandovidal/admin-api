@@ -115,7 +115,7 @@ describe.concurrent('API methods', () => {
     describe('POST /api/programs', () => {
       it('should respond with a 201 status code', async () => {
         const courses = await server.get('/api/courses').send()
-        const courseFinded = courses?.body?.data?.courses?.[0]
+        const courseFinded = courses?.body?.data?.[0]
         const courseId = courseFinded?.id as string
 
         const programInput = {
@@ -155,11 +155,11 @@ describe.concurrent('API methods', () => {
     describe('POST /api/enrollments', () => {
       it('should respond with a 201 status code', async () => {
         const students = await server.get('/api/students').send()
-        const studentFinded: Student = students?.body?.data?.students?.[0]
+        const studentFinded: Student = students?.body?.data?.[0]
         const studentId = studentFinded?.id
 
         const programs = await server.get('/api/programs').send()
-        const programFinded: Program = programs?.body?.data?.programs?.[0]
+        const programFinded: Program = programs?.body?.data?.[0]
         const programId = programFinded?.id
 
         const enrollmentInput = {
@@ -183,7 +183,7 @@ describe.concurrent('API methods', () => {
     describe('DELETE /api/students', () => {
       it('should respond with a 200 status code', async () => {
         const students = await server.get('/api/students').send()
-        const studentFinded: Student = students?.body?.data?.students?.[0]
+        const studentFinded: Student = students?.body?.data?.[0]
         const studentId = studentFinded?.id
 
         expect(students.status).toBe(HttpCode.OK)
@@ -199,7 +199,7 @@ describe.concurrent('API methods', () => {
     describe('DELETE /api/courses', () => {
       it('should respond with a 200 status code', async () => {
         const courses = await server.get('/api/courses').send()
-        const courseFinded: Course = courses?.body?.data?.courses?.[0]
+        const courseFinded: Course = courses?.body?.data?.[0]
         const courseId = courseFinded?.id
 
         expect(courses.status).toBe(HttpCode.OK)
