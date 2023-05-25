@@ -1,14 +1,10 @@
 # create User
-POST http://localhost:5000/users
+POST http://localhost:5000/api/users
 Content-Type: application/json; charset=utf-8
 
 {
+    "username": "jeremy",
     "name": "Jeremy McKinnon",
     "email": "jeremy.mckinon@gmail.com",
-    "dateOfBirth": "2023-01-20T16:49:52.500+00:00",
-    "location": {
-        "address": "toufel 334",
-        "city": "melbourne",
-        "country": "AUS"
-    }
+    "password": "123456"
 }
