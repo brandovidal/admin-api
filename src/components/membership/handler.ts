@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, logger } from '../../utils'
+import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
 
 import MembershipController from './controller'
 
@@ -23,7 +23,7 @@ export const getMemberships = async (req: Request, res: Response, next: NextFunc
 
     const { count, total, memberships } = await controller.getMemberships(startDate, endDate, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'membership list successfully', { memberships, count, total }))
+    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'membership list successfully', memberships, count, total))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'memberships_not_exist', 'Memberships not exist'))
   }
@@ -128,7 +128,6 @@ export const remove = async (req: Request, res: Response, next: NextFunction): P
       return
     }
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'membership deleted successfully'))
-
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

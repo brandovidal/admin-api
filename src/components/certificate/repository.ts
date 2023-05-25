@@ -147,7 +147,7 @@ export const deleteCertificate = async (certificateId: string): Promise<number> 
       id: {
         in: [certificateId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return certificate.count

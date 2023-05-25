@@ -1,9 +1,9 @@
-import type { Enrollment } from '@prisma/client'
+import { Enrollment } from '@prisma/client'
 
 import { createEnrollment, getEnrollments, deleteEnrollment, updateEnrollment, getEnrollmentById, getEnrollment } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { EnrollmentsResponse } from '../../interfaces/enrollment'
+import { type EnrollmentsResponse } from '../../interfaces/enrollment'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class EnrollmentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getEnrollments')
-  public async getEnrollments(@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() limit = 10): Promise<EnrollmentsResponse> {
+  public async getEnrollments (@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() limit = 10): Promise<EnrollmentsResponse> {
     return await getEnrollments(startDate, endDate, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class EnrollmentController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/enrollment')
-  public async getEnrollment(@Query() startDate?: string, @Query() endDate?: string): Promise<Enrollment> {
+  public async getEnrollment (@Query() startDate?: string, @Query() endDate?: string): Promise<Enrollment> {
     return await getEnrollment(startDate, endDate)
   }
 
@@ -48,7 +48,7 @@ export default class EnrollmentController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getEnrollmentById(@Path() id: string): Promise<Enrollment> {
+  public async getEnrollmentById (@Path() id: string): Promise<Enrollment> {
     return await getEnrollmentById(id)
   }
 
@@ -61,7 +61,7 @@ export default class EnrollmentController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createEnrollment(@Body() requestBody: Enrollment): Promise<Enrollment> {
+  public async createEnrollment (@Body() requestBody: Enrollment): Promise<Enrollment> {
     return await createEnrollment(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class EnrollmentController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateEnrollment(@Path() id: string, @Body() requestBody: Enrollment): Promise<Enrollment> {
+  public async updateEnrollment (@Path() id: string, @Body() requestBody: Enrollment): Promise<Enrollment> {
     return await updateEnrollment(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class EnrollmentController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteEnrollment(@Path() id: string): Promise<number> {
+  public async deleteEnrollment (@Path() id: string): Promise<number> {
     return await deleteEnrollment(id)
   }
 }

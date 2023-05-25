@@ -1,9 +1,9 @@
-import type { Course } from '@prisma/client'
+import { Course } from '@prisma/client'
 
 import { createCourse, getCourses, deleteCourse, updateCourse, getCourseById, getCourse } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { CoursesResponse } from '../../interfaces/course'
+import { type CoursesResponse } from '../../interfaces/course'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class CourseController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCourses')
-  public async getCourses(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<CoursesResponse> {
+  public async getCourses (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<CoursesResponse> {
     return await getCourses(name, email, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class CourseController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/course')
-  public async getCourse(@Query() name?: string, @Query() email?: string): Promise<Course> {
+  public async getCourse (@Query() name?: string, @Query() email?: string): Promise<Course> {
     return await getCourse(name, email)
   }
 
@@ -48,7 +48,7 @@ export default class CourseController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getCourseById(@Path() id: string): Promise<Course> {
+  public async getCourseById (@Path() id: string): Promise<Course> {
     return await getCourseById(id)
   }
 
@@ -61,7 +61,7 @@ export default class CourseController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createCourse(@Body() requestBody: Course): Promise<Course> {
+  public async createCourse (@Body() requestBody: Course): Promise<Course> {
     return await createCourse(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class CourseController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateCourse(@Path() id: string, @Body() requestBody: Course): Promise<Course> {
+  public async updateCourse (@Path() id: string, @Body() requestBody: Course): Promise<Course> {
     return await updateCourse(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class CourseController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteCourse(@Path() id: string): Promise<number> {
+  public async deleteCourse (@Path() id: string): Promise<number> {
     return await deleteCourse(id)
   }
 }

@@ -12,13 +12,20 @@ export interface ValidationType {
   message: string
 }
 
+export interface SuccessTypeByList {
+  status: number
+  code: string
+  message: string
+  data?: object | string | null
+  count: number
+  total: number
+}
+
 export interface SuccessType {
   status: number
   code: string
   message: string
   data?: object | string | null
-  count?: number
-  total?: number
 }
 
 export enum HttpCode {

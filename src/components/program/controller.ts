@@ -1,9 +1,9 @@
-import type { Program } from '@prisma/client'
+import { Program } from '@prisma/client'
 
 import { createProgram, getPrograms, deleteProgram, updateProgram, getProgramById, getProgram } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { ProgramsResponse } from '../../interfaces/program'
+import { type ProgramsResponse } from '../../interfaces/program'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class ProgramController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getPrograms')
-  public async getPrograms(@Query() name?: string, @Query() code?: string, @Query() page = 1, @Query() limit = 10): Promise<ProgramsResponse> {
+  public async getPrograms (@Query() name?: string, @Query() code?: string, @Query() page = 1, @Query() limit = 10): Promise<ProgramsResponse> {
     return await getPrograms(name, code, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class ProgramController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/program')
-  public async getProgram(@Query() name?: string, @Query() code?: string): Promise<Program> {
+  public async getProgram (@Query() name?: string, @Query() code?: string): Promise<Program> {
     return await getProgram(name, code)
   }
 
@@ -48,7 +48,7 @@ export default class ProgramController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getProgramById(@Path() id: string): Promise<Program> {
+  public async getProgramById (@Path() id: string): Promise<Program> {
     return await getProgramById(id)
   }
 
@@ -61,7 +61,7 @@ export default class ProgramController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createProgram(@Body() requestBody: Program): Promise<Program> {
+  public async createProgram (@Body() requestBody: Program): Promise<Program> {
     return await createProgram(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class ProgramController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateProgram(@Path() id: string, @Body() requestBody: Program): Promise<Program> {
+  public async updateProgram (@Path() id: string, @Body() requestBody: Program): Promise<Program> {
     return await updateProgram(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class ProgramController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteProgram(@Path() id: string): Promise<Program> {
+  public async deleteProgram (@Path() id: string): Promise<Program> {
     return await deleteProgram(id)
   }
 }

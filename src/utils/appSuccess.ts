@@ -5,38 +5,30 @@ export default class BaseSuccess {
   private readonly code
   private readonly message
   private readonly data
-  private readonly count
-  private readonly total
 
   constructor (
     status: number,
     code: string,
     message: string,
-    data?: object | string | null,
-    count?: number,
-    total?: number
+    data?: object | string | null
   ) {
     this.status = status
     this.code = code
     this.message = message
     this.data = data
-    this.count = count
-    this.total = total
   }
 
-  getValues (): SuccessType {
+  values (): SuccessType {
     return {
       status: this.status,
       code: this.code,
       message: this.message,
-      data: this.data,
-      count: this.count,
-      total: this.total
+      data: this.data
     }
   }
 
   stringify (): string {
-    return JSON.stringify(this.getValues())
+    return JSON.stringify(this.values())
   }
 }
 
@@ -44,20 +36,16 @@ export const AppSuccess = (
   status = HttpCode.OK,
   code = '',
   message = 'error',
-  data: object | string | null = null,
-  count = 0,
-  total = 0
+  data: object | string | null = null
 ): SuccessType => {
-  return new BaseSuccess(status, code, message, data, count, total).getValues()
+  return new BaseSuccess(status, code, message, data).values()
 }
 
 export const AppSuccessStringify = (
   status = HttpCode.OK,
   code = '',
   message = 'error',
-  data = null,
-  count = 0,
-  total = 0
+  data = null
 ): string => {
-  return new BaseSuccess(status, code, message, data, count, total).stringify()
+  return new BaseSuccess(status, code, message, data).stringify()
 }

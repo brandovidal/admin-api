@@ -38,7 +38,7 @@ export const getEnrollments = async (startDate?: string, endDate?: string, page 
     prisma.enrollment.findMany({
       where: {
         startDate,
-        endDate,
+        endDate
       },
       take,
       skip,
@@ -100,7 +100,7 @@ export const getEnrollment = async (startDate?: string, endDate?: string): Promi
   const enrollment = await prisma.enrollment.findFirst({
     where: {
       startDate,
-      endDate,
+      endDate
     }
   }) as Enrollment
 
@@ -147,7 +147,7 @@ export const deleteEnrollment = async (enrollmentId: string): Promise<number> =>
       id: {
         in: [enrollmentId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return enrollment.count

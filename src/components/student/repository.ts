@@ -37,7 +37,7 @@ export const getStudents = async (name?: string, email?: string, page = PAGE_DEF
     prisma.student.count(),
     prisma.student.findMany({
       where: {
-        name: { contains: name?.toString(), mode: 'insensitive' },
+        name: { contains: name?.toString(), mode: 'insensitive' }
       },
       take,
       skip,
@@ -98,7 +98,7 @@ export const getStudent = async (name?: string, email?: string): Promise<Student
 
   const student = await prisma.student.findFirst({
     where: {
-      name: { contains: name, mode: 'insensitive' },
+      name: { contains: name, mode: 'insensitive' }
     }
   }) as Student
 
@@ -145,7 +145,7 @@ export const deleteStudent = async (studentId: string): Promise<number> => {
       id: {
         in: [studentId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return student.count

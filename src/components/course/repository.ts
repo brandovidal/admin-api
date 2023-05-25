@@ -37,7 +37,7 @@ export const getCourses = async (name?: string, email?: string, page = PAGE_DEFA
     prisma.course.count(),
     prisma.course.findMany({
       where: {
-        name: { contains: name?.toString(), mode: 'insensitive' },
+        name: { contains: name?.toString(), mode: 'insensitive' }
       },
       take,
       skip,
@@ -98,7 +98,7 @@ export const getCourse = async (name?: string, email?: string): Promise<Course> 
 
   const course = await prisma.course.findFirst({
     where: {
-      name: { contains: name, mode: 'insensitive' },
+      name: { contains: name, mode: 'insensitive' }
     }
   }) as Course
 
@@ -145,7 +145,7 @@ export const deleteCourse = async (courseId: string): Promise<number> => {
       id: {
         in: [courseId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return course.count

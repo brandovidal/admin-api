@@ -1,9 +1,9 @@
-import type { Certificate } from '@prisma/client'
+import { Certificate } from '@prisma/client'
 
 import { createCertificate, getCertificates, deleteCertificate, updateCertificate, getCertificateById, getCertificate } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { CertificatesResponse } from '../../interfaces/certificate'
+import { type CertificatesResponse } from '../../interfaces/certificate'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class CertificateController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCertificates')
-  public async getCertificates(@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() limit = 10): Promise<CertificatesResponse> {
+  public async getCertificates (@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() limit = 10): Promise<CertificatesResponse> {
     return await getCertificates(dateOfIssue, url, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class CertificateController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/certificate')
-  public async getCertificate(@Query() dateOfIssue?: string, @Query() url?: string): Promise<Certificate> {
+  public async getCertificate (@Query() dateOfIssue?: string, @Query() url?: string): Promise<Certificate> {
     return await getCertificate(dateOfIssue, url)
   }
 
@@ -48,7 +48,7 @@ export default class CertificateController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getCertificateById(@Path() id: string): Promise<Certificate> {
+  public async getCertificateById (@Path() id: string): Promise<Certificate> {
     return await getCertificateById(id)
   }
 
@@ -61,7 +61,7 @@ export default class CertificateController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createCertificate(@Body() requestBody: Certificate): Promise<Certificate> {
+  public async createCertificate (@Body() requestBody: Certificate): Promise<Certificate> {
     return await createCertificate(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class CertificateController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateCertificate(@Path() id: string, @Body() requestBody: Certificate): Promise<Certificate> {
+  public async updateCertificate (@Path() id: string, @Body() requestBody: Certificate): Promise<Certificate> {
     return await updateCertificate(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class CertificateController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteCertificate(@Path() id: string): Promise<number> {
+  public async deleteCertificate (@Path() id: string): Promise<number> {
     return await deleteCertificate(id)
   }
 }

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 
-import { Prisma, User } from '@prisma/client'
+import { Prisma, type User } from '@prisma/client'
 
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'

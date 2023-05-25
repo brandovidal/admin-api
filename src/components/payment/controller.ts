@@ -1,9 +1,9 @@
-import type { Payment } from '@prisma/client'
+import { Payment } from '@prisma/client'
 
 import { createPayment, getPayments, deletePayment, updatePayment, getPaymentById, getPayment } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { PaymentsResponse } from '../../interfaces/payment'
+import { type PaymentsResponse } from '../../interfaces/payment'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class PaymentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getPayments')
-  public async getPayments(@Query() voucher?: string, @Query() amount?: string, @Query() page = 1, @Query() limit = 10): Promise<PaymentsResponse> {
+  public async getPayments (@Query() voucher?: string, @Query() amount?: string, @Query() page = 1, @Query() limit = 10): Promise<PaymentsResponse> {
     return await getPayments(voucher, amount, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class PaymentController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/payment')
-  public async getPayment(@Query() voucher?: string, @Query() amount?: string): Promise<Payment> {
+  public async getPayment (@Query() voucher?: string, @Query() amount?: string): Promise<Payment> {
     return await getPayment(voucher, amount)
   }
 
@@ -48,7 +48,7 @@ export default class PaymentController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getPaymentById(@Path() id: string): Promise<Payment> {
+  public async getPaymentById (@Path() id: string): Promise<Payment> {
     return await getPaymentById(id)
   }
 
@@ -61,7 +61,7 @@ export default class PaymentController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createPayment(@Body() requestBody: Payment): Promise<Payment> {
+  public async createPayment (@Body() requestBody: Payment): Promise<Payment> {
     return await createPayment(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class PaymentController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updatePayment(@Path() id: string, @Body() requestBody: Payment): Promise<Payment> {
+  public async updatePayment (@Path() id: string, @Body() requestBody: Payment): Promise<Payment> {
     return await updatePayment(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class PaymentController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deletePayment(@Path() id: string): Promise<number> {
+  public async deletePayment (@Path() id: string): Promise<number> {
     return await deletePayment(id)
   }
 }

@@ -51,7 +51,7 @@ export const findMembershipByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }),
+    }).length(24, { message: 'ID must be 24 characters' })
   })
 })
 
@@ -62,7 +62,7 @@ export const findMembershipSchema = object({
   }).superRefine((val, ctx) => {
     const { name, code } = val
     if (isEmpty(name) && isEmpty(code)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Name or code is required',
         fatal: true

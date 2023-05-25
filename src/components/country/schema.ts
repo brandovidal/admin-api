@@ -45,7 +45,7 @@ export const findCountryByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }),
+    }).length(24, { message: 'ID must be 24 characters' })
   })
 })
 
@@ -56,7 +56,7 @@ export const findCountrySchema = object({
   }).superRefine((val, ctx) => {
     const { name, iso3 } = val
     if (isEmpty(name) && isEmpty(iso3)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Name or iso3 is required',
         fatal: true

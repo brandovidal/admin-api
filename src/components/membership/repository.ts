@@ -147,7 +147,7 @@ export const deleteMembership = async (membershipId: string): Promise<number> =>
       id: {
         in: [membershipId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return membership.count

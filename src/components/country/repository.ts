@@ -37,7 +37,7 @@ export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEF
     prisma.country.count(),
     prisma.country.findMany({
       where: {
-        name: { contains: name?.toString(), mode: 'insensitive' },
+        name: { contains: name?.toString(), mode: 'insensitive' }
       },
       take,
       skip,
@@ -98,7 +98,7 @@ export const getCountry = async (name?: string, iso3?: string): Promise<Country>
 
   const country = await prisma.country.findFirst({
     where: {
-      name: { contains: name, mode: 'insensitive' },
+      name: { contains: name, mode: 'insensitive' }
     }
   }) as Country
 
@@ -145,7 +145,7 @@ export const deleteCountry = async (countryId: string): Promise<number> => {
       id: {
         in: [countryId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return country.count

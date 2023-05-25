@@ -52,7 +52,7 @@ export const registerEnrollmentSchema = z.object({
     }).length(24).optional(),
     programId: z.string({
       required_error: 'program ID is required'
-    }).length(24).optional(),
+    }).length(24).optional()
   })
 })
 
@@ -111,7 +111,7 @@ export const updateEnrollmentSchema = z.object({
     }).length(24).optional(),
     programId: z.string({
       required_error: 'program ID is required'
-    }).length(24).optional(),
+    }).length(24).optional()
   })
 })
 
@@ -119,7 +119,7 @@ export const findEnrollmentByIdSchema = z.object({
   params: z.object({
     id: z.string({
       required_error: 'ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }),
+    }).length(24, { message: 'ID must be 24 characters' })
   })
 })
 
@@ -130,7 +130,7 @@ export const findEnrollmentSchema = z.object({
   }).superRefine((val, ctx) => {
     const { startDate, endDate } = val
     if (isEmpty(startDate) && isEmpty(endDate)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'startDate or endDate is required',
         fatal: true

@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess } from '../../utils'
+import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
 
 import UserController from './controller'
 
@@ -37,7 +37,7 @@ export const getUsers = async (
     res
       .status(HttpCode.OK)
       .json(
-        AppSuccess(
+        AppSuccessByList(
           HttpCode.OK,
           'success',
           'user list successfully',
@@ -107,7 +107,7 @@ export const getUserbyId = async (
 
     res
       .status(HttpCode.OK)
-      .json(AppSuccess(HttpCode.OK, 'success', 'user list successfully', user))
+      .json(AppSuccess(HttpCode.OK, 'success', 'find user by ID successfully', user))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -218,7 +218,7 @@ export const update = async (
       }
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
-      console.error(err)
+      logger.error(err)
       res
         .status(HttpCode.CONFLICT)
         .json(

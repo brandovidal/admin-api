@@ -32,7 +32,7 @@ export const registerPaymentSchema = z.object({
     }).length(24, { message: 'enrollmentId must be 24 characters' }),
     studentId: z.string({
       required_error: 'studentId is required'
-    }).length(24, { message: 'studentId must be 24 characters' }),
+    }).length(24, { message: 'studentId must be 24 characters' })
   })
 })
 
@@ -71,7 +71,7 @@ export const updatePaymentSchema = z.object({
     }).length(24, { message: 'enrollmentId must be 24 characters' }).optional(),
     studentId: z.string({
       required_error: 'studentId is required'
-    }).length(24, { message: 'studentId must be 24 characters' }).optional(),
+    }).length(24, { message: 'studentId must be 24 characters' }).optional()
   })
 })
 
@@ -79,7 +79,7 @@ export const findPaymentByIdSchema = z.object({
   params: z.object({
     id: z.string({
       required_error: 'ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }),
+    }).length(24, { message: 'ID must be 24 characters' })
   })
 })
 
@@ -90,7 +90,7 @@ export const findPaymentSchema = z.object({
   }).superRefine((val, ctx) => {
     const { voucher, amount } = val
     if (isEmpty(voucher) && isEmpty(amount)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'voucher or amount is required',
         fatal: true

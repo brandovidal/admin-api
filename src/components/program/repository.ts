@@ -38,7 +38,7 @@ export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFA
     prisma.program.count(),
     prisma.program.findMany({
       where: {
-        name: { contains: name?.toString(), mode: 'insensitive' },
+        name: { contains: name?.toString(), mode: 'insensitive' }
       },
       take,
       skip,
@@ -99,7 +99,7 @@ export const getProgram = async (name?: string, code?: string): Promise<Program>
 
   const program = await prisma.program.findFirst({
     where: {
-      name: { contains: name, mode: 'insensitive' },
+      name: { contains: name, mode: 'insensitive' }
     }
   }) as Program
 

@@ -24,7 +24,7 @@ export const registerProgramSchema = object({
     }).optional(),
     courseId: string({
       required_error: 'Course ID is required'
-    }).length(24),
+    }).length(24)
   })
 })
 
@@ -47,7 +47,7 @@ export const updateProgramSchema = object({
     }),
     courseId: string({
       required_error: 'Course ID is required'
-    }).length(24),
+    }).length(24)
   })
 })
 
@@ -55,7 +55,7 @@ export const findProgramByIdSchema = object({
   params: object({
     id: string({
       required_error: 'ID is required'
-    }),
+    })
   })
 })
 
@@ -66,7 +66,7 @@ export const findProgramSchema = object({
   }).superRefine((val, ctx) => {
     const { name, code } = val
     if (isEmpty(name) && isEmpty(code)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Name or code is required',
         fatal: true

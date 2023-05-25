@@ -1,9 +1,9 @@
-import type { Student } from '@prisma/client'
+import { Student } from '@prisma/client'
 
 import { createStudent, getStudents, deleteStudent, updateStudent, getStudentById, getStudent } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { StudentsResponse } from '../../interfaces/student'
+import { type StudentsResponse } from '../../interfaces/student'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class StudentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getStudents')
-  public async getStudents(@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<StudentsResponse> {
+  public async getStudents (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<StudentsResponse> {
     return await getStudents(name, email, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class StudentController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/student')
-  public async getStudent(@Query() name?: string, @Query() email?: string): Promise<Student> {
+  public async getStudent (@Query() name?: string, @Query() email?: string): Promise<Student> {
     return await getStudent(name, email)
   }
 
@@ -48,7 +48,7 @@ export default class StudentController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getStudentById(@Path() id: string): Promise<Student> {
+  public async getStudentById (@Path() id: string): Promise<Student> {
     return await getStudentById(id)
   }
 
@@ -61,7 +61,7 @@ export default class StudentController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createStudent(@Body() requestBody: Student): Promise<Student> {
+  public async createStudent (@Body() requestBody: Student): Promise<Student> {
     return await createStudent(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class StudentController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateStudent(@Path() id: string, @Body() requestBody: Student): Promise<Student> {
+  public async updateStudent (@Path() id: string, @Body() requestBody: Student): Promise<Student> {
     return await updateStudent(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class StudentController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteStudent(@Path() id: string): Promise<number> {
+  public async deleteStudent (@Path() id: string): Promise<number> {
     return await deleteStudent(id)
   }
 }

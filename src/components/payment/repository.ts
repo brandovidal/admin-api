@@ -37,7 +37,7 @@ export const getPayments = async (voucher?: string, amount?: string, page = PAGE
     prisma.payment.count(),
     prisma.payment.findMany({
       where: {
-        voucher: { contains: voucher?.toString(), mode: 'insensitive' },
+        voucher: { contains: voucher?.toString(), mode: 'insensitive' }
       },
       take,
       skip,
@@ -98,7 +98,7 @@ export const getPayment = async (voucher?: string, amount?: string): Promise<Pay
 
   const payment = await prisma.payment.findFirst({
     where: {
-      voucher: { contains: voucher, mode: 'insensitive' },
+      voucher: { contains: voucher, mode: 'insensitive' }
     }
   }) as Payment
 
@@ -145,7 +145,7 @@ export const deletePayment = async (paymentId: string): Promise<number> => {
       id: {
         in: [paymentId]
       }
-    },
+    }
   })
   void prisma.$disconnect()
   return payment.count

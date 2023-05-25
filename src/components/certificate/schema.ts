@@ -19,7 +19,7 @@ export const registerCertificateSchema = z.object({
     }).length(24, { message: 'ID must be 24 characters' }),
     studentId: z.string({
       required_error: 'Student ID is required'
-    }).length(24, { message: 'Student ID must be 24 characters' }),
+    }).length(24, { message: 'Student ID must be 24 characters' })
   })
 })
 
@@ -45,7 +45,7 @@ export const updateCertificateSchema = z.object({
     }).length(24, { message: 'ID must be 24 characters' }).optional(),
     studentId: z.string({
       required_error: 'Student ID is required'
-    }).length(24, { message: 'Student ID must be 24 characters' }).optional(),
+    }).length(24, { message: 'Student ID must be 24 characters' }).optional()
   })
 })
 
@@ -53,7 +53,7 @@ export const findCertificateByIdSchema = z.object({
   params: z.object({
     id: z.string({
       required_error: 'ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }),
+    }).length(24, { message: 'ID must be 24 characters' })
   })
 })
 
@@ -64,7 +64,7 @@ export const findCertificateSchema = z.object({
   }).superRefine((val, ctx) => {
     const { url, dateOfIssue } = val
     if (isEmpty(url) && isEmpty(dateOfIssue)) {
-      return ctx.addIssue({
+      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'URL or dateOfIssue is required',
         fatal: true

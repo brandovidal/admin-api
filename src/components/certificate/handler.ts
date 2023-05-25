@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, logger } from '../../utils'
+import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
 
 import CertificateController from './controller'
 
@@ -23,7 +23,7 @@ export const getCertificates = async (req: Request, res: Response, next: NextFun
 
     const { count, total, certificates } = await controller.getCertificates(dateOfIssue, url, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate list successfully', { certificates, count, total }))
+    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'certificate list successfully', certificates, count, total))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'certificates_not_exist', 'Certificates not exist'))
   }
@@ -135,7 +135,6 @@ export const remove = async (req: Request, res: Response, next: NextFunction): P
       return
     }
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate deleted successfully'))
-
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

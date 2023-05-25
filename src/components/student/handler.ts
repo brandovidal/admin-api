@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, logger } from '../../utils'
+import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
 
 import StudentController from './controller'
 
@@ -23,7 +23,7 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
 
     const { count, total, students } = await controller.getStudents(name, email, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'student list successfully', { students, count, total }))
+    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'student list successfully', students, count, total))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'students_not_exist', 'Students not exist'))
   }
@@ -128,7 +128,6 @@ export const remove = async (req: Request, res: Response, next: NextFunction): P
       return
     }
     res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'student deleted successfully'))
-
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

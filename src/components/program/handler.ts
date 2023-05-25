@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, logger } from '../../utils'
+import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
 
 import ProgramController from './controller'
 
@@ -23,7 +23,7 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
 
     const { count, total, programs } = await controller.getPrograms(name, code, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program list successfully', { programs, count, total }))
+    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'program list successfully', programs, count, total))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'programs_not_exist', 'Programs not exist'))
   }

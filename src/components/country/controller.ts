@@ -1,9 +1,9 @@
-import type { Country } from '@prisma/client'
+import { Country } from '@prisma/client'
 
 import { createCountry, getCountries, deleteCountry, updateCountry, getCountryById, getCountry } from './repository'
 
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { CountriesResponse } from '../../interfaces/country'
+import { type CountriesResponse } from '../../interfaces/country'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
 
@@ -22,7 +22,7 @@ export default class CountryController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCountries')
-  public async getCountries(@Query() name?: string, @Query() iso3?: string, @Query() page = 1, @Query() limit = 10): Promise<CountriesResponse> {
+  public async getCountries (@Query() name?: string, @Query() iso3?: string, @Query() page = 1, @Query() limit = 10): Promise<CountriesResponse> {
     return await getCountries(name, iso3, page, limit)
   }
 
@@ -36,7 +36,7 @@ export default class CountryController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/country')
-  public async getCountry(@Query() name?: string, @Query() iso3?: string): Promise<Country> {
+  public async getCountry (@Query() name?: string, @Query() iso3?: string): Promise<Country> {
     return await getCountry(name, iso3)
   }
 
@@ -48,7 +48,7 @@ export default class CountryController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/{id}')
-  public async getCountryById(@Path() id: string): Promise<Country> {
+  public async getCountryById (@Path() id: string): Promise<Country> {
     return await getCountryById(id)
   }
 
@@ -61,7 +61,7 @@ export default class CountryController {
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   @SuccessResponse('201', 'Created')
   @Post('/')
-  public async createCountry(@Body() requestBody: Country): Promise<Country> {
+  public async createCountry (@Body() requestBody: Country): Promise<Country> {
     return await createCountry(requestBody)
   }
 
@@ -75,7 +75,7 @@ export default class CountryController {
   @Put('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
-  public async updateCountry(@Path() id: string, @Body() requestBody: Country): Promise<Country> {
+  public async updateCountry (@Path() id: string, @Body() requestBody: Country): Promise<Country> {
     return await updateCountry(id, requestBody)
   }
 
@@ -87,7 +87,7 @@ export default class CountryController {
    */
   @Delete('/{id}')
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
-  public async deleteCountry(@Path() id: string): Promise<number> {
+  public async deleteCountry (@Path() id: string): Promise<number> {
     return await deleteCountry(id)
   }
 }
