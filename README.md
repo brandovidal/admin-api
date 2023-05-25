@@ -39,7 +39,7 @@ Inside of your project, you'll see the following folders and files:
 
 Copy the `.env.example` file to `.env` and fill in the required environment variables.
 Replicate the `.env.example` file to `.env.test` and fill in the required environment variables.
-Replicate the `.env.example` file to `.env.dev` and fill in the required environment variables.
+Replicate the `.env.example` file to `.env.development` and fill in the required environment variables.
 Use pnpm to install the dependencies https://pnpm.io/es/installation.
 
 ## 📖 How to use
