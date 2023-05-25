@@ -10,14 +10,18 @@ Inside of your project, you'll see the following folders and files:
 /
 ├── __test__/
 ├── build/
+├── examples/
 ├── prisma/
 │   └── schema.prisma
+├── requests/
 ├── src/
-│   └── delete-data.ts
-│   └── index.ts
-│   └── insert-data.ts
-│   └── retrieve-data.ts
-│   └── update-data.ts
+│   └── components/
+│   └── constants/
+│   └── interfaces/
+│   └── middlewares/
+│   └── routes/
+│   └── types/
+│   └── utils/
 ├── .eslintignore
 ├── .eslintrc.json
 ├── .gitignore
@@ -28,7 +32,7 @@ Inside of your project, you'll see the following folders and files:
 
 ## 💻 Prerequisites
 
-- Node.js 12+
+- Node.js 16+
 - Yarn or pnpm
 
 👾 Necesary environment variables:
