@@ -24,7 +24,7 @@ export const getUsers = async (
     const email = query.email?.toString()
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
-    const revalidate = query.revalidate?.toString()
+    const revalidate = query.revalidate?.toString() === 'true'
 
     const { count, total, users } = await controller.getUsers(
       name,
