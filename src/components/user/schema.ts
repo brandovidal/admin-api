@@ -46,7 +46,8 @@ export const createUserSchema = object({
     password: string({
       required_error: 'Password is required'
     }).min(6, 'Password must be more than 6 characters')
-      .max(32, 'Password must be less than 32 characters')
+      .max(32, 'Password must be less than 32 characters'),
+    role: z.optional(z.nativeEnum(RoleEnumType))
   })
 })
 
@@ -78,20 +79,21 @@ export const registerUserSchema = object({
 
 export const updateUserSchema = object({
   body: object({
-    username: string({
+    username: z.optional(string({
       required_error: 'Username is required'
-    }),
-    name: string({
+    })),
+    name: z.optional(string({
       required_error: 'Name is required'
-    }),
-    email: string({
+    })),
+    email: z.optional(string({
       required_error: 'Email address is required'
-    }).email('Invalid email address'),
-    password: string({
+    }).email('Invalid email address')),
+    password: z.optional(string({
       required_error: 'Password is required'
     })
       .min(6, 'Password must be more than 6 characters')
-      .max(32, 'Password must be less than 32 characters')
+      .max(32, 'Password must be less than 32 characters')),
+    role: z.optional(z.nativeEnum(RoleEnumType))
   })
 })
 

@@ -3,8 +3,19 @@ POST http://localhost:5000/api/users
 Content-Type: application/json; charset=utf-8
 
 {
-    "username": "jeremy",
-    "name": "Jeremy McKinnon",
-    "email": "jeremy.mckinon@gmail.com",
-    "password": "123456"
+    "username": "guille",
+    "name": "Guillermo Rodas",
+    "email": "guillermo.rodas@gmail.com",
+    "password": "123456",
+    "role": "admin"
 }
+
+# POST http://localhost:5000/api/users
+# Content-Type: application/json; charset=utf-8
+
+# {
+#     "username": "jeremy",
+#     "name": "Jeremy McKinnon",
+#     "email": "jeremy.mckinon@gmail.com",
+#     "password": "123456"
+# }

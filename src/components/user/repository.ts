@@ -43,7 +43,7 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
       take,
       skip,
       orderBy: {
-        updatedAt: 'asc'
+        createdAt: 'desc'
       }
     })
   ])
