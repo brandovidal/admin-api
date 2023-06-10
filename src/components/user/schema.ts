@@ -7,6 +7,12 @@ enum RoleEnumType {
   ADMIN = 'admin',
   USER = 'user'
 }
+enum StatusEnumType {
+  ACTIVE = 'active',
+  DEACTIVE = 'deactive',
+  DELETED = 'deleted',
+  BANNED = 'banned'
+}
 
 export const findUserByIdSchema = object({
   params: object({
@@ -47,7 +53,14 @@ export const createUserSchema = object({
       required_error: 'Password is required'
     }).min(6, 'Password must be more than 6 characters')
       .max(32, 'Password must be less than 32 characters'),
-    role: z.optional(z.nativeEnum(RoleEnumType))
+    role: z.optional(z.nativeEnum(RoleEnumType)),
+    status: z.optional(z.nativeEnum(StatusEnumType))
+  })
+})
+
+export const updateUserStatusSchema = object({
+  body: object({
+    status: z.nativeEnum(StatusEnumType)
   })
 })
 

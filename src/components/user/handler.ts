@@ -233,6 +233,51 @@ export const update = async (
     next(err)
   }
 }
+// update user status
+export const updateStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const userId: string = req.params?.id
+    const updatedUser = await controller.updateUser(userId, req.body)
+
+    res
+      .status(HttpCode.OK)
+      .json(
+        AppSuccess(
+          HttpCode.OK,
+          'success',
+          'user status updated successfully',
+          updatedUser
+        )
+      )
+  } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      if (err.code === 'P2025') {
+        res
+          .status(HttpCode.CONFLICT)
+          .json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
+        return
+      }
+    }
+    if (err instanceof Prisma.PrismaClientValidationError) {
+      logger.error(err)
+      res
+        .status(HttpCode.CONFLICT)
+        .json(
+          AppError(
+            HttpCode.CONFLICT,
+            'prisma_validation_error',
+            'Error de validación de campos'
+          )
+        )
+      return
+    }
+    next(err)
+  }
+}
 
 // delete user
 export const remove = async (

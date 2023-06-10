@@ -80,6 +80,20 @@ export default class UserController {
   }
 
   /**
+   * The `updateUser` function takes in a `id` path parameter and a `User` object and returns a promise of a User object
+   * @param {string} id - string - This is the id of the user we want to update.
+   * @param {User} requestBody - This is the body of the request. It's the data that the user is
+   * sending to the server.
+   * @returns The updated user status
+   */
+  @Put('/{id}/status')
+  @Response<InternalErrorJSON>(500, 'Internal Server Error')
+  @Response<ValidateErrorJSON>(400, 'Validation Failed')
+  public async updateUserStatus (@Path() id: string, @Body() requestBody: User): Promise<User> {
+    return await updateUser(id, requestBody)
+  }
+
+  /**
    * The `deleteUser` function takes in a `id` path parameter and returns a promise of a User object
    * @param {string} id - string - This is the path parameter. It's the id of the user we want to
    * delete.
