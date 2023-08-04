@@ -1,4 +1,4 @@
-import { HttpCode, type SuccessType } from '../types/response'
+import { type SuccessType } from '../types/response'
 
 export default class BaseSuccess {
   // FIXME: change code to boolean
@@ -10,9 +10,6 @@ export default class BaseSuccess {
   private readonly meta?
 
   constructor (
-    status: number | boolean,
-    code: string,
-    message: string,
     data?: object | string | null,
     meta?: object | null
   ) {
@@ -35,21 +32,15 @@ export default class BaseSuccess {
 }
 
 export const AppSuccess = (
-  status = HttpCode.OK,
-  code = '',
-  message = 'error',
   data: object | string | null = null,
   meta: object | null = {}
 ): SuccessType => {
-  return new BaseSuccess(status, code, message, data, meta).values()
+  return new BaseSuccess(data, meta).values()
 }
 
 export const AppSuccessStringify = (
-  status = HttpCode.OK,
-  code = '',
-  message = 'error',
   data = null,
   meta = {}
 ): string => {
-  return new BaseSuccess(status, code, message, data, meta).stringify()
+  return new BaseSuccess(data, meta).stringify()
 }

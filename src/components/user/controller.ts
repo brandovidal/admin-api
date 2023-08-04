@@ -22,8 +22,8 @@ export default class UserController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getUsers')
-  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10, @Query() revalidate = true): Promise<UsersResponse> {
-    return await getUsers(name, email, page, limit, revalidate)
+  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<UsersResponse> {
+    return await getUsers(name, email, page, limit)
   }
 
   /**
