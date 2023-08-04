@@ -1,9 +1,17 @@
 import { type User } from '@prisma/client'
 
+export interface MetaResponse {
+  pagination?: {
+    page: number
+    pageSize: number
+    pageCount: number
+    total: number
+  }
+}
+
 export interface UsersResponse {
-  count?: number
-  total?: number
-  users: User[]
+  meta?: MetaResponse
+  data: User[]
 }
 
 export interface UserLoggedResponse {

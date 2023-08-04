@@ -21,7 +21,8 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const skip = (page - 1) * take
 
   const cachedUsers = await userCache.getItem<User[]>('get-users') ?? []
-  const cachedTotalUsers = await userCache.getItem<number>('total-users') ?? 0
+  const cachedTotalUser = await userCache.getItem<number>('total-user') ?? 0
+  const cachedPageCountUser = await userCache.getItem<number>('page-count-user') ?? 0
 
   // params
   const cachedName = await userCache.getItem<number>('get-name-users')
@@ -30,7 +31,7 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const cachedPage = await userCache.getItem<number>('get-page-users')
 
   if (!isEmpty(cachedUsers) && cachedName === name && cachedEmail === email && cachedSize === limit && cachedPage === page && revalidate) {
-    return { count: cachedUsers.length, total: cachedTotalUsers, users: cachedUsers }
+    return { data: cachedUsers, meta: { pagination: { page, pageSize: take, pageCount: cachedPageCountUser, total: cachedTotalUser } } }
   }
 
   const [total, users] = await prisma.$transaction([
@@ -48,10 +49,11 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
     })
   ])
 
-  const count = users.length
+  const pageCount = Math.ceil(total / take)
 
   await userCache.setItem('get-users', users, { ttl: TTL_DEFAULT })
-  await userCache.setItem('total-users', total, { ttl: TTL_DEFAULT })
+  await userCache.setItem('total-user', total, { ttl: TTL_DEFAULT })
+  await userCache.setItem('page-count-users', pageCount, { ttl: TTL_DEFAULT })
 
   // params
   await userCache.setItem('get-name-users', name, { ttl: TTL_DEFAULT })
@@ -60,7 +62,7 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   await userCache.setItem('get-page-users', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
-  return { count, total, users }
+  return { data: users, meta: { pagination: { page, pageSize: take, pageCount, total } } }
 }
 
 export const getUserById = async (userId: string): Promise<User | null> => {

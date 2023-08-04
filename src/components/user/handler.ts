@@ -26,7 +26,7 @@ export const getUsers = async (
     const limit = parseInt(query.limit?.toString() ?? '10')
     const revalidate = query.revalidate?.toString() === 'true'
 
-    const { count, total, users } = await controller.getUsers(
+    const { data, meta } = await controller.getUsers(
       name,
       email,
       page,
@@ -41,8 +41,8 @@ export const getUsers = async (
           HttpCode.OK,
           'success',
           'user list successfully',
-          users,
-          { count, total }
+          data,
+          meta
         )
       )
   } catch (err) {
