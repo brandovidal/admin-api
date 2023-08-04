@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import CourseController from './controller'
 
@@ -21,9 +21,9 @@ export const getCourses = async (req: Request, res: Response, next: NextFunction
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, courses } = await controller.getCourses(name, email, page, limit)
+    const { count, total, courses: data } = await controller.getCourses(name, email, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'course list successfully', courses, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'courses_not_exist', 'Courses not exist'))
   }
@@ -37,14 +37,14 @@ export const getCourse = async (req: Request, res: Response, next: NextFunction)
     const name = query.name?.toString() ?? ''
     const email = query.email?.toString() ?? ''
 
-    const course = await controller.getCourse(name, email)
+    const data = await controller.getCourse(name, email)
 
-    if (isEmpty(course)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'course_not_exist', 'Course not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find course successfully', course))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'course_not_exist', 'Course not exist'))
   }
@@ -54,14 +54,14 @@ export const getCourse = async (req: Request, res: Response, next: NextFunction)
 export const getCourseById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const courseId: string = req.params?.id
-    const course = await controller.getCourseById(courseId)
+    const data = await controller.getCourseById(courseId)
 
-    if (isEmpty(course)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_not_exist', 'Course not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course list successfully', course))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getCourseById = async (req: Request, res: Response, next: NextFunct
 // create course
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdCourse = await controller.createCourse(req.body)
+    const data = await controller.createCourse(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'course created successfully', createdCourse))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -99,9 +99,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const courseId: string = req.params?.id
-    const updatedCourse = await controller.updateCourse(courseId, req.body)
+    const data = await controller.updateCourse(courseId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course updated successfully', updatedCourse))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
@@ -121,13 +121,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const courseId: string = req.params?.id
-    const deletedCourse = await controller.deleteCourse(courseId)
+    await controller.deleteCourse(courseId)
 
-    if (deletedCourse === 0) {
-      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'course_not_exist', 'course not exist'))
-      return
-    }
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'course deleted successfully'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

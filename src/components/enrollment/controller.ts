@@ -5,7 +5,7 @@ import { createEnrollment, getEnrollments, deleteEnrollment, updateEnrollment, g
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { type EnrollmentsResponse } from '../../interfaces/enrollment'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 @Tags('Enrollment')
 @Route('/api/enrollments')

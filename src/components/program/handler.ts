@@ -121,9 +121,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
-    const data = await controller.deleteProgram(programId)
+    await controller.deleteProgram(programId)
 
-    res.status(HttpCode.OK).json(AppSuccess(data))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {

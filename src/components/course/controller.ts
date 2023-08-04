@@ -5,7 +5,7 @@ import { createCourse, getCourses, deleteCourse, updateCourse, getCourseById, ge
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { type CoursesResponse } from '../../interfaces/course'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 @Tags('Course')
 @Route('/api/courses')
