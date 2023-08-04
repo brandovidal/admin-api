@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import EnrollmentController from './controller'
 
@@ -21,9 +21,9 @@ export const getEnrollments = async (req: Request, res: Response, next: NextFunc
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, enrollments } = await controller.getEnrollments(startDate, endDate, page, limit)
+    const { count, total, enrollments: data } = await controller.getEnrollments(startDate, endDate, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'enrollment list successfully', enrollments, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'enrollments_not_exist', 'Enrollments not exist'))
   }
@@ -37,14 +37,14 @@ export const getEnrollment = async (req: Request, res: Response, next: NextFunct
     const startDate = query.startDate?.toString() ?? ''
     const endDate = query.endDate?.toString() ?? ''
 
-    const enrollment = await controller.getEnrollment(startDate, endDate)
+    const data = await controller.getEnrollment(startDate, endDate)
 
-    if (isEmpty(enrollment)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'enrollment_not_exist', 'Enrollment not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find enrollment successfully', enrollment))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'enrollment_not_exist', 'Enrollment not exist'))
   }
@@ -54,14 +54,14 @@ export const getEnrollment = async (req: Request, res: Response, next: NextFunct
 export const getEnrollmentById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const enrollmentId: string = req.params?.id
-    const enrollment = await controller.getEnrollmentById(enrollmentId)
+    const data = await controller.getEnrollmentById(enrollmentId)
 
-    if (isEmpty(enrollment)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'enrollment_not_exist', 'Enrollment not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'enrollment list successfully', enrollment))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getEnrollmentById = async (req: Request, res: Response, next: NextF
 // create enrollment
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdEnrollment = await controller.createEnrollment(req.body)
+    const data = await controller.createEnrollment(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'enrollment created successfully', createdEnrollment))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -99,9 +99,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const enrollmentId: string = req.params?.id
-    const updatedEnrollment = await controller.updateEnrollment(enrollmentId, req.body)
+    const data = await controller.updateEnrollment(enrollmentId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'enrollment updated successfully', updatedEnrollment))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
@@ -121,13 +121,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const enrollmentId: string = req.params?.id
-    const deletedEnrollment = await controller.deleteEnrollment(enrollmentId)
+    await controller.deleteEnrollment(enrollmentId)
 
-    if (deletedEnrollment === 0) {
-      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'enrollment_not_exist', 'enrollment not exist'))
-      return
-    }
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'enrollment deleted successfully'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

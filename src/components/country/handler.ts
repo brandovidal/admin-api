@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import CountryController from './controller'
 
@@ -21,9 +21,9 @@ export const getCountries = async (req: Request, res: Response, next: NextFuncti
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, countries } = await controller.getCountries(name, iso3, page, limit)
+    const { count, total, countries: data } = await controller.getCountries(name, iso3, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'country list successfully', countries, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'courses_not_exist', 'Countries not exist'))
   }
@@ -37,14 +37,14 @@ export const getCountry = async (req: Request, res: Response, next: NextFunction
     const name = query.name?.toString() ?? ''
     const iso3 = query.iso3?.toString() ?? ''
 
-    const country = await controller.getCountry(name, iso3)
+    const data = await controller.getCountry(name, iso3)
 
-    if (isEmpty(country)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'course_not_exist', 'Country not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find country successfully', country))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'course_not_exist', 'Country not exist'))
   }
@@ -54,14 +54,14 @@ export const getCountry = async (req: Request, res: Response, next: NextFunction
 export const getCountryById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const courseId: string = req.params?.id
-    const country = await controller.getCountryById(courseId)
+    const data = await controller.getCountryById(courseId)
 
-    if (isEmpty(country)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'course_not_exist', 'Country not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'country list successfully', country))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getCountryById = async (req: Request, res: Response, next: NextFunc
 // create country
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdCountry = await controller.createCountry(req.body)
+    const data = await controller.createCountry(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'country created successfully', createdCountry))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -99,9 +99,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const courseId: string = req.params?.id
-    const updatedCountry = await controller.updateCountry(courseId, req.body)
+    const data = await controller.updateCountry(courseId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'country updated successfully', updatedCountry))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
@@ -121,13 +121,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const courseId: string = req.params?.id
-    const deletedCountry = await controller.deleteCountry(courseId)
+    await controller.deleteCountry(courseId)
 
-    if (deletedCountry === 0) {
-      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'course_not_exist', 'country not exist'))
-      return
-    }
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'country deleted successfully'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

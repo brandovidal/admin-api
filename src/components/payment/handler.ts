@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import PaymentController from './controller'
 
@@ -21,9 +21,9 @@ export const getPayments = async (req: Request, res: Response, next: NextFunctio
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, payments } = await controller.getPayments(voucher, amount, page, limit)
+    const { count, total, payments: data } = await controller.getPayments(voucher, amount, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'payment list successfully', payments, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'payments_not_exist', 'Payments not exist'))
   }
@@ -37,14 +37,14 @@ export const getPayment = async (req: Request, res: Response, next: NextFunction
     const voucher = query.voucher?.toString() ?? ''
     const amount = query.amount?.toString() ?? ''
 
-    const payment = await controller.getPayment(voucher, amount)
+    const data = await controller.getPayment(voucher, amount)
 
-    if (isEmpty(payment)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'payment_not_exist', 'Payment not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find payment successfully', payment))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'payment_not_exist', 'Payment not exist'))
   }
@@ -54,14 +54,14 @@ export const getPayment = async (req: Request, res: Response, next: NextFunction
 export const getPaymentById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const paymentId: string = req.params?.id
-    const payment = await controller.getPaymentById(paymentId)
+    const data = await controller.getPaymentById(paymentId)
 
-    if (isEmpty(payment)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'payment_not_exist', 'Payment not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'payment list successfully', payment))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getPaymentById = async (req: Request, res: Response, next: NextFunc
 // create payment
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdPayment = await controller.createPayment(req.body)
+    const data = await controller.createPayment(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'payment created successfully', createdPayment))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -88,7 +88,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
       logger.error(err.message)
-      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'prisma_validation_error', 'Error de validación de campos'))
+      res
+        .status(HttpCode.CONFLICT)
+        .json(AppError(HttpCode.CONFLICT, 'prisma_validation_error', 'Error de validación de campos'))
       return
     }
     next(err)
@@ -99,13 +101,15 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const paymentId: string = req.params?.id
-    const updatedPayment = await controller.updatePayment(paymentId, req.body)
+    const data = await controller.updatePayment(paymentId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'payment updated successfully', updatedPayment))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'payment_exist', 'Voucher already exist in other payment'))
+        res
+          .status(HttpCode.CONFLICT)
+          .json(AppError(HttpCode.CONFLICT, 'payment_exist', 'Voucher already exist in other payment'))
         return
       }
       if (err.code === 'P2025') {
@@ -114,7 +118,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
       }
     }
     if (err instanceof Prisma.PrismaClientValidationError) {
-      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'prisma_validation_error', 'Error de validación de campos'))
+      res
+        .status(HttpCode.CONFLICT)
+        .json(AppError(HttpCode.CONFLICT, 'prisma_validation_error', 'Error de validación de campos'))
       return
     }
     next(err)
@@ -125,17 +131,15 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const paymentId: string = req.params?.id
-    const deletedPayment = await controller.deletePayment(paymentId)
+    await controller.deletePayment(paymentId)
 
-    if (deletedPayment === 0) {
-      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'payment_not_exist', 'payment not exist'))
-      return
-    }
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'payment deleted successfully'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {
-        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'payment_relation_error', 'Payment has relation with other table'))
+        res
+          .status(HttpCode.CONFLICT)
+          .json(AppError(HttpCode.CONFLICT, 'payment_relation_error', 'Payment has relation with other table'))
         return
       }
       if (err.code === 'P2025') {
