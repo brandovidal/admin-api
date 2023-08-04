@@ -21,17 +21,17 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const skip = (page - 1) * take
 
   const cachedUsers = await userCache.getItem<User[]>('get-users') ?? []
-  const cachedTotalUser = await userCache.getItem<number>('total-user') ?? 0
-  const cachedPageCountUser = await userCache.getItem<number>('page-count-user') ?? 0
+  const cachedTotalUser = await userCache.getItem<number>('get-total-user') ?? 0
+  const cachedPage = await userCache.getItem<number>('get-page-users')
+  const cachedPageCountUser = await userCache.getItem<number>('get-page-count-user') ?? 0
 
   // params
   const cachedName = await userCache.getItem<number>('get-name-users')
   const cachedEmail = await userCache.getItem<number>('get-email-users')
   const cachedSize = await userCache.getItem<number>('get-limit-users')
-  const cachedPage = await userCache.getItem<number>('get-page-users')
 
   if (!isEmpty(cachedUsers) && cachedName === name && cachedEmail === email && cachedSize === limit && cachedPage === page && revalidate) {
-    return { data: cachedUsers, meta: { pagination: { page, pageSize: take, pageCount: cachedPageCountUser, total: cachedTotalUser } } }
+    return { data: cachedUsers, meta: { pagination: { page: cachedPage, pageSize: take, pageCount: cachedPageCountUser, total: cachedTotalUser } } }
   }
 
   const [total, users] = await prisma.$transaction([
@@ -52,14 +52,14 @@ export const getUsers = async (name?: string, email?: string, page = PAGE_DEFAUL
   const pageCount = Math.ceil(total / take)
 
   await userCache.setItem('get-users', users, { ttl: TTL_DEFAULT })
-  await userCache.setItem('total-user', total, { ttl: TTL_DEFAULT })
-  await userCache.setItem('page-count-users', pageCount, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-total-user', total, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-page-count-user', pageCount, { ttl: TTL_DEFAULT })
+  await userCache.setItem('get-page-users', page, { ttl: TTL_DEFAULT })
 
   // params
   await userCache.setItem('get-name-users', name, { ttl: TTL_DEFAULT })
   await userCache.setItem('get-email-users', email, { ttl: TTL_DEFAULT })
   await userCache.setItem('get-limit-users', limit, { ttl: TTL_DEFAULT })
-  await userCache.setItem('get-page-users', page, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
   return { data: users, meta: { pagination: { page, pageSize: take, pageCount, total } } }
