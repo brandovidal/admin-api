@@ -22,6 +22,7 @@ import { HttpCode } from '../types/response'
 
 const router = Router()
 
+// TODO: update response type
 router.use('/api/auth', authRouter)
 router.use('/api/users', userRouter)
 router.use('/api/programs', programRouter)
@@ -52,8 +53,9 @@ router.all('*', (req: Request, res: Response, next: NextFunction): void => {
 })
 
 router.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
-  const { status, code, message } = err
-  res.status(status).json(AppError(status, code, message))
+  const { message, error } = err
+
+  res.status(error.code).json(AppError(error.code, error.name, message))
 })
 
 export { router }

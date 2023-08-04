@@ -31,7 +31,7 @@ export const register = async (req: Request<object, object, User>, res: Response
 
     const user = await controller.register(body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'user_register', 'user registered', { user }))
+    res.status(HttpCode.CREATED).json(AppSuccess({ user }))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -61,7 +61,7 @@ export const login = async (req: Request<object, object, LoginUserInput>, res: R
     res.header('refreshToken', refreshToken)
     res.header('loggedIn', 'true')
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'login_success', 'Login success', { accessToken }))
+    res.status(HttpCode.OK).json(AppSuccess({ accessToken }))
   } catch (err) {
     next(err)
   }
@@ -105,7 +105,7 @@ export const refreshAccessToken = async (req: Request, res: Response, next: Next
     res.header('loggedIn', 'true')
 
     // 5. Send response
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'refresh_access_success', 'Refresh access success', { accessToken }))
+    res.status(HttpCode.OK).json(AppSuccess({ accessToken }))
   } catch (err) {
     next(err)
   }
@@ -119,7 +119,7 @@ export const logout = async (req: Request, res: Response, next: NextFunction): P
     res.removeHeader('Authorization')
     res.removeHeader('loggedIn')
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'logout_success', 'Logout success'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     next(err)
   }

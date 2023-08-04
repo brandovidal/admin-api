@@ -11,7 +11,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum RoleEnumType {
+enum UserStatusEnumType {
+  active
+  inactive
+  deleted
+}
+
+enum UserRoleEnumType {
   user
   admin
 }
@@ -36,7 +42,8 @@ model User {
   verified Boolean? @default(false)
 
   password String
-  role     RoleEnumType? @default(user)
+  role     UserRoleEnumType?   @default(user)
+  status   UserStatusEnumType? @default(active)
 
   verificationCode String?
 

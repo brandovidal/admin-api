@@ -1,29 +1,24 @@
-import { HttpCode, type SuccessType } from '../types/response'
+import { type ResponseType } from '../types/response'
 
 export default class BaseSuccess {
   private readonly status
-  private readonly code
-  private readonly message
   private readonly data
+  private readonly meta?
 
   constructor (
-    status: number,
-    code: string,
-    message: string,
-    data?: object | string | null
+    data?: object | string | null,
+    meta?: object | null
   ) {
-    this.status = status
-    this.code = code
-    this.message = message
+    this.status = true
     this.data = data
+    this.meta = meta
   }
 
-  values (): SuccessType {
+  values (): ResponseType {
     return {
       status: this.status,
-      code: this.code,
-      message: this.message,
-      data: this.data
+      data: this.data,
+      meta: this.meta
     }
   }
 
@@ -33,19 +28,15 @@ export default class BaseSuccess {
 }
 
 export const AppSuccess = (
-  status = HttpCode.OK,
-  code = '',
-  message = 'error',
-  data: object | string | null = null
-): SuccessType => {
-  return new BaseSuccess(status, code, message, data).values()
+  data: object | string | null = null,
+  meta: object | null = {}
+): ResponseType => {
+  return new BaseSuccess(data, meta).values()
 }
 
 export const AppSuccessStringify = (
-  status = HttpCode.OK,
-  code = '',
-  message = 'error',
-  data = null
+  data = null,
+  meta = {}
 ): string => {
-  return new BaseSuccess(status, code, message, data).stringify()
+  return new BaseSuccess(data, meta).stringify()
 }

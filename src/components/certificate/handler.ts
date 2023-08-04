@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import CertificateController from './controller'
 
@@ -21,9 +21,9 @@ export const getCertificates = async (req: Request, res: Response, next: NextFun
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, certificates } = await controller.getCertificates(dateOfIssue, url, page, limit)
+    const { count, total, certificates: data } = await controller.getCertificates(dateOfIssue, url, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'certificate list successfully', certificates, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'certificates_not_exist', 'Certificates not exist'))
   }
@@ -37,14 +37,14 @@ export const getCertificate = async (req: Request, res: Response, next: NextFunc
     const dateOfIssue = query.dateOfIssue?.toString() ?? ''
     const url = query.url?.toString() ?? ''
 
-    const certificate = await controller.getCertificate(dateOfIssue, url)
+    const data = await controller.getCertificate(dateOfIssue, url)
 
-    if (isEmpty(certificate)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'certificate_not_exist', 'Certificate not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find certificate successfully', certificate))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'certificate_not_exist', 'Certificate not exist'))
   }
@@ -54,14 +54,14 @@ export const getCertificate = async (req: Request, res: Response, next: NextFunc
 export const getCertificateById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const certificateId: string = req.params?.id
-    const certificate = await controller.getCertificateById(certificateId)
+    const data = await controller.getCertificateById(certificateId)
 
-    if (isEmpty(certificate)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'certificate_not_exist', 'Certificate not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate list successfully', certificate))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getCertificateById = async (req: Request, res: Response, next: Next
 // create certificate
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdCertificate = await controller.createCertificate(req.body)
+    const data = await controller.createCertificate(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'certificate created successfully', createdCertificate))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -106,9 +106,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const certificateId: string = req.params?.id
-    const updatedCertificate = await controller.updateCertificate(certificateId, req.body)
+    const data = await controller.updateCertificate(certificateId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate updated successfully', updatedCertificate))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
@@ -128,13 +128,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const certificateId: string = req.params?.id
-    const deletedCertificate = await controller.deleteCertificate(certificateId)
+    await controller.deleteCertificate(certificateId)
 
-    if (deletedCertificate === 0) {
-      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'certificate_not_exist', 'certificate not exist'))
-      return
-    }
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'certificate deleted successfully'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

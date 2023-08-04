@@ -5,7 +5,7 @@ import { createMembership, getMemberships, deleteMembership, updateMembership, g
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { type MembershipsResponse } from '../../interfaces/membership'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 @Tags('Membership')
 @Route('/api/memberships')

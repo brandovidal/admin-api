@@ -5,7 +5,7 @@ import { createCountry, getCountries, deleteCountry, updateCountry, getCountryBy
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { type CountriesResponse } from '../../interfaces/country'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 @Tags('Country')
 @Route('/api/countries')

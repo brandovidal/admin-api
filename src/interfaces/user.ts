@@ -1,9 +1,9 @@
 import { type User } from '@prisma/client'
+import type { MetaResponse } from './utils/response'
 
 export interface UsersResponse {
-  count?: number
-  total?: number
-  users: User[]
+  meta?: MetaResponse
+  data: User[]
 }
 
 export interface UserLoggedResponse {

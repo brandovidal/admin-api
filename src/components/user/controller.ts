@@ -22,8 +22,8 @@ export default class UserController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getUsers')
-  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10, @Query() revalidate = 'NONE'): Promise<UsersResponse> {
-    return await getUsers(name, email, page, limit, revalidate)
+  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<UsersResponse> {
+    return await getUsers(name, email, page, limit)
   }
 
   /**
@@ -76,6 +76,20 @@ export default class UserController {
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ValidateErrorJSON>(400, 'Validation Failed')
   public async updateUser (@Path() id: string, @Body() requestBody: User): Promise<User> {
+    return await updateUser(id, requestBody)
+  }
+
+  /**
+   * The `updateUser` function takes in a `id` path parameter and a `User` object and returns a promise of a User object
+   * @param {string} id - string - This is the id of the user we want to update.
+   * @param {User} requestBody - This is the body of the request. It's the data that the user is
+   * sending to the server.
+   * @returns The updated user status
+   */
+  @Put('/{id}/status')
+  @Response<InternalErrorJSON>(500, 'Internal Server Error')
+  @Response<ValidateErrorJSON>(400, 'Validation Failed')
+  public async updateUserStatus (@Path() id: string, @Body() requestBody: User): Promise<User> {
     return await updateUser(id, requestBody)
   }
 

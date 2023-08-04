@@ -9,7 +9,6 @@ import type { ProgramsResponse } from '../../interfaces/program'
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import isEmpty from 'just-is-empty'
-import { Response } from 'express'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 

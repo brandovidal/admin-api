@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import MembershipController from './controller'
 
@@ -21,9 +21,9 @@ export const getMemberships = async (req: Request, res: Response, next: NextFunc
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, memberships } = await controller.getMemberships(startDate, endDate, page, limit)
+    const { count, total, memberships: data } = await controller.getMemberships(startDate, endDate, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'membership list successfully', memberships, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'memberships_not_exist', 'Memberships not exist'))
   }
@@ -37,14 +37,14 @@ export const getMembership = async (req: Request, res: Response, next: NextFunct
     const startDate = query.startDate?.toString() ?? ''
     const endDate = query.endDate?.toString() ?? ''
 
-    const membership = await controller.getMembership(startDate, endDate)
+    const data = await controller.getMembership(startDate, endDate)
 
-    if (isEmpty(membership)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'membership_not_exist', 'Membership not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find membership successfully', membership))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'membership_not_exist', 'Membership not exist'))
   }
@@ -54,14 +54,14 @@ export const getMembership = async (req: Request, res: Response, next: NextFunct
 export const getMembershipById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const membershipId: string = req.params?.id
-    const membership = await controller.getMembershipById(membershipId)
+    const data = await controller.getMembershipById(membershipId)
 
-    if (isEmpty(membership)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'membership_not_exist', 'Membership not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'membership list successfully', membership))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getMembershipById = async (req: Request, res: Response, next: NextF
 // create membership
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdMembership = await controller.createMembership(req.body)
+    const data = await controller.createMembership(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'membership created successfully', createdMembership))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -99,9 +99,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const membershipId: string = req.params?.id
-    const updatedMembership = await controller.updateMembership(membershipId, req.body)
+    const data = await controller.updateMembership(membershipId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'membership updated successfully', updatedMembership))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
@@ -121,13 +121,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const membershipId: string = req.params?.id
-    const deletedMembership = await controller.deleteMembership(membershipId)
+    await controller.deleteMembership(membershipId)
 
-    if (deletedMembership === 0) {
-      res.status(HttpCode.FORBIDDEN).json(AppSuccess(HttpCode.FORBIDDEN, 'membership_not_exist', 'membership not exist'))
-      return
-    }
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'membership deleted successfully'))
+    res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2014') {

@@ -15,8 +15,8 @@ export const validate = (schema: AnyZodObject) => (req: Request, res: Response, 
     next()
   } catch (err) {
     if (err instanceof ZodError) {
-      const validations = err.errors?.map(({ path, code, message }) => ({ name: path.at(1) ?? 'error', code, message }))
-      const result = AppError(HttpCode.BAD_REQUEST, 'validation_error', 'Validation with errors', validations)
+      const details = err.errors?.map(({ path, code, message }) => ({ name: path.at(1) ?? 'error', code, message }))
+      const result = AppError(HttpCode.BAD_REQUEST, 'validation_error', 'Validation with errors', details)
       res.status(HttpCode.BAD_REQUEST).json(result)
     }
     next(err)

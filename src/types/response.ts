@@ -1,31 +1,20 @@
-export interface ErrorType {
-  status: number
-  code: string
-  message: string
-  validations?: ValidationType[] | null
-}
-
 export interface ValidationType {
   name: string | number
   path?: string | number
   code?: string
   message: string
 }
-
-export interface SuccessTypeByList {
-  status: number
-  code: string
+export interface ErrorType {
+  code: number
+  name: string
   message: string
-  data?: object | string | null
-  count: number
-  total: number
+  details?: ValidationType[] | null
 }
-
-export interface SuccessType {
-  status: number
-  code: string
-  message: string
+export interface ResponseType {
+  status: boolean
   data?: object | string | null
+  meta?: object | null
+  error?: ErrorType | object | null
 }
 
 export enum HttpCode {

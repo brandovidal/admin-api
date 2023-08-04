@@ -5,7 +5,7 @@ import { createPayment, getPayments, deletePayment, updatePayment, getPaymentByI
 import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
 import { type PaymentsResponse } from '../../interfaces/payment'
 
-import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags, Res } from 'tsoa'
+import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
 @Tags('Payment')
 @Route('/api/payments')

@@ -1,28 +1,33 @@
-import { HttpCode, type ErrorType, type ValidationType } from '../types/response'
+import type { ResponseType, ValidationType } from '../types/response'
+import { HttpCode } from '../types/response'
 
 export default class BaseError extends Error {
   readonly status
-  readonly code
-  readonly message
-  readonly validations?
+  readonly data: null
+  readonly error
 
-  constructor (status: number, code: string, message: string, validations?: ValidationType[] | null) {
+  constructor (code: number = HttpCode.INTERNAL_SERVER_ERROR, name = 'internal_server_error', message = 'Internal server error', details?: ValidationType[] | null) {
     super(message)
 
-    this.status = status
-    this.code = code
-    this.message = message
-    this.validations = validations
+    const error = {
+      code,
+      name,
+      message,
+      details
+    }
+
+    this.status = false
+    this.data = null
+    this.error = error
 
     Error.captureStackTrace(this, this.constructor)
   }
 
-  getValues (): ErrorType {
+  getValues (): ResponseType {
     return {
       status: this.status,
-      code: this.code,
-      message: this.message,
-      validations: this.validations
+      data: this.data,
+      error: this.error
     }
   }
 
@@ -31,10 +36,10 @@ export default class BaseError extends Error {
   }
 }
 
-export const AppError = (status = HttpCode.INTERNAL_SERVER_ERROR, code = 'internal_server_error', message = 'Internal server error', validations?: ValidationType[] | null): ErrorType => {
-  return new BaseError(status, code, message, validations).getValues()
+export const AppError = (status = HttpCode.INTERNAL_SERVER_ERROR, code = 'internal_server_error', message = 'Internal server error', details?: ValidationType[] | null): ResponseType => {
+  return new BaseError(status, code, message, details).getValues()
 }
 
-export const AppErrorStringify = (status = HttpCode.INTERNAL_SERVER_ERROR, code = 'internal_server_error', message = 'Internal server error', validations?: ValidationType[] | null): string => {
-  return new BaseError(status, code, message, validations).stringify()
+export const AppErrorStringify = (status = HttpCode.INTERNAL_SERVER_ERROR, code = 'internal_server_error', message = 'Internal server error', details?: ValidationType[] | null): string => {
+  return new BaseError(status, code, message, details).stringify()
 }
