@@ -7,7 +7,7 @@ export default class BaseError extends Error {
   readonly code
   // FIXME: this is optional
   readonly message
-  // FIXME: this is optional
+  // FIXME: this is optional, is rename to details
   readonly validations?
 
   constructor (status: number, code: string, message: string, validations?: ValidationType[] | null) {

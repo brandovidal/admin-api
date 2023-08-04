@@ -4,30 +4,28 @@ export default class BaseSuccess {
   // FIXME: change code to boolean
   private readonly status
   // FIXME: it is removed
-  private readonly code
   // FIXME: this is optional
-  private readonly message
   private readonly data
   // TODO: add meta as aditional data
+  private readonly meta?
 
   constructor (
-    status: number,
+    status: number | boolean,
     code: string,
     message: string,
-    data?: object | string | null
+    data?: object | string | null,
+    meta?: object | null
   ) {
-    this.status = status
-    this.code = code
-    this.message = message
+    this.status = true
     this.data = data
+    this.meta = meta
   }
 
   values (): SuccessType {
     return {
       status: this.status,
-      code: this.code,
-      message: this.message,
-      data: this.data
+      data: this.data,
+      meta: this.meta
     }
   }
 
@@ -40,16 +38,18 @@ export const AppSuccess = (
   status = HttpCode.OK,
   code = '',
   message = 'error',
-  data: object | string | null = null
+  data: object | string | null = null,
+  meta: object | null = {}
 ): SuccessType => {
-  return new BaseSuccess(status, code, message, data).values()
+  return new BaseSuccess(status, code, message, data, meta).values()
 }
 
 export const AppSuccessStringify = (
   status = HttpCode.OK,
   code = '',
   message = 'error',
-  data = null
+  data = null,
+  meta = {}
 ): string => {
-  return new BaseSuccess(status, code, message, data).stringify()
+  return new BaseSuccess(status, code, message, data, meta).stringify()
 }

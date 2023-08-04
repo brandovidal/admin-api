@@ -22,10 +22,9 @@ export interface SuccessTypeByList {
 }
 
 export interface SuccessType {
-  status: number
-  code: string
-  message: string
+  status: number | boolean
   data?: object | string | null
+  meta?: object | null
 }
 
 export enum HttpCode {

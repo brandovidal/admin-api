@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import UserController from './controller'
 
@@ -37,13 +37,12 @@ export const getUsers = async (
     res
       .status(HttpCode.OK)
       .json(
-        AppSuccessByList(
+        AppSuccess(
           HttpCode.OK,
           'success',
           'user list successfully',
           users,
-          count,
-          total
+          { count, total }
         )
       )
   } catch (err) {
