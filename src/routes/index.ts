@@ -22,6 +22,7 @@ import { HttpCode } from '../types/response'
 
 const router = Router()
 
+// TODO: update response type
 router.use('/api/auth', authRouter)
 router.use('/api/users', userRouter)
 router.use('/api/programs', programRouter)

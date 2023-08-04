@@ -1,9 +1,13 @@
 import { HttpCode, type ErrorType, type ValidationType } from '../types/response'
 
 export default class BaseError extends Error {
+  // FIXME: change code to boolean
   readonly status
+  // FIXME: it is removed
   readonly code
+  // FIXME: this is optional
   readonly message
+  // FIXME: this is optional
   readonly validations?
 
   constructor (status: number, code: string, message: string, validations?: ValidationType[] | null) {

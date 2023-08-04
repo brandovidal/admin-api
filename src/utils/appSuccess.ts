@@ -1,10 +1,14 @@
 import { HttpCode, type SuccessType } from '../types/response'
 
 export default class BaseSuccess {
+  // FIXME: change code to boolean
   private readonly status
+  // FIXME: it is removed
   private readonly code
+  // FIXME: this is optional
   private readonly message
   private readonly data
+  // TODO: add meta as aditional data
 
   constructor (
     status: number,
