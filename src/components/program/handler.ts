@@ -5,7 +5,7 @@ import isEmpty from 'just-is-empty'
 
 import { HttpCode } from '../../types/response'
 
-import { AppError, AppSuccess, AppSuccessByList, logger } from '../../utils'
+import { AppError, AppSuccess, logger } from '../../utils'
 
 import ProgramController from './controller'
 
@@ -21,9 +21,9 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, programs } = await controller.getPrograms(name, code, page, limit)
+    const { count, total, programs: data } = await controller.getPrograms(name, code, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccessByList(HttpCode.OK, 'success', 'program list successfully', programs, count, total))
+    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'programs_not_exist', 'Programs not exist'))
   }
@@ -37,14 +37,14 @@ export const getProgram = async (req: Request, res: Response, next: NextFunction
     const name = query.name?.toString() ?? ''
     const code = query.code?.toString() ?? ''
 
-    const program = await controller.getProgram(name, code)
+    const data = await controller.getProgram(name, code)
 
-    if (isEmpty(program)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'program_not_exist', 'Program not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'find program successfully', program))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'program_not_exist', 'Program not exist'))
   }
@@ -54,14 +54,14 @@ export const getProgram = async (req: Request, res: Response, next: NextFunction
 export const getProgramById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
-    const program = await controller.getProgramById(programId)
+    const data = await controller.getProgramById(programId)
 
-    if (isEmpty(program)) {
+    if (isEmpty(data)) {
       res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'program_not_exist', 'Program not exist'))
       return
     }
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program list successfully', program))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2023') {
@@ -76,9 +76,9 @@ export const getProgramById = async (req: Request, res: Response, next: NextFunc
 // create program
 export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const createdProgram = await controller.createProgram(req.body)
+    const data = await controller.createProgram(req.body)
 
-    res.status(HttpCode.CREATED).json(AppSuccess(HttpCode.CREATED, 'success', 'program created successfully', createdProgram))
+    res.status(HttpCode.CREATED).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
@@ -99,9 +99,9 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
 export const update = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
-    const updatedProgram = await controller.updateProgram(programId, req.body)
+    const data = await controller.updateProgram(programId, req.body)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program updated successfully', updatedProgram))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
@@ -121,9 +121,9 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const programId: string = req.params?.id
-    const deletedProgram = await controller.deleteProgram(programId)
+    const data = await controller.deleteProgram(programId)
 
-    res.status(HttpCode.OK).json(AppSuccess(HttpCode.OK, 'success', 'program deleted successfully', deletedProgram))
+    res.status(HttpCode.OK).json(AppSuccess(data))
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2025') {
