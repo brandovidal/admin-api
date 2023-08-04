@@ -2,7 +2,7 @@
 # GET http://localhost:5000/api/users
 
 # get Users from page 1  with 10 items per page
-GET http://localhost:5000/api/users?page=1&limit=10
+# GET http://localhost:5000/api/users?page=1&limit=10
 
 # get Users from page 1 with 2 items per page
 # GET http://localhost:5000/api/users
@@ -13,7 +13,7 @@ GET http://localhost:5000/api/users?page=1&limit=10
 # ?page=2&limit=2
 
 # get User by id
-# GET http://localhost:5000/api/users/63cb8b0fa5df98e192ab53df
+GET http://localhost:5000/api/users/63cb8b0fa5df98e192ab53df
 
 # get User by id with 404 error
 # GET http://localhost:5000/api/users/655

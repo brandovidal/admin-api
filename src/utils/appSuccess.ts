@@ -1,12 +1,8 @@
-import { type SuccessType } from '../types/response'
+import { type ResponseType } from '../types/response'
 
 export default class BaseSuccess {
-  // FIXME: change code to boolean
   private readonly status
-  // FIXME: it is removed
-  // FIXME: this is optional
   private readonly data
-  // TODO: add meta as aditional data
   private readonly meta?
 
   constructor (
@@ -18,7 +14,7 @@ export default class BaseSuccess {
     this.meta = meta
   }
 
-  values (): SuccessType {
+  values (): ResponseType {
     return {
       status: this.status,
       data: this.data,
@@ -34,7 +30,7 @@ export default class BaseSuccess {
 export const AppSuccess = (
   data: object | string | null = null,
   meta: object | null = {}
-): SuccessType => {
+): ResponseType => {
   return new BaseSuccess(data, meta).values()
 }
 

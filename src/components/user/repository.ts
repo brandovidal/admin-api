@@ -9,7 +9,7 @@ import isEmpty from 'just-is-empty'
 import type { UsersResponse } from '../../interfaces/user'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
-import { getPagination } from '@/utils/page'
+import { getPagination } from '../../utils/page'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
