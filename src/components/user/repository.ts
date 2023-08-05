@@ -121,6 +121,7 @@ export const createUser = async (userInput: Prisma.UserCreateInput): Promise<Use
     name: userInput.name,
     email: userInput.email.toLowerCase(),
     password: hashedPassword,
+    role: userInput.role,
     verificationCode,
     verified: false
   }
