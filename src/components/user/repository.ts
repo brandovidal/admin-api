@@ -9,6 +9,7 @@ import isEmpty from 'just-is-empty'
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import { getPagination } from '../../utils/page'
+import { generateHash, generateRandomCode } from '../../utils/hash'
 
 import { type Response } from '../../interfaces/utils/response'
 
@@ -109,7 +110,20 @@ export const getUniqueUser = async (where: Prisma.UserWhereUniqueInput, select?:
 }
 
 export const createUser = async (userInput: Prisma.UserCreateInput): Promise<User> => {
-  const user = await prisma.user.create({ data: userInput })
+  const { password } = userInput
+
+  const hashedPassword = await generateHash(password)
+  const verificationCode = await generateRandomCode()
+  
+  const data: Prisma.UserCreateInput = {
+    username: userInput.username,
+    name: userInput.name,
+    email: userInput.email.toLowerCase(),
+    password: hashedPassword,
+    verificationCode
+  }
+
+  const user = await prisma.user.create({ data })
   void prisma.$disconnect()
   return user
 }

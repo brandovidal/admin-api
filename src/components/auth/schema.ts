@@ -20,7 +20,7 @@ export const registerUserSchema = object({
     password: string({
       required_error: 'Password is required'
     })
-      .min(8, 'Password must be more than 8 characters')
+      .min(6, 'Password must be more than 6 characters')
       .max(32, 'Password must be less than 32 characters'),
     passwordConfirm: string({
       required_error: 'Please confirm your password'
@@ -39,7 +39,7 @@ export const loginUserSchema = object({
     }).email('Invalid email address'),
     password: string({
       required_error: 'Password is required'
-    }).min(8, 'Invalid email or password')
+    }).min(6, 'Invalid email or password')
   })
 })
 
@@ -54,7 +54,7 @@ export const updateUserSchema = object({
     name: string({}),
     email: string({}).email('Invalid email address'),
     password: string({})
-      .min(8, 'Password must be more than 8 characters')
+      .min(6, 'Password must be more than 6 characters')
       .max(32, 'Password must be less than 32 characters'),
     passwordConfirm: string({}),
     role: z.optional(z.nativeEnum(RoleEnumType))

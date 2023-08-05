@@ -17,8 +17,7 @@ import { MemoryStorage } from 'node-ts-cache-storage-memory'
 import omit from 'just-omit'
 import isEmpty from 'just-is-empty'
 
-import bcrypt from 'bcryptjs'
-import crypto from 'crypto'
+import { compareHash } from '../../utils/hash'
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -48,26 +47,11 @@ export const login = async (loginInput: LoginUserInput): Promise<UserLoggedRespo
   const { email, password } = loginInput
 
   const user = await findUser(email)
-  const isLogged = isEmpty(user) || (await bcrypt.compare(password, user.password))
+  const isLogged = isEmpty(user) || (await compareHash(password, user.password))
   return { isLogged, user }
 }
 
 export const register = async (registerInput: User): Promise<User> => {
-  const { password } = registerInput
-
-  const hashedPassword = await bcrypt.hash(password, 12)
-
-  const verifyCode = crypto.randomBytes(32).toString('hex')
-  const verificationCode = (crypto.createHash('sha256').update(verifyCode).digest('hex'))
-
-  const userInput = {
-    username: registerInput.username,
-    name: registerInput.name,
-    email: registerInput.email.toLowerCase(),
-    password: hashedPassword,
-    verificationCode
-  }
-
-  const user = await createUser(userInput)
+  const user = await createUser(registerInput)
   return user
 }

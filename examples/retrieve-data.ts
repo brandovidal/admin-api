@@ -1,5 +1,5 @@
 import { PrismaClient, Tag } from '@prisma/client'
-// import { logger } from 'src/utils/logger'
+// import { logger } from '../../utils/logger'
 
 const prisma = new PrismaClient()
 
