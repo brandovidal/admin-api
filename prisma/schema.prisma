@@ -55,12 +55,12 @@ model User {
 }
 
 model Student {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   lastname String
   birthday DateTime?
-  dni      Int
-  email    String
+  dni      Int       @unique
+  email    String    @unique
 
   ruc          Int?
   businessName String?
@@ -92,7 +92,7 @@ model Student {
   membership  Membership[]  @relation("studentMemberships")
   payment     Payment[]     @relation("studentPayments")
 
-  @@unique([email])
+  @@unique([email, dni])
   @@map("students")
 }
 

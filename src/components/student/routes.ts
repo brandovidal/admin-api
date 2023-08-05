@@ -15,7 +15,7 @@ const router = Router()
 // router.use(deserializeStudent)
 
 router.get('/', getStudents)
-router.get('/student', [validate(findStudentSchema)], getStudent)
+router.get('/unique', [validate(findStudentSchema)], getStudent)
 router.get('/:id', [validate(findStudentByIdSchema)], getStudentById)
 router.post('/', [validate(registerStudentSchema)], create)
 router.put('/:id', [validate(updateStudentSchema)], update)

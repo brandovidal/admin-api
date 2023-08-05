@@ -10,9 +10,9 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/students')
 export default class StudentController {
   /**
-   * The `getStudents` function takes in a `name`, `email`, `page` and `limit` query parameter and returns a `StudentResponse`
+   * The `getStudents` function takes in a `name`, `dni`, `page` and `limit` query parameter and returns a `StudentResponse`
   * @param {string} [name] - string
-  * @param {string} [email] - string
+  * @param {string} [dni] - string
   * @param [page=1] - The page number of the results to return.
   * @param [limit=10] - The number of items to return per page.
   * @returns The return  is StudentResponse.
@@ -21,22 +21,22 @@ export default class StudentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getStudents')
-  public async getStudents (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<StudentResponse<Student>> {
-    return await getStudents(name, email, page, limit)
+  public async getStudents (@Query() name?: string, @Query() dni?: string, @Query() page = 1, @Query() limit = 10): Promise<StudentResponse<Student>> {
+    return await getStudents(name, dni, page, limit)
   }
 
   /**
-  * The `getStudent` function takes in a `name` and `email` query parameter and returns a `Student`
+  * The `getStudent` function takes in a `name` and `dni` query parameter and returns a `Student`
   * object
   * @param {string} [name] - string - This is the name of the student.
-  * @param {string} [email] - The email of the student to get.
+  * @param {string} [dni] - The dni of the student to get.
   * @returns A promise of a Student object
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/student')
-  public async getStudent (@Query() name?: string, @Query() email?: string): Promise<Student> {
-    return await getStudent(name, email)
+  public async getStudent (@Query() name: string, @Query() dni: number): Promise<Student> {
+    return await getStudent(name, dni)
   }
 
   /**
