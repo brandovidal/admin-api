@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 import { signJwt } from '../../utils'
 
-import { type UserLoggedResponse, type UserToken } from '../../interfaces/user'
+import { type UserLoggedResponse, type UserToken } from '../../interfaces/components/user'
 
 import { accessTokenExpiresIn, redisCacheExpiresIn, refreshTokenExpiresIn } from '../../constants/repository'
 

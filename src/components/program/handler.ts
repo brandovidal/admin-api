@@ -21,9 +21,9 @@ export const getPrograms = async (req: Request, res: Response, next: NextFunctio
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, programs: data } = await controller.getPrograms(name, code, page, limit)
+    const { data, meta } = await controller.getPrograms(name, code, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'programs_not_exist', 'Programs not exist'))
   }

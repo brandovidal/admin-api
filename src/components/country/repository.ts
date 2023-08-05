@@ -4,11 +4,12 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { CountriesResponse } from '../../interfaces/country'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+import { getPagination } from '../../utils/page'
+import { Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +17,11 @@ const countryCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<CountriesResponse> => {
+export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Country>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedCountries = await countryCache.getItem<Country[]>('get-countries') ?? []
-  const cachedTotalCountries = await countryCache.getItem<number>('total-countries') ?? 0
-
-  // params
-  const cachedName = await countryCache.getItem<number>('get-name-countries')
-  const cachedIso3 = await countryCache.getItem<number>('get-iso3-countries')
-  const cachedSize = await countryCache.getItem<number>('get-limit-countries')
-  const cachedPage = await countryCache.getItem<number>('get-page-countries')
-
-  if (!isEmpty(cachedCountries) && cachedName === name && cachedIso3 === iso3 && cachedSize === limit && cachedPage === page) {
-    return { count: cachedCountries.length, total: cachedTotalCountries, countries: cachedCountries }
-  }
-
-  const [total, countries] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.country.count(),
     prisma.country.findMany({
       where: {
@@ -46,20 +34,10 @@ export const getCountries = async (name?: string, iso3?: string, page = PAGE_DEF
       }
     })
   ])
-
-  const count = countries.length
-
-  await countryCache.setItem('get-countries', countries, { ttl: TTL_DEFAULT })
-  await countryCache.setItem('total-countries', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await countryCache.setItem('get-name-countries', name, { ttl: TTL_DEFAULT })
-  await countryCache.setItem('get-iso3-countries', iso3, { ttl: TTL_DEFAULT })
-  await countryCache.setItem('get-limit-countries', limit, { ttl: TTL_DEFAULT })
-  await countryCache.setItem('get-page-countries', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, countries }
+  
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getCountryById = async (countryId: string): Promise<Country> => {

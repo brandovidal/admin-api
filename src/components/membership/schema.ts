@@ -1,4 +1,4 @@
-import { number, object, string, z } from 'zod'
+import { object, string, z } from 'zod'
 import type { TypeOf } from 'zod'
 import isEmpty from 'just-is-empty'
 

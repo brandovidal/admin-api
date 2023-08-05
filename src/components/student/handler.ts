@@ -17,13 +17,13 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
     const query = req.query
 
     const name = query.name?.toString()
-    const email = query.email?.toString()
-    const page = parseInt(query.page?.toString() ?? '1')
-    const limit = parseInt(query.limit?.toString() ?? '10')
+    const dni = query.dni?.toString()
+    const page = Number(query.page?.toString() ?? '1')
+    const limit = Number(query.limit?.toString() ?? '10')
 
-    const { count, total, students: data } = await controller.getStudents(name, email, page, limit)
+    const { data, meta } = await controller.getStudents(name, dni, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'students_not_exist', 'Students not exist'))
   }
@@ -35,9 +35,9 @@ export const getStudent = async (req: Request, res: Response, next: NextFunction
     const query = req.query
 
     const name = query.name?.toString() ?? ''
-    const email = query.email?.toString() ?? ''
+    const dni = Number(query.dni?.toString() ?? '0')
 
-    const data = await controller.getStudent(name, email)
+    const data = await controller.getStudent(name, dni)
 
     if (isEmpty(data)) {
       res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'student_not_exist', 'Student not exist'))
@@ -125,7 +125,12 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const studentId: string = req.params?.id
-    await controller.deleteStudent(studentId)
+    const count = await controller.deleteStudent(studentId)
+
+    if (count === 0) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'student_not_exist', 'Student not exist'))
+      return
+    }
 
     res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {

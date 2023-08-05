@@ -4,11 +4,12 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { CoursesResponse } from '../../interfaces/course'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+import { getPagination } from '../../utils/page'
+import { Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +17,11 @@ const courseCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getCourses = async (name?: string, email?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<CoursesResponse> => {
+export const getCourses = async (name?: string, email?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Course>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedCourses = await courseCache.getItem<Course[]>('get-courses') ?? []
-  const cachedTotalCourses = await courseCache.getItem<number>('total-courses') ?? 0
-
-  // params
-  const cachedName = await courseCache.getItem<number>('get-name-courses')
-  const cachedCode = await courseCache.getItem<number>('get-email-courses')
-  const cachedSize = await courseCache.getItem<number>('get-limit-courses')
-  const cachedPage = await courseCache.getItem<number>('get-page-courses')
-
-  if (!isEmpty(cachedCourses) && cachedName === name && cachedCode === email && cachedSize === limit && cachedPage === page) {
-    return { count: cachedCourses.length, total: cachedTotalCourses, courses: cachedCourses }
-  }
-
-  const [total, courses] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.course.count(),
     prisma.course.findMany({
       where: {
@@ -46,20 +34,10 @@ export const getCourses = async (name?: string, email?: string, page = PAGE_DEFA
       }
     })
   ])
-
-  const count = courses.length
-
-  await courseCache.setItem('get-courses', courses, { ttl: TTL_DEFAULT })
-  await courseCache.setItem('total-courses', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await courseCache.setItem('get-name-courses', name, { ttl: TTL_DEFAULT })
-  await courseCache.setItem('get-email-courses', email, { ttl: TTL_DEFAULT })
-  await courseCache.setItem('get-limit-courses', limit, { ttl: TTL_DEFAULT })
-  await courseCache.setItem('get-page-courses', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, courses }
+  
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getCourseById = async (courseId: string): Promise<Course> => {

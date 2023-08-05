@@ -2,8 +2,7 @@ import { Membership } from '@prisma/client'
 
 import { createMembership, getMemberships, deleteMembership, updateMembership, getMembershipById, getMembership } from './repository'
 
-import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { type MembershipsResponse } from '../../interfaces/membership'
+import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON, Response as MembershipsResponse } from '../../interfaces/utils/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
@@ -22,7 +21,7 @@ export default class MembershipController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getMemberships')
-  public async getMemberships (@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() limit = 10): Promise<MembershipsResponse> {
+  public async getMemberships (@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() limit = 10): Promise<MembershipsResponse<Membership>> {
     return await getMemberships(startDate, endDate, page, limit)
   }
 

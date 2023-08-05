@@ -21,9 +21,9 @@ export const getCountries = async (req: Request, res: Response, next: NextFuncti
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, countries: data } = await controller.getCountries(name, iso3, page, limit)
+    const { data, meta } = await controller.getCountries(name, iso3, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'courses_not_exist', 'Countries not exist'))
   }

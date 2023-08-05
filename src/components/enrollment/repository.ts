@@ -4,11 +4,12 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { EnrollmentsResponse } from '../../interfaces/enrollment'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+import { getPagination } from '../../utils/page'
+import { Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +17,11 @@ const enrollmentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getEnrollments = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<EnrollmentsResponse> => {
+export const getEnrollments = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Enrollment>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedEnrollments = await enrollmentCache.getItem<Enrollment[]>('get-enrollments') ?? []
-  const cachedTotalEnrollments = await enrollmentCache.getItem<number>('total-enrollments') ?? 0
-
-  // params
-  const cachedName = await enrollmentCache.getItem<number>('get-startDate-enrollments')
-  const cachedCode = await enrollmentCache.getItem<number>('get-endDate-enrollments')
-  const cachedSize = await enrollmentCache.getItem<number>('get-limit-enrollments')
-  const cachedPage = await enrollmentCache.getItem<number>('get-page-enrollments')
-
-  if (!isEmpty(cachedEnrollments) && cachedName === startDate && cachedCode === endDate && cachedSize === limit && cachedPage === page) {
-    return { count: cachedEnrollments.length, total: cachedTotalEnrollments, enrollments: cachedEnrollments }
-  }
-
-  const [total, enrollments] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.enrollment.count(),
     prisma.enrollment.findMany({
       where: {
@@ -47,20 +35,10 @@ export const getEnrollments = async (startDate?: string, endDate?: string, page 
       }
     })
   ])
-
-  const count = enrollments.length
-
-  await enrollmentCache.setItem('get-enrollments', enrollments, { ttl: TTL_DEFAULT })
-  await enrollmentCache.setItem('total-enrollments', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await enrollmentCache.setItem('get-startDate-enrollments', startDate, { ttl: TTL_DEFAULT })
-  await enrollmentCache.setItem('get-endDate-enrollments', endDate, { ttl: TTL_DEFAULT })
-  await enrollmentCache.setItem('get-limit-enrollments', limit, { ttl: TTL_DEFAULT })
-  await enrollmentCache.setItem('get-page-enrollments', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, enrollments }
+
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getEnrollmentById = async (enrollmentId: string): Promise<Enrollment> => {

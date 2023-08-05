@@ -4,11 +4,13 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { ProgramsResponse } from '../../interfaces/program'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+import { getPagination } from '../../utils/page'
+
+import { Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +18,12 @@ const programCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<ProgramsResponse> => {
+export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Program>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedPrograms = await programCache.getItem<Program[]>('get-programs') ?? []
-  const cachedTotalPrograms = await programCache.getItem<number>('total-programs') ?? 0
 
-  // params
-  const cachedName = await programCache.getItem<number>('get-name-programs')
-  const cachedCode = await programCache.getItem<number>('get-code-programs')
-  const cachedSize = await programCache.getItem<number>('get-limit-programs')
-  const cachedPage = await programCache.getItem<number>('get-page-programs')
-
-  if (!isEmpty(cachedPrograms) && cachedName === name && cachedCode === code && cachedSize === limit && cachedPage === page) {
-    return { count: cachedPrograms.length, total: cachedTotalPrograms, programs: cachedPrograms }
-  }
-
-  const [total, programs] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.program.count(),
     prisma.program.findMany({
       where: {
@@ -46,20 +36,10 @@ export const getPrograms = async (name?: string, code?: string, page = PAGE_DEFA
       }
     })
   ])
-
-  const count = programs.length
-
-  await programCache.setItem('get-programs', programs, { ttl: TTL_DEFAULT })
-  await programCache.setItem('total-programs', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await programCache.setItem('get-name-programs', name, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-code-programs', code, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-limit-programs', limit, { ttl: TTL_DEFAULT })
-  await programCache.setItem('get-page-programs', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, programs }
+
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getProgramById = async (programId: string): Promise<Program> => {

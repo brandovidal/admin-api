@@ -4,11 +4,14 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { StudentsResponse } from '../../interfaces/student'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+
+import { getPagination } from '../../utils/page'
+
+import {type Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +19,11 @@ const studentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getStudents = async (name?: string, email?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<StudentsResponse> => {
+export const getStudents = async (name?: string, dni?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Student>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedStudents = await studentCache.getItem<Student[]>('get-students') ?? []
-  const cachedTotalStudents = await studentCache.getItem<number>('total-students') ?? 0
-
-  // params
-  const cachedName = await studentCache.getItem<number>('get-name-students')
-  const cachedCode = await studentCache.getItem<number>('get-email-students')
-  const cachedSize = await studentCache.getItem<number>('get-limit-students')
-  const cachedPage = await studentCache.getItem<number>('get-page-students')
-
-  if (!isEmpty(cachedStudents) && cachedName === name && cachedCode === email && cachedSize === limit && cachedPage === page) {
-    return { count: cachedStudents.length, total: cachedTotalStudents, students: cachedStudents }
-  }
-
-  const [total, students] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.student.count(),
     prisma.student.findMany({
       where: {
@@ -46,20 +36,45 @@ export const getStudents = async (name?: string, email?: string, page = PAGE_DEF
       }
     })
   ])
+  void prisma.$disconnect()
 
-  const count = students.length
-
-  await studentCache.setItem('get-students', students, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('total-students', total, { ttl: TTL_DEFAULT })
+  const meta = getPagination(page, total, take)
+  return { data, meta }
+}
+export const getStudent = async (name: string, dni: number): Promise<Student> => {
+  const cachedStudent = await studentCache.getItem<Student>('get-only-student') as Student
 
   // params
-  await studentCache.setItem('get-name-students', name, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-email-students', email, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-limit-students', limit, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-page-students', page, { ttl: TTL_DEFAULT })
+  const cachedName = await studentCache.getItem<string>('get-only-name')
+  const cachedDni = await studentCache.getItem<number>('get-only-dni')
+
+  if (!isEmpty(cachedStudent) && cachedName === name && cachedDni === dni) {
+    return cachedStudent
+  }
+
+  const whereAnd : Prisma.StudentWhereInput[] = []
+
+  if (!isEmpty(name)) {
+    whereAnd.push({ name: { contains: name, mode: 'insensitive' } })
+  }
+  if (dni > 0) {
+    whereAnd.push({ dni })
+  }
+
+  const student = await prisma.student.findFirstOrThrow({
+    where: {
+      AND: whereAnd
+    }
+  }) as Student
+
+  await studentCache.setItem('get-only-student', student, { ttl: TTL_DEFAULT })
+
+  // params
+  await studentCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
+  await studentCache.setItem('get-only-dni', dni, { ttl: TTL_DEFAULT })
 
   void prisma.$disconnect()
-  return { count, total, students }
+  return student
 }
 
 export const getStudentById = async (studentId: string): Promise<Student> => {
@@ -85,32 +100,6 @@ export const getStudentById = async (studentId: string): Promise<Student> => {
   return student
 }
 
-export const getStudent = async (name?: string, email?: string): Promise<Student> => {
-  const cachedStudent = await studentCache.getItem<Student>('get-only-student') as Student
-
-  // params
-  const cachedName = await studentCache.getItem<number>('get-only-name')
-  const cachedCode = await studentCache.getItem<number>('get-only-email')
-
-  if (!isEmpty(cachedStudent) && cachedName === name && cachedCode === email) {
-    return cachedStudent
-  }
-
-  const student = await prisma.student.findFirst({
-    where: {
-      name: { contains: name, mode: 'insensitive' }
-    }
-  }) as Student
-
-  await studentCache.setItem('get-only-student', student, { ttl: TTL_DEFAULT })
-
-  // params
-  await studentCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
-
-  void prisma.$disconnect()
-  return student
-}
 
 export const getUniqueStudent = async (where: Prisma.StudentWhereUniqueInput, select?: Prisma.StudentSelect): Promise<Student> => {
   const student = (await prisma.student.findUnique({

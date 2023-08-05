@@ -2,8 +2,7 @@ import { Payment } from '@prisma/client'
 
 import { createPayment, getPayments, deletePayment, updatePayment, getPaymentById, getPayment } from './repository'
 
-import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { type PaymentsResponse } from '../../interfaces/payment'
+import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON, Response as PaymentsResponse } from '../../interfaces/utils/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
@@ -22,7 +21,7 @@ export default class PaymentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getPayments')
-  public async getPayments (@Query() voucher?: string, @Query() amount?: string, @Query() page = 1, @Query() limit = 10): Promise<PaymentsResponse> {
+  public async getPayments (@Query() voucher?: string, @Query() amount?: string, @Query() page = 1, @Query() limit = 10): Promise<PaymentsResponse<Payment>> {
     return await getPayments(voucher, amount, page, limit)
   }
 

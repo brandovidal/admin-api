@@ -4,11 +4,13 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { PaymentsResponse } from '../../interfaces/payment'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+import { getPagination } from '../../utils/page'
+
+import { Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +18,11 @@ const paymentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getPayments = async (voucher?: string, amount?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<PaymentsResponse> => {
+export const getPayments = async (voucher?: string, amount?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Payment>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedPayments = await paymentCache.getItem<Payment[]>('get-payments') ?? []
-  const cachedTotalPayments = await paymentCache.getItem<number>('total-payments') ?? 0
-
-  // params
-  const cachedName = await paymentCache.getItem<number>('get-voucher-payments')
-  const cachedCode = await paymentCache.getItem<number>('get-amount-payments')
-  const cachedSize = await paymentCache.getItem<number>('get-limit-payments')
-  const cachedPage = await paymentCache.getItem<number>('get-page-payments')
-
-  if (!isEmpty(cachedPayments) && cachedName === voucher && cachedCode === amount && cachedSize === limit && cachedPage === page) {
-    return { count: cachedPayments.length, total: cachedTotalPayments, payments: cachedPayments }
-  }
-
-  const [total, payments] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.payment.count(),
     prisma.payment.findMany({
       where: {
@@ -46,20 +35,10 @@ export const getPayments = async (voucher?: string, amount?: string, page = PAGE
       }
     })
   ])
-
-  const count = payments.length
-
-  await paymentCache.setItem('get-payments', payments, { ttl: TTL_DEFAULT })
-  await paymentCache.setItem('total-payments', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await paymentCache.setItem('get-voucher-payments', voucher, { ttl: TTL_DEFAULT })
-  await paymentCache.setItem('get-amount-payments', amount, { ttl: TTL_DEFAULT })
-  await paymentCache.setItem('get-limit-payments', limit, { ttl: TTL_DEFAULT })
-  await paymentCache.setItem('get-page-payments', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, payments }
+  
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getPaymentById = async (paymentId: string): Promise<Payment> => {

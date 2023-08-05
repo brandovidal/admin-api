@@ -21,9 +21,9 @@ export const getEnrollments = async (req: Request, res: Response, next: NextFunc
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, enrollments: data } = await controller.getEnrollments(startDate, endDate, page, limit)
+    const { data, meta } = await controller.getEnrollments(startDate, endDate, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'enrollments_not_exist', 'Enrollments not exist'))
   }

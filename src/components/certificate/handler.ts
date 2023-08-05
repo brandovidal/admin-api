@@ -21,9 +21,9 @@ export const getCertificates = async (req: Request, res: Response, next: NextFun
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, certificates: data } = await controller.getCertificates(dateOfIssue, url, page, limit)
+    const { data, meta } = await controller.getCertificates(dateOfIssue, url, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'certificates_not_exist', 'Certificates not exist'))
   }
