@@ -5,6 +5,7 @@ import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import isEmpty from 'just-is-empty'
+import omit from 'just-omit'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
@@ -13,7 +14,7 @@ import { generateHash, generateRandomCode } from '../../utils/hash'
 
 import { type Response } from '../../interfaces/utils/response'
 
-export const excludedFields = ['password', 'verified', 'verificationCode']
+export const excludedFields = ['password', 'verified', 'verificationCode'] as const
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -120,12 +121,15 @@ export const createUser = async (userInput: Prisma.UserCreateInput): Promise<Use
     name: userInput.name,
     email: userInput.email.toLowerCase(),
     password: hashedPassword,
-    verificationCode
+    verificationCode,
+    verified: false
   }
 
   const user = await prisma.user.create({ data })
   void prisma.$disconnect()
-  return user
+
+  const createUser = omit(user, [...excludedFields]) as User
+  return createUser
 }
 
 export const updateUser = async (userId: string, userInput: User): Promise<User> => {

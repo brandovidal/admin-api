@@ -11,8 +11,6 @@ import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/reposit
 import { getPagination } from '../../utils/page'
 import { Response } from '../../interfaces/utils/response'
 
-export const excludedFields = ['password', 'verified', 'verificationCode']
-
 const membershipCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()

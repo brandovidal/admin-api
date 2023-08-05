@@ -12,8 +12,6 @@ import { getPagination } from '../../utils/page'
 
 import { Response } from '../../interfaces/utils/response'
 
-export const excludedFields = ['password', 'verified', 'verificationCode']
-
 const paymentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
