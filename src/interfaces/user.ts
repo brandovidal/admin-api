@@ -1,8 +1,8 @@
 import { type User } from '@prisma/client'
-import type { MetaResponse } from './utils/response'
+import type { MetaType } from '../types/response'
 
 export interface UsersResponse {
-  meta?: MetaResponse
+  meta?: MetaType | object | null
   data: User[]
 }
 

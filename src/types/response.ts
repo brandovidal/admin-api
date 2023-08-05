@@ -10,10 +10,19 @@ export interface ErrorType {
   message: string
   details?: ValidationType[] | null
 }
+export interface PaginationType {
+  page: number
+  pageSize: number
+  pageCount: number
+  total: number
+}
+export interface MetaType {
+  pagination: PaginationType
+}
 export interface ResponseType {
   status: boolean
   data?: object | string | null
-  meta?: object | null
+  meta?: MetaType | object | null
   error?: ErrorType | object | null
 }
 
