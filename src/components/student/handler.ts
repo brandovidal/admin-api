@@ -125,7 +125,12 @@ export const update = async (req: Request, res: Response, next: NextFunction): P
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const studentId: string = req.params?.id
-    await controller.deleteStudent(studentId)
+    const count = await controller.deleteStudent(studentId)
+
+    if (count === 0) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'student_not_exist', 'Student not exist'))
+      return
+    }
 
     res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {

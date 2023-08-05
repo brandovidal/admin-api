@@ -162,7 +162,12 @@ export const updateStatus = async (req: Request, res: Response, next: NextFuncti
 export const remove = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userId: string = req.params?.id
-    await controller.deleteUser(userId)
+    const user = await controller.deleteUser(userId)
+
+    if (isEmpty(user)) {
+      res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'user_not_exist', 'User not exist'))
+      return
+    }
 
     res.status(HttpCode.OK).json(AppSuccess(null))
   } catch (err) {

@@ -58,7 +58,7 @@ model Student {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   lastname String
-  birthday DateTime
+  birthday DateTime?
   dni      Int
   email    String
 

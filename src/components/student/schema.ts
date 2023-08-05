@@ -54,7 +54,7 @@ export const registerStudentSchema = z.object({
       })
       .optional(),
     phoneWithFormat: z
-      .number({
+      .string({
         required_error: 'Phone With Format is required'
       })
       .optional(),
@@ -204,7 +204,7 @@ export const updateStudentSchema = z.object({
       })
       .optional(),
     phoneWithFormat: z
-      .number({
+      .string({
         required_error: 'Phone With Format is required'
       })
       .optional(),
