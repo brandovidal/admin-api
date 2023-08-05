@@ -21,9 +21,9 @@ export const getMemberships = async (req: Request, res: Response, next: NextFunc
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, memberships: data } = await controller.getMemberships(startDate, endDate, page, limit)
+    const { data, meta } = await controller.getMemberships(startDate, endDate, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'memberships_not_exist', 'Memberships not exist'))
   }

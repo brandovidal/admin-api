@@ -20,7 +20,7 @@ export interface MetaType {
   pagination: PaginationType
 }
 export interface ResponseType {
-  status: boolean
+  status?: boolean
   data?: object | string | null
   meta?: MetaType | object | null
   error?: ErrorType | object | null

@@ -21,9 +21,9 @@ export const getStudents = async (req: Request, res: Response, next: NextFunctio
     const page = parseInt(query.page?.toString() ?? '1')
     const limit = parseInt(query.limit?.toString() ?? '10')
 
-    const { count, total, students: data } = await controller.getStudents(name, email, page, limit)
+    const { data, meta } = await controller.getStudents(name, email, page, limit)
 
-    res.status(HttpCode.OK).json(AppSuccess(data, { count, total }))
+    res.status(HttpCode.OK).json(AppSuccess(data, meta))
   } catch (err) {
     res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'students_not_exist', 'Students not exist'))
   }

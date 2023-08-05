@@ -4,11 +4,12 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { MembershipsResponse } from '../../interfaces/membership'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+import { getPagination } from '../../utils/page'
+import { Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +17,11 @@ const membershipCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getMemberships = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<MembershipsResponse> => {
+export const getMemberships = async (startDate?: string, endDate?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Membership>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedMemberships = await membershipCache.getItem<Membership[]>('get-memberships') ?? []
-  const cachedTotalMemberships = await membershipCache.getItem<number>('total-memberships') ?? 0
-
-  // params
-  const cachedName = await membershipCache.getItem<number>('get-startDate-memberships')
-  const cachedCode = await membershipCache.getItem<number>('get-endDate-memberships')
-  const cachedSize = await membershipCache.getItem<number>('get-limit-memberships')
-  const cachedPage = await membershipCache.getItem<number>('get-page-memberships')
-
-  if (!isEmpty(cachedMemberships) && cachedName === startDate && cachedCode === endDate && cachedSize === limit && cachedPage === page) {
-    return { count: cachedMemberships.length, total: cachedTotalMemberships, memberships: cachedMemberships }
-  }
-
-  const [total, memberships] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.membership.count(),
     prisma.membership.findMany({
       where: {
@@ -47,20 +35,10 @@ export const getMemberships = async (startDate?: string, endDate?: string, page 
       }
     })
   ])
-
-  const count = memberships.length
-
-  await membershipCache.setItem('get-memberships', memberships, { ttl: TTL_DEFAULT })
-  await membershipCache.setItem('total-memberships', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await membershipCache.setItem('get-startDate-memberships', startDate, { ttl: TTL_DEFAULT })
-  await membershipCache.setItem('get-endDate-memberships', endDate, { ttl: TTL_DEFAULT })
-  await membershipCache.setItem('get-limit-memberships', limit, { ttl: TTL_DEFAULT })
-  await membershipCache.setItem('get-page-memberships', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, memberships }
+
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getMembershipById = async (membershipId: string): Promise<Membership> => {

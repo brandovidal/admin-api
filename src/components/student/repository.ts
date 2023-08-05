@@ -4,11 +4,14 @@ import { PrismaClient } from '@prisma/client'
 import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
-import type { StudentsResponse } from '../../interfaces/student'
+import isEmpty from 'just-is-empty'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
-import isEmpty from 'just-is-empty'
+
+import { getPagination } from '../../utils/page'
+
+import {type Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -16,24 +19,11 @@ const studentCache = new CacheContainer(new MemoryStorage())
 
 const prisma = new PrismaClient()
 
-export const getStudents = async (name?: string, email?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<StudentsResponse> => {
+export const getStudents = async (name?: string, email?: string, page = PAGE_DEFAULT, limit = SIZE_DEFAULT): Promise<Response<Student>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const cachedStudents = await studentCache.getItem<Student[]>('get-students') ?? []
-  const cachedTotalStudents = await studentCache.getItem<number>('total-students') ?? 0
-
-  // params
-  const cachedName = await studentCache.getItem<number>('get-name-students')
-  const cachedCode = await studentCache.getItem<number>('get-email-students')
-  const cachedSize = await studentCache.getItem<number>('get-limit-students')
-  const cachedPage = await studentCache.getItem<number>('get-page-students')
-
-  if (!isEmpty(cachedStudents) && cachedName === name && cachedCode === email && cachedSize === limit && cachedPage === page) {
-    return { count: cachedStudents.length, total: cachedTotalStudents, students: cachedStudents }
-  }
-
-  const [total, students] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.student.count(),
     prisma.student.findMany({
       where: {
@@ -46,20 +36,10 @@ export const getStudents = async (name?: string, email?: string, page = PAGE_DEF
       }
     })
   ])
-
-  const count = students.length
-
-  await studentCache.setItem('get-students', students, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('total-students', total, { ttl: TTL_DEFAULT })
-
-  // params
-  await studentCache.setItem('get-name-students', name, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-email-students', email, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-limit-students', limit, { ttl: TTL_DEFAULT })
-  await studentCache.setItem('get-page-students', page, { ttl: TTL_DEFAULT })
-
   void prisma.$disconnect()
-  return { count, total, students }
+
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getStudentById = async (studentId: string): Promise<Student> => {

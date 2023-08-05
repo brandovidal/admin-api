@@ -2,8 +2,7 @@ import { Certificate } from '@prisma/client'
 
 import { createCertificate, getCertificates, deleteCertificate, updateCertificate, getCertificateById, getCertificate } from './repository'
 
-import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { type CertificatesResponse } from '../../interfaces/certificate'
+import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON, Response as CertificatesResponse } from '../../interfaces/utils/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
@@ -22,7 +21,7 @@ export default class CertificateController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getCertificates')
-  public async getCertificates (@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() limit = 10): Promise<CertificatesResponse> {
+  public async getCertificates (@Query() dateOfIssue?: string, @Query() url?: string, @Query() page = 1, @Query() limit = 10): Promise<CertificatesResponse<Certificate>> {
     return await getCertificates(dateOfIssue, url, page, limit)
   }
 

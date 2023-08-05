@@ -2,8 +2,7 @@ import { Enrollment } from '@prisma/client'
 
 import { createEnrollment, getEnrollments, deleteEnrollment, updateEnrollment, getEnrollmentById, getEnrollment } from './repository'
 
-import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { type EnrollmentsResponse } from '../../interfaces/enrollment'
+import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON, Response as EnrollmentsResponse } from '../../interfaces/utils/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
@@ -22,7 +21,7 @@ export default class EnrollmentController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getEnrollments')
-  public async getEnrollments (@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() limit = 10): Promise<EnrollmentsResponse> {
+  public async getEnrollments (@Query() startDate?: string, @Query() endDate?: string, @Query() page = 1, @Query() limit = 10): Promise<EnrollmentsResponse<Enrollment>> {
     return await getEnrollments(startDate, endDate, page, limit)
   }
 

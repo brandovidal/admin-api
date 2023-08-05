@@ -2,8 +2,7 @@ import { Program } from '@prisma/client'
 
 import { createProgram, getPrograms, deleteProgram, updateProgram, getProgramById, getProgram } from './repository'
 
-import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import { type ProgramsResponse } from '../../interfaces/program'
+import type { ForbiddenErrorJSON, InternalErrorJSON, Response as ProgramsResponse, ValidateErrorJSON } from '../../interfaces/utils/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
@@ -22,7 +21,7 @@ export default class ProgramController {
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getPrograms')
-  public async getPrograms (@Query() name?: string, @Query() code?: string, @Query() page = 1, @Query() limit = 10): Promise<ProgramsResponse> {
+  public async getPrograms (@Query() name?: string, @Query() code?: string, @Query() page = 1, @Query() limit = 10): Promise<ProgramsResponse<Program>> {
     return await getPrograms(name, code, page, limit)
   }
 

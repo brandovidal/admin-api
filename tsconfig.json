@@ -31,16 +31,16 @@
     "rootDir": "./src" /* Specify the root folder within your source files. */,
     // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
     "baseUrl": "./" /* Specify the base directory to resolve non-relative module names. */,
-    "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@constants/*": ["./src/constants/*"],
-      "@interfaces/*": ["./src/interfaces/*"],
-      "@middlewares/*": ["./src/middlewares/*"],
-      "@routes/*": ["./src/routes/*"],
-      "@types/*": ["./src/types/*"],
-      "@utils/*": ["./src/utils/*"]
-    },
+    // "paths": {
+    //   "@/*": ["./src/*"],
+    //   "@components/*": ["./src/components/*"],
+    //   "@constants/*": ["./src/constants/*"],
+    //   "@interfaces/*": ["./src/interfaces/*"],
+    //   "@middlewares/*": ["./src/middlewares/*"],
+    //   "@routes/*": ["./src/routes/*"],
+    //   "@types/*": ["./src/types/*"],
+    //   "@utils/*": ["./src/utils/*"]
+    // },
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     "typeRoots": [
       "node_modules/@types",

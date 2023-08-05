@@ -2,8 +2,7 @@ import { User } from '@prisma/client'
 
 import { createUser, getUsers, deleteUser, updateUser, getUserById, getUser } from './repository'
 
-import type { ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/response'
-import type { UsersResponse } from '../../interfaces/user'
+import type { Response as UserResponse, ForbiddenErrorJSON, InternalErrorJSON, ValidateErrorJSON } from '../../interfaces/utils/response'
 
 import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Response, OperationId, Tags } from 'tsoa'
 
@@ -11,18 +10,18 @@ import { Get, Post, Put, Delete, Path, Route, Body, SuccessResponse, Query, Resp
 @Route('/api/users')
 export default class UserController {
   /**
-   * The `getUsers` function takes in a `name`, `email`, `page` and `limit` query parameter and returns a `UsersResponse`
+   * The `getUsers` function takes in a `name`, `email`, `page` and `limit` query parameter and returns a `UserResponse`
   * @param {string} [name] - string
   * @param {string} [email] - string
   * @param [page=1] - The page number of the results to return.
   * @param [limit=10] - The number of items to return per page.
-  * @returns The return  is UsersResponse.
+  * @returns The return  is UserResponse.
   */
   @Response<InternalErrorJSON>(500, 'Internal Server Error')
   @Response<ForbiddenErrorJSON>(403, 'Forbidden')
   @Get('/')
   @OperationId('getUsers')
-  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<UsersResponse> {
+  public async getUsers (@Query() name?: string, @Query() email?: string, @Query() page = 1, @Query() limit = 10): Promise<UserResponse<User>> {
     return await getUsers(name, email, page, limit)
   }
 

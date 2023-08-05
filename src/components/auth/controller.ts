@@ -1,7 +1,7 @@
 import { User } from '@prisma/client'
 
-import { type InternalErrorJSON, type ValidateErrorJSON } from '../../interfaces/response'
-import { type UserLoggedResponse } from '../../interfaces/user'
+import { type InternalErrorJSON, type ValidateErrorJSON } from '../../interfaces/utils/response'
+import { type UserLoggedResponse } from '../../interfaces/components/user'
 
 import { login, register } from './repository'
 

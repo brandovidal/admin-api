@@ -6,10 +6,11 @@ import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import isEmpty from 'just-is-empty'
 
-import type { UsersResponse } from '../../interfaces/user'
-
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
+
 import { getPagination } from '../../utils/page'
+
+import { type Response } from '../../interfaces/utils/response'
 
 export const excludedFields = ['password', 'verified', 'verificationCode']
 
@@ -22,11 +23,11 @@ export const getUsers = async (
   email?: string,
   page = PAGE_DEFAULT,
   limit = SIZE_DEFAULT
-): Promise<UsersResponse> => {
+): Promise<Response<User>> => {
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const [total, users] = await prisma.$transaction([
+  const [total, data] = await prisma.$transaction([
     prisma.user.count(),
     prisma.user.findMany({
       where: {
@@ -40,11 +41,10 @@ export const getUsers = async (
       }
     })
   ])
-  const meta = getPagination(page, total, take)
-
   void prisma.$disconnect()
 
-  return { data: users, meta }
+  const meta = getPagination(page, total, take)
+  return { data, meta }
 }
 
 export const getUser = async (name?: string, email?: string): Promise<User> => {
