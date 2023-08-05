@@ -29,7 +29,7 @@ export const getUsers = async (
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const [total, data] = await prisma.$transaction([
+  const [total, users] = await prisma.$transaction([
     prisma.user.count(),
     prisma.user.findMany({
       where: {
@@ -44,6 +44,8 @@ export const getUsers = async (
     })
   ])
   void prisma.$disconnect()
+
+  const data = users.map((user) => omit(user, [...excludedFields])) as User[]
 
   const meta = getPagination(page, total, take)
   return { data, meta }
@@ -60,20 +62,22 @@ export const getUser = async (name?: string, email?: string): Promise<User> => {
     return cachedUser
   }
 
-  const user = (await prisma.user.findFirst({
+  const userFinded = (await prisma.user.findFirst({
     where: {
       name: { contains: name, mode: 'insensitive' },
       email: { contains: email, mode: 'insensitive' }
     }
   })) as User
+  void prisma.$disconnect()
 
+  const user = omit(userFinded, [...excludedFields]) as User
+  
   await userCache.setItem('get-only-user', user, { ttl: TTL_DEFAULT })
 
   // params
   await userCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
   await userCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
 
-  void prisma.$disconnect()
   return user
 }
 
@@ -85,18 +89,20 @@ export const getUserById = async (userId: string): Promise<User | null> => {
     return cachedUserById
   }
 
-  const user = (await prisma.user.findUnique({
+  const userFinded = (await prisma.user.findUnique({
     where: {
       id: userId
     }
   })) as User
+  void prisma.$disconnect()
+
+  const user = omit(userFinded, [...excludedFields]) as User
 
   await userCache.setItem('get-user-by-id', user, { ttl: TTL_DEFAULT })
 
   // params
   await userCache.setItem('get-id-user', userId, { ttl: TTL_DEFAULT })
 
-  void prisma.$disconnect()
   return user
 }
 
@@ -126,11 +132,11 @@ export const createUser = async (userInput: Prisma.UserCreateInput): Promise<Use
     verified: false
   }
 
-  const user = await prisma.user.create({ data })
+  const createUser = await prisma.user.create({ data })
   void prisma.$disconnect()
 
-  const createUser = omit(user, [...excludedFields]) as User
-  return createUser
+  const user = omit(createUser, [...excludedFields]) as User
+  return user
 }
 
 export const updateUser = async (userId: string, userInput: User): Promise<User> => {
