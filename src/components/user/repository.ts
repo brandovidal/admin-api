@@ -5,14 +5,16 @@ import { CacheContainer } from 'node-ts-cache'
 import { MemoryStorage } from 'node-ts-cache-storage-memory'
 
 import isEmpty from 'just-is-empty'
+import omit from 'just-omit'
 
 import { PAGE_DEFAULT, SIZE_DEFAULT, TTL_DEFAULT } from '../../constants/repository'
 
 import { getPagination } from '../../utils/page'
+import { generateHash, generateRandomCode } from '../../utils/hash'
 
 import { type Response } from '../../interfaces/utils/response'
 
-export const excludedFields = ['password', 'verified', 'verificationCode']
+export const excludedFields = ['password', 'verified', 'verificationCode'] as const
 
 const userCache = new CacheContainer(new MemoryStorage())
 
@@ -27,7 +29,7 @@ export const getUsers = async (
   const take = limit ?? SIZE_DEFAULT
   const skip = (page - 1) * take
 
-  const [total, data] = await prisma.$transaction([
+  const [total, users] = await prisma.$transaction([
     prisma.user.count(),
     prisma.user.findMany({
       where: {
@@ -42,6 +44,8 @@ export const getUsers = async (
     })
   ])
   void prisma.$disconnect()
+
+  const data = users.map((user) => omit(user, [...excludedFields])) as User[]
 
   const meta = getPagination(page, total, take)
   return { data, meta }
@@ -58,20 +62,22 @@ export const getUser = async (name?: string, email?: string): Promise<User> => {
     return cachedUser
   }
 
-  const user = (await prisma.user.findFirst({
+  const userFinded = (await prisma.user.findFirst({
     where: {
       name: { contains: name, mode: 'insensitive' },
       email: { contains: email, mode: 'insensitive' }
     }
   })) as User
+  void prisma.$disconnect()
 
+  const user = omit(userFinded, [...excludedFields]) as User
+  
   await userCache.setItem('get-only-user', user, { ttl: TTL_DEFAULT })
 
   // params
   await userCache.setItem('get-only-name', name, { ttl: TTL_DEFAULT })
   await userCache.setItem('get-only-email', email, { ttl: TTL_DEFAULT })
 
-  void prisma.$disconnect()
   return user
 }
 
@@ -83,18 +89,20 @@ export const getUserById = async (userId: string): Promise<User | null> => {
     return cachedUserById
   }
 
-  const user = (await prisma.user.findUnique({
+  const userFinded = (await prisma.user.findUnique({
     where: {
       id: userId
     }
   })) as User
+  void prisma.$disconnect()
+
+  const user = omit(userFinded, [...excludedFields]) as User
 
   await userCache.setItem('get-user-by-id', user, { ttl: TTL_DEFAULT })
 
   // params
   await userCache.setItem('get-id-user', userId, { ttl: TTL_DEFAULT })
 
-  void prisma.$disconnect()
   return user
 }
 
@@ -109,8 +117,25 @@ export const getUniqueUser = async (where: Prisma.UserWhereUniqueInput, select?:
 }
 
 export const createUser = async (userInput: Prisma.UserCreateInput): Promise<User> => {
-  const user = await prisma.user.create({ data: userInput })
+  const { password } = userInput
+
+  const hashedPassword = await generateHash(password)
+  const verificationCode = await generateRandomCode()
+  
+  const data: Prisma.UserCreateInput = {
+    username: userInput.username,
+    name: userInput.name,
+    email: userInput.email.toLowerCase(),
+    password: hashedPassword,
+    role: userInput.role,
+    verificationCode,
+    verified: false
+  }
+
+  const createUser = await prisma.user.create({ data })
   void prisma.$disconnect()
+
+  const user = omit(createUser, [...excludedFields]) as User
   return user
 }
 

@@ -59,10 +59,10 @@ model Student {
   name     String
   lastname String
   birthday DateTime?
-  dni      Int       @unique
+  dni      Int?       @unique
   email    String    @unique
 
-  ruc          Int?
+  ruc          Int? @unique
   businessName String?
   address      String?
 
@@ -92,7 +92,7 @@ model Student {
   membership  Membership[]  @relation("studentMemberships")
   payment     Payment[]     @relation("studentPayments")
 
-  @@unique([email, dni])
+  @@unique([email, dni, ruc])
   @@map("students")
 }
 
