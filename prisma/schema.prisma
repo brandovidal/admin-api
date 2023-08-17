@@ -102,8 +102,8 @@ model Enrollment {
   startDate DateTime? @default(now())
   endDate   DateTime?
 
-  faceToFaceModality     Boolean? @default(false)
-  semiFaceToFaceModality Boolean? @default(false)
+  presentialModality     Boolean? @default(false)
+  semiPresentialModality Boolean? @default(false)
   virtualModality        Boolean? @default(false)
 
   enableMarketingAds Boolean?                  @default(false)

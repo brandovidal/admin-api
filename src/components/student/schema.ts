@@ -42,12 +42,11 @@ export const registerStudentSchema = z.object({
         required_error: 'Address is required'
       })
       .optional(),
-
     country: z
       .string({
         required_error: 'Country is required'
       })
-      .optional(),
+      .nullish(),
     phone: z
       .number({
         required_error: 'Phone is required'

@@ -109,7 +109,7 @@ export const insertUserAndPost = async (): Promise<void> => {
   logger.info('Student created')
 
   const enrollemntInput: Prisma.EnrollmentCreateInput = {
-    faceToFaceModality: true,
+    presentialModality: true,
     marketingAds: ['recomendation', 'email'],
     marketingEmail: 'juan@email.com',
     marketingMedia: 'Correo electronico',
