@@ -72,9 +72,9 @@ model Student {
   ladline           Int?
   ladlineWithFormat String?
 
-  postgradoTraining  Boolean? @default(false)
-  qualifiedTraining  Boolean? @default(false)
-  highSchoolTraining Boolean? @default(false)
+  postgraduateTraining  Boolean? @default(false)
+  graduateTraining  Boolean? @default(false)
+  bachelorTraining Boolean? @default(false)
   studentTraining    Boolean? @default(false)
 
   studyCenter  String?
@@ -102,8 +102,8 @@ model Enrollment {
   startDate DateTime? @default(now())
   endDate   DateTime?
 
-  faceToFaceModality     Boolean? @default(false)
-  semiFaceToFaceModality Boolean? @default(false)
+  presentialModality     Boolean? @default(false)
+  semiPresentialModality Boolean? @default(false)
   virtualModality        Boolean? @default(false)
 
   enableMarketingAds Boolean?                  @default(false)

@@ -42,12 +42,11 @@ export const registerStudentSchema = z.object({
         required_error: 'Address is required'
       })
       .optional(),
-
     country: z
       .string({
         required_error: 'Country is required'
       })
-      .optional(),
+      .nullish(),
     phone: z
       .number({
         required_error: 'Phone is required'
@@ -69,19 +68,19 @@ export const registerStudentSchema = z.object({
       })
       .optional(),
 
-    postgradoTraining: z
+    postgraduateTraining: z
       .boolean({
-        required_error: 'postgradoTraining is required'
+        required_error: 'postgraduateTraining is required'
       })
       .optional(),
-    qualifiedTraining: z
+    graduateTraining: z
       .boolean({
-        required_error: 'qualifiedTraining is required'
+        required_error: 'graduateTraining is required'
       })
       .optional(),
-    highSchoolTraining: z
+    bachelorTraining: z
       .boolean({
-        required_error: 'highSchoolTraining is required'
+        required_error: 'bachelorTraining is required'
       })
       .optional(),
     studentTraining: z
@@ -219,19 +218,19 @@ export const updateStudentSchema = z.object({
       })
       .optional(),
 
-    postgradoTraining: z
+    postgraduateTraining: z
       .boolean({
-        required_error: 'postgradoTraining is required'
+        required_error: 'postgraduateTraining is required'
       })
       .optional(),
-    qualifiedTraining: z
+    graduateTraining: z
       .boolean({
-        required_error: 'qualifiedTraining is required'
+        required_error: 'graduateTraining is required'
       })
       .optional(),
-    highSchoolTraining: z
+    bachelorTraining: z
       .boolean({
-        required_error: 'highSchoolTraining is required'
+        required_error: 'bachelorTraining is required'
       })
       .optional(),
     studentTraining: z

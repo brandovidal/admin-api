@@ -11,11 +11,11 @@ export const registerEnrollmentSchema = z.object({
       required_error: 'endDate is required'
     }).datetime({ offset: true }).optional(),
 
-    faceToFaceModality: z.boolean({
-      required_error: 'faceToFaceModality is required'
+    presentialModality: z.boolean({
+      required_error: 'presentialModality is required'
     }).optional(),
-    semiFaceToFaceModality: z.boolean({
-      required_error: 'semiFaceToFaceModality is required'
+    semiPresentialModality: z.boolean({
+      required_error: 'semiPresentialModality is required'
     }).optional(),
     virtualModality: z.boolean({
       required_error: 'virtualModality is required'
@@ -70,11 +70,11 @@ export const updateEnrollmentSchema = z.object({
       required_error: 'endDate is required'
     }).datetime({ offset: true }).optional(),
 
-    faceToFaceModality: z.boolean({
-      required_error: 'faceToFaceModality is required'
+    presentialModality: z.boolean({
+      required_error: 'presentialModality is required'
     }).optional(),
-    semiFaceToFaceModality: z.boolean({
-      required_error: 'semiFaceToFaceModality is required'
+    semiPresentialModality: z.boolean({
+      required_error: 'semiPresentialModality is required'
     }).optional(),
     virtualModality: z.boolean({
       required_error: 'virtualModality is required'
