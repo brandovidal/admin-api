@@ -29,20 +29,23 @@ export const registerStudentSchema = z.object({
       .number({
         required_error: 'Ruc is required'
       })
-      .min(10_000_000_000)
-      .max(99_999_999_999)
-      .optional(),
+      .nullish(),
     businessName: z
       .string({
         required_error: 'BusinessName is required'
       })
-      .optional(),
+      .nullish(),
     address: z
       .string({
         required_error: 'Address is required'
       })
-      .optional(),
+      .nullish(),
     country: z
+      .string({
+        required_error: 'Country is required'
+      })
+      .nullish(),
+    phoneCode: z
       .string({
         required_error: 'Country is required'
       })
@@ -61,7 +64,7 @@ export const registerStudentSchema = z.object({
       .number({
         required_error: 'Ladline is required'
       })
-      .optional(),
+      .nullish(),
     ladlineWithFormat: z
       .number({
         required_error: 'Ladline With Format is required'
@@ -180,23 +183,28 @@ export const updateStudentSchema = z.object({
       .number({
         required_error: 'Ruc is required'
       })
-      .optional(),
+      .nullish(),
     businessName: z
       .string({
         required_error: 'BusinessName is required'
       })
-      .optional(),
+      .nullish(),
     address: z
       .string({
         required_error: 'Address is required'
       })
-      .optional(),
+      .nullish(),
 
     country: z
       .string({
         required_error: 'Country is required'
       })
-      .optional(),
+      .nullish(),
+    phoneCode: z
+      .string({
+        required_error: 'Country is required'
+      })
+      .nullish(),
     phone: z
       .number({
         required_error: 'Phone is required'
@@ -211,7 +219,7 @@ export const updateStudentSchema = z.object({
       .number({
         required_error: 'Ladline is required'
       })
-      .optional(),
+      .nullish(),
     ladlineWithFormat: z
       .number({
         required_error: 'Ladline With Format is required'
