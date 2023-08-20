@@ -7,7 +7,7 @@
   "author": "Brando Vidal",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16"
   },
   "scripts": {
     "postinstall": "npx prisma generate && npx prisma db push",
