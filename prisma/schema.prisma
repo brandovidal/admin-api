@@ -59,23 +59,24 @@ model Student {
   name     String
   lastname String
   birthday DateTime?
-  dni      Int?       @unique
+  dni      Int?      @unique
   email    String    @unique
 
-  ruc          Int? @unique
+  ruc          Int?    @unique
   businessName String?
   address      String?
 
   country           String?
+  phoneCode         String?
   phone             Int?
   phoneWithFormat   String?
   ladline           Int?
   ladlineWithFormat String?
 
-  postgraduateTraining  Boolean? @default(false)
-  graduateTraining  Boolean? @default(false)
-  bachelorTraining Boolean? @default(false)
-  studentTraining    Boolean? @default(false)
+  postgraduateTraining Boolean? @default(false)
+  graduateTraining     Boolean? @default(false)
+  bachelorTraining     Boolean? @default(false)
+  studentTraining      Boolean? @default(false)
 
   studyCenter  String?
   workplace    String?
