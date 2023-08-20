@@ -21,7 +21,7 @@
     "local": "dotenv -e .env.development -- ts-node",
     "predev": "concurrently 'pnpm run swagger' 'pnpm run prisma-generate-dev'",
     "dev": "pnpm run predev && dotenv -e .env.development -- nodemon --watch src/ --exec ts-node src/index.ts",
-    "prebuild": "concurrently 'pnpm run swagger' 'pnpm run clean-build'",
+    "prebuild": "pnpm run swagger && pnpm run clean-build",
     "build": "pnpm run prebuild && tsc",
     "prestart": "pnpm run prisma-generate && pnpm run build",
     "start": "dotenv -e .env -- node build/index.js",
