@@ -6,6 +6,9 @@
   "repository": "git@github.com:brandovidal/node-typescript-skeleton.git",
   "author": "Brando Vidal",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "postinstall": "npx prisma generate && npx prisma db push",
     "prepare": "husky install",
