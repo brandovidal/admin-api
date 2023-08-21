@@ -2,6 +2,12 @@
 
 This project contains a minimal starter for Node.js project with Typescript, ESLint, TS-Standard and Nodemon already configured
 
+## 🌐 URL
+
+```
+https://panel-api-x6vc.onrender.com
+```
+
 ## 🚀 Project Structure
 
 Inside of your project, you'll see the following folders and files:
