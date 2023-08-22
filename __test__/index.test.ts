@@ -140,10 +140,12 @@ describe.concurrent('API methods', () => {
           lastname: 'diaz',
           email: 'ofelio@correo.com',
           birthday: new Date(),
-          dni: 12345678
+          dni: 12345678,
+          status: false
         }
 
         const response = await server.post('/api/students').send(studentInput)
+        console.log("🚀 ~ file: index.test.ts:147 ~ it ~ response:", response)
 
         expect(response.status).toBe(HttpCode.CREATED)
         expect(response.headers['Content-Type']).contains(/json/)
