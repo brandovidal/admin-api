@@ -82,7 +82,7 @@ export const create = async (req: Request, res: Response, next: NextFunction): P
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
       if (err.code === 'P2002') {
-        res.status(HttpCode.CONFLICT).json(AppError(HttpCode.CONFLICT, 'student_exist', 'Student already exist'))
+        res.status(HttpCode.FORBIDDEN).json(AppError(HttpCode.FORBIDDEN, 'student_exist', 'Student already exist'))
         return
       }
     }
