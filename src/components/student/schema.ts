@@ -15,7 +15,7 @@ export const registerStudentSchema = z.object({
         required_error: 'Birthday is required'
       })
       .datetime({ offset: true })
-      .optional(),
+      .nullish(),
     dni: z.number({
       required_error: 'DNI is required'
     }),
@@ -24,7 +24,6 @@ export const registerStudentSchema = z.object({
         required_error: 'Email is required'
       })
       .email({ message: 'Email is not valid' }),
-
     ruc: z
       .number({
         required_error: 'Ruc is required'
@@ -69,74 +68,76 @@ export const registerStudentSchema = z.object({
       .number({
         required_error: 'Ladline With Format is required'
       })
-      .optional(),
-
+      .nullish(),
     postgraduateTraining: z
       .boolean({
         required_error: 'postgraduateTraining is required'
       })
-      .optional(),
+      .nullish(),
     graduateTraining: z
       .boolean({
         required_error: 'graduateTraining is required'
       })
-      .optional(),
+      .nullish(),
     bachelorTraining: z
       .boolean({
         required_error: 'bachelorTraining is required'
       })
-      .optional(),
+      .nullish(),
     studentTraining: z
       .boolean({
         required_error: 'studentTraining is required'
       })
-      .optional(),
+      .nullish(),
 
     studyCenter: z
       .string({
         required_error: 'studyCenter is required'
       })
-      .optional(),
+      .nullish(),
     workplace: z
       .string({
         required_error: 'workplace is required'
       })
-      .optional(),
+      .nullish(),
     workPosition: z
       .string({
         required_error: 'workPosition is required'
       })
-      .optional(),
+      .nullish(),
     workAddress: z
       .string({
         required_error: 'workAddress is required'
       })
-      .optional(),
-
+      .nullish(),
+    status: z
+      .boolean({
+        required_error: 'status is required'
+      }),
     enrollmentId: z
       .string({
         required_error: 'enrollment ID is required'
       })
       .length(24)
-      .optional(),
+      .nullish(),
     certificateId: z
       .string({
         required_error: 'certificate ID is required'
       })
       .length(24)
-      .optional(),
+      .nullish(),
     membershipId: z
       .string({
         required_error: 'membership ID is required'
       })
       .length(24)
-      .optional(),
+      .nullish(),
     paymentId: z
       .string({
         required_error: 'payment ID is required'
       })
       .length(24)
-      .optional()
+      .nullish()
   })
 })
 
@@ -153,32 +154,31 @@ export const updateStudentSchema = z.object({
       .string({
         required_error: 'Name is required'
       })
-      .optional(),
+      .nullish(),
     lastname: z
       .string({
         required_error: 'Lastname is required'
       })
-      .optional(),
+      .nullish(),
     birthday: z
       .string({
         required_error: 'Birthday is required'
       })
       .datetime({ offset: true })
-      .optional(),
+      .nullish(),
     dni: z
       .number({
         required_error: 'DNI is required'
       })
       .min(10_000_000)
       .max(99_999_999)
-      .optional(),
+      .nullish(),
     email: z
       .string({
         required_error: 'Email is required'
       })
       .email({ message: 'Email is not valid' })
-      .optional(),
-
+      .nullish(),
     ruc: z
       .number({
         required_error: 'Ruc is required'
@@ -194,7 +194,6 @@ export const updateStudentSchema = z.object({
         required_error: 'Address is required'
       })
       .nullish(),
-
     country: z
       .string({
         required_error: 'Country is required'
@@ -209,12 +208,12 @@ export const updateStudentSchema = z.object({
       .number({
         required_error: 'Phone is required'
       })
-      .optional(),
+      .nullish(),
     phoneWithFormat: z
       .string({
         required_error: 'Phone With Format is required'
       })
-      .optional(),
+      .nullish(),
     ladline: z
       .number({
         required_error: 'Ladline is required'
@@ -224,74 +223,77 @@ export const updateStudentSchema = z.object({
       .number({
         required_error: 'Ladline With Format is required'
       })
-      .optional(),
-
+      .nullish(),
     postgraduateTraining: z
       .boolean({
         required_error: 'postgraduateTraining is required'
       })
-      .optional(),
+      .nullish(),
     graduateTraining: z
       .boolean({
         required_error: 'graduateTraining is required'
       })
-      .optional(),
+      .nullish(),
     bachelorTraining: z
       .boolean({
         required_error: 'bachelorTraining is required'
       })
-      .optional(),
+      .nullish(),
     studentTraining: z
       .boolean({
         required_error: 'studentTraining is required'
       })
-      .optional(),
+      .nullish(),
 
     studyCenter: z
       .string({
         required_error: 'studyCenter is required'
       })
-      .optional(),
+      .nullish(),
     workplace: z
       .string({
         required_error: 'workplace is required'
       })
-      .optional(),
+      .nullish(),
     workPosition: z
       .string({
         required_error: 'workPosition is required'
       })
-      .optional(),
+      .nullish(),
     workAddress: z
       .string({
         required_error: 'workAddress is required'
       })
-      .optional(),
-
+      .nullish(),
+    status: z
+      .boolean({
+        required_error: 'status is required'
+      })
+      .nullish(),
     enrollmentId: z
       .string({
         required_error: 'enrollment ID is required'
       })
       .length(24)
-      .optional(),
+      .nullish(),
     certificateId: z
       .string({
         required_error: 'certificate ID is required'
       })
       .length(24)
-      .optional(),
+      .nullish(),
     membershipId: z
       .string({
         required_error: 'membership ID is required'
       })
       .length(24)
-      .optional(),
+      .nullish(),
     paymentId: z
       .string({
         required_error: 'payment ID is required'
       })
       .length(24)
-      .optional()
+      .nullish()
   })
 })
 
