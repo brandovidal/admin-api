@@ -59,10 +59,10 @@ model Student {
   name     String
   lastname String
   birthday DateTime?
-  dni      Int?      @unique
-  email    String    @unique
+  dni      Int?
+  email    String   @unique
 
-  ruc          Int?    @unique
+  ruc          Int?
   businessName String?
   address      String?
 
@@ -93,7 +93,7 @@ model Student {
   membership  Membership[]  @relation("studentMemberships")
   payment     Payment[]     @relation("studentPayments")
 
-  @@unique([email, dni, ruc])
+  // @@unique([email])
   @@map("students")
 }
 
@@ -120,7 +120,7 @@ model Enrollment {
   total    Float? @default(0.00)
 
   student   Student? @relation("studentEnrollments", fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  studentId String?  @unique @db.ObjectId
+  studentId String?  @db.ObjectId
 
   program   Program? @relation("programEnrollments", fields: [programId], references: [id], onDelete: NoAction, onUpdate: Cascade)
   programId String?  @db.ObjectId
@@ -130,7 +130,7 @@ model Enrollment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  @@unique([marketingEmail, studentId])
+  @@unique([studentId])
   @@map("enrollments")
 }
 
@@ -178,7 +178,7 @@ model Program {
   Certificate Certificate[] @relation("certificatePrograms")
 
   course   Course? @relation("programCourses", fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  courseId String? @unique @db.ObjectId
+  courseId String? @db.ObjectId
 
   @@unique([code, courseId])
   @@map("programs")
@@ -242,7 +242,7 @@ model Membership {
 model Payment {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  voucher String
+  voucher String?
   amount  Float
 
   paymentMethod    String
