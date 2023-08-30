@@ -12,13 +12,13 @@ export const registerCourseSchema = object({
     }),
     startDate: string({
       required_error: 'StartDate is required'
-    }).datetime({ offset: true }).optional(),
+    }).datetime({ offset: true }).nullish(),
     endDate: string({
       required_error: 'EndDte is required'
-    }).datetime({ offset: true }).optional(),
+    }).datetime({ offset: true }).nullish(),
     programId: string({
       required_error: 'Program ID is required'
-    }).length(24).optional()
+    }).length(24).nullish()
   })
 })
 
@@ -31,19 +31,19 @@ export const updateCourseSchema = object({
   body: object({
     name: string({
       required_error: 'Name is required'
-    }).optional(),
+    }).nullish(),
     code: string({
       required_error: 'Code is required'
-    }).optional(),
+    }).nullish(),
     startDate: string({
       required_error: 'StartDate is required'
-    }).datetime({ offset: true }).optional(),
+    }).datetime({ offset: true }).nullish(),
     endDate: string({
       required_error: 'EndDte is required'
-    }).datetime({ offset: true }).optional(),
+    }).datetime({ offset: true }).nullish(),
     programId: string({
       required_error: 'Program ID is required'
-    }).length(24, { message: 'ID must be 24 characters' }).optional()
+    }).length(24, { message: 'ID must be 24 characters' }).nullish()
   })
 })
 
