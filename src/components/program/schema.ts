@@ -13,18 +13,18 @@ export const registerProgramSchema = object({
     amount: number({
       required_error: 'Amount is required',
       invalid_type_error: 'Amount must be a number'
-    }).optional(),
+    }).nullish(),
     discount: number({
       required_error: 'Discount is required',
       invalid_type_error: 'Discount must be a number'
-    }).optional(),
+    }).nullish(),
     total: number({
       required_error: 'Total is required',
       invalid_type_error: 'Total must be a number'
-    }).optional(),
+    }).nullish(),
     courseId: string({
       required_error: 'Course ID is required'
-    }).length(24)
+    }).length(24).nullable()
   })
 })
 
@@ -38,13 +38,13 @@ export const updateProgramSchema = object({
     }),
     amount: number({
       required_error: 'Amount is required'
-    }),
+    }).nullish(),
     discount: number({
       required_error: 'Discount is required'
-    }),
+    }).nullish(),
     total: number({
       required_error: 'Total is required'
-    }),
+    }).nullish(),
     courseId: string({
       required_error: 'Course ID is required'
     }).length(24)
