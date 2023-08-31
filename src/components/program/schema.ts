@@ -24,7 +24,7 @@ export const registerProgramSchema = object({
     }).nullish(),
     courseId: string({
       required_error: 'Course ID is required'
-    }).length(24).nullable()
+    }).length(24).nullish()
   })
 })
 
@@ -47,7 +47,7 @@ export const updateProgramSchema = object({
     }).nullish(),
     courseId: string({
       required_error: 'Course ID is required'
-    }).length(24)
+    }).length(24).nullish()
   })
 })
 
