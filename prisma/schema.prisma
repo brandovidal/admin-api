@@ -140,9 +140,6 @@ model Course {
   name String
   code String
 
-  startDate DateTime?
-  endDate   DateTime?
-
   uniqueProgram Boolean? @default(false)
   status        Boolean? @default(true)
 

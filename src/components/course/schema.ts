@@ -10,12 +10,6 @@ export const registerCourseSchema = object({
     code: string({
       required_error: 'Code is required'
     }),
-    startDate: string({
-      required_error: 'StartDate is required'
-    }).datetime({ offset: true }).nullish(),
-    endDate: string({
-      required_error: 'EndDte is required'
-    }).datetime({ offset: true }).nullish(),
     programId: string({
       required_error: 'Program ID is required'
     }).length(24).nullish()
@@ -35,12 +29,6 @@ export const updateCourseSchema = object({
     code: string({
       required_error: 'Code is required'
     }).nullish(),
-    startDate: string({
-      required_error: 'StartDate is required'
-    }).datetime({ offset: true }).nullish(),
-    endDate: string({
-      required_error: 'EndDte is required'
-    }).datetime({ offset: true }).nullish(),
     programId: string({
       required_error: 'Program ID is required'
     }).length(24, { message: 'ID must be 24 characters' }).nullish()
