@@ -1,4 +1,11 @@
-node_modules
+node_modules/
+public/
+
 npm-debug.log
+pnpm-lock.yaml
+
 Dockerfile
 .dockerignore
+
+.env.*
+.env

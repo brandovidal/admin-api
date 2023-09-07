@@ -7,9 +7,10 @@ COPY tsconfig.json ./
 COPY pnpm-lock.yaml ./
 COPY prisma/schema.prisma  ./
 COPY tsoa.json  ./
-# COPY .env  ./
+COPY .env  ./
 RUN pnpm install
 COPY ./src ./src
+RUN ls
 CMD [ "pnpm", "run", "start" ]
 
 # Builder stage
